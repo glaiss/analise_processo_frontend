@@ -1,0 +1,29 @@
+<mat-card class="process-card" [class.high-priority]="processo().scoreFinal > 100">
+  <mat-card-header>
+    <div mat-card-avatar class="score-avatar" [class]="scoreColor">
+      {{ processo().scoreFinal }}
+    </div>
+    <mat-card-title class="font-mono">{{ processo().numero }}</mat-card-title>
+    <mat-card-subtitle>{{ processo().classeJudicial }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p class="assunto">{{ processo().assuntoJudicial }}</p>
+    <div class="metadata">
+      <span class="label">Ajuizamento:</span>
+      <span class="value">{{ processo().dataAjuizamento | date:'dd/MM/yyyy' }}</span>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <mat-chip-set>
+      @if (processo().prazoVencendo) {
+        <mat-chip [color]="deadlineColor" selected>
+          <mat-icon matChipAvatar>alarm</mat-icon>
+          {{ processo().diasParaVencer }} dias
+        </mat-chip>
+      }
+      <mat-chip>{{ processo().statusAtribuicao }}</mat-chip>
+    </mat-chip-set>
+  </mat-card-actions>
+</mat-card>

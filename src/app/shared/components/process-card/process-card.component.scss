@@ -1,0 +1,66 @@
+:host {
+  display: block;
+}
+
+.process-card {
+  height: 100%;
+  padding: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 16px;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  &.high-priority {
+    border-left: 4px solid var(--mat-sys-primary);
+  }
+}
+
+.score-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 50%;
+  background-color: var(--mat-sys-surface-variant);
+  color: var(--mat-sys-on-surface-variant);
+
+  &.primary {
+    background-color: var(--mat-sys-primary);
+    color: var(--mat-sys-on-primary);
+  }
+
+  &.accent {
+    background-color: var(--mat-sys-tertiary);
+    color: var(--mat-sys-on-tertiary);
+    box-shadow: 0 0 10px rgba(197, 160, 89, 0.5); // Glow effect
+  }
+}
+
+.assunto {
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--mat-sys-on-surface);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metadata {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+
+  .label {
+    font-weight: 500;
+    margin-right: 4px;
+  }
+}
+
+mat-card-header {
+  margin-bottom: 16px;
+}
