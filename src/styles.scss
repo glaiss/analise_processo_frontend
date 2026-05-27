@@ -1,1 +1,39 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+
+// Define a minimal theme without relying on $variables that might be missing in some M3 versions
+$theme: mat.define-theme();
+
+html {
+  height: 100%;
+}
+
+body {
+  @include mat.all-component-themes($theme);
+  @include mat.system-level-typography($theme);
+  
+  background-color: #F8F9FA;
+  color: #263238; // Default text color
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  height: 100%;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+// Snackbar Custom Styles
+.error-snackbar {
+  background-color: #B00020 !important;
+  color: white !important;
+}
+
+.success-snackbar {
+  background-color: #2E7D32 !important;
+  color: white !important;
+}
+
+.warn-snackbar {
+  background-color: #C5A059 !important;
+  color: white !important;
+}
