@@ -1,0 +1,43 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="title-section">
+      <h1>Análise de Processos</h1>
+      <p class="subtitle">Monitoramento de Score e Prazos</p>
+    </div>
+
+    <div class="actions-section">
+      <mat-button-toggle-group (change)="onViewModeChange($event)" [value]="viewMode()">
+        <mat-button-toggle value="meus">Meus Processos</mat-button-toggle>
+        <mat-button-toggle value="equipe">Processos da Equipe</mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else if (processes().length === 0) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>Nenhuma distribuição de processos encontrada ainda.</p>
+    </div>
+  } @else {
+    <div class="groups-container">
+      <div class="process-grid">
+        @for (p of processes(); track p.id) {
+          <app-process-card [processo]="{
+            numero: p.processo.numero,
+            classeJudicial: p.processo.classeJudicial,
+            assuntoJudicial: p.processo.assuntoJudicial,
+            dataAjuizamento: '',
+            scoreFinal: p.processo.scoreFinal,
+            nivel: p.processo.nivel,
+            statusAtribuicao: p.status,
+            usuarioResponsavel: p.usuario?.nome || 'Não atribuído',
+            prazoVencendo: p.statusPrazo === 'URGENTE'
+          }"></app-process-card>
+        }
+      </div>
+    </div>
+  }

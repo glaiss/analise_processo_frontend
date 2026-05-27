@@ -1,0 +1,39 @@
+<div class="ingestion-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Ingestão de Processos</mat-card-title>
+      <mat-card-subtitle>Configurar sincronização de novos processos</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #ingestForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tribunal</mat-label>
+          <mat-select name="tribunal" [(ngModel)]="formData.tribunal" required>
+            @for (t of tribunais; track t) {
+              <mat-option [value]="t">{{ t }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Total de Processos</mat-label>
+          <input matInput type="number" name="total" [(ngModel)]="formData.total" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tamanho do Lote (Size)</mat-label>
+          <input matInput type="number" name="size" [(ngModel)]="formData.size" required>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!ingestForm.form.valid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Iniciar Sincronização
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,17 @@
+.ingestion-container {
+  max-width: 500px;
+  margin: 64px auto 40px; // Increased top margin
+  padding: 0 16px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+button[type="submit"] {
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

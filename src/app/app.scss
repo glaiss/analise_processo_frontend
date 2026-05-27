@@ -1,0 +1,70 @@
+.app-container {
+  height: 100vh;
+}
+
+.app-sidenav {
+  width: 260px;
+  background-color: var(--mat-sys-surface-container);
+  border-right: 1px solid var(--mat-sys-outline-variant);
+  display: flex;
+  flex-direction: column;
+
+  .logo-container {
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+    .logo-icon {
+      color: var(--mat-sys-primary);
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--mat-sys-primary);
+      letter-spacing: -0.5px;
+    }
+  }
+
+  mat-nav-list {
+    flex: 1;
+    padding-top: 16px;
+
+    .active {
+      background-color: var(--mat-sys-secondary-container);
+      color: var(--mat-sys-on-secondary-container);
+    }
+  }
+}
+
+.user-toolbar-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+
+  .user-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.app-toolbar {
+  background-color: var(--mat-sys-primary) !important;
+  color: var(--mat-sys-on-primary) !important;
+  box-shadow: none !important;
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+}
+
+.content-wrapper {
+  background-color: #F8F9FA;
+  min-height: calc(100vh - 64px);
+}

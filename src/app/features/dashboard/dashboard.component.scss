@@ -1,0 +1,75 @@
+.dashboard-container {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+  
+  .title-section {
+    flex: 1;
+  }
+
+  .actions-section {
+    display: flex;
+    justify-content: flex-end; // Align to the right
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 8px;
+  }
+}
+
+.groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 64px; // Increased gap between groups
+}
+
+.group-section {
+  .group-header {
+    margin-bottom: 24px; // Added space below group title
+    padding-bottom: 12px;
+  }
+}
+
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 32px; // Increased gap between cards
+}
+
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--mat-sys-error);
+  background-color: var(--mat-sys-error-container);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--mat-sys-on-surface-variant);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+  }
+}
