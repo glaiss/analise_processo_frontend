@@ -1,0 +1,9 @@
+<mat-nav-list>
+  <div mat-subheader>Meus Processos</div>
+  @for (proc of processState.allProcesses(); track proc.numero) {
+    <a mat-list-item (click)="navigate(proc.numero)">
+      <mat-icon matListItemIcon>folder_open</mat-icon>
+      <span matListItemTitle>{{ proc.numero }}</span>
+    </a>
+  }
+</mat-nav-list>

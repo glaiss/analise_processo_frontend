@@ -2,11 +2,9 @@ import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from './core/services/auth.service';
+import { HeaderComponent } from './shared/components/header/header.component';
+import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { filter } from 'rxjs';
 
 @Component({
@@ -16,10 +14,8 @@ import { filter } from 'rxjs';
     CommonModule,
     RouterOutlet,
     MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatButtonModule
+    HeaderComponent,
+    SidebarComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'
@@ -39,24 +35,9 @@ export class App implements OnInit {
     });
   }
 
-  debugClick(link: string) {
-    console.log('Clicked on:', link);
-  }
-
-  navigate(path: string) {
-    console.log('Navigating to:', path);
-    this.router.navigate([path]);
-  }
-
   toggleSidenav() {
     if (this.sidenav) {
       this.sidenav.toggle();
     }
-  }
-
-  logout() {
-    this.auth.logout().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
   }
 }

@@ -1,0 +1,13 @@
+<mat-toolbar color="primary" class="app-toolbar">
+  <button mat-icon-button (click)="toggleSidenav.emit()">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span>{{ auth.currentUser()?.equipe || 'Sherlok UI' }}</span>
+  <span class="spacer"></span>
+  <div class="user-toolbar-info">
+      <span class="user-name">{{ auth.currentUser()?.nome }}</span>
+      <button mat-button (click)="logout()">
+          <mat-icon>logout</mat-icon> Sair
+      </button>
+  </div>
+</mat-toolbar>

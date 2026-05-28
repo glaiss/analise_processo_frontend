@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
-import { ProcessoResumoDTO } from '../../../core/models/processo.model';
+import { ProcessoResumoDTO } from '../../../core/models/processo/processo-resumo.model';
 
 @Component({
   selector: 'app-process-card',

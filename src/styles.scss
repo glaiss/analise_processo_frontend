@@ -1,6 +1,14 @@
 @use '@angular/material' as mat;
 
-// Define a minimal theme without relying on $variables that might be missing in some M3 versions
+:root {
+  --primary-navy: #001C44;
+  --secondary-slate: #475D7E;
+  --accent-gold: #C5A059;
+  --surface-off-white: #F8F9FA;
+  --urgency-red: #B00020;
+}
+
+// Define a minimal theme
 $theme: mat.define-theme();
 
 html {
@@ -11,8 +19,8 @@ body {
   @include mat.all-component-themes($theme);
   @include mat.system-level-typography($theme);
   
-  background-color: #F8F9FA;
-  color: #263238; // Default text color
+  background-color: var(--surface-off-white);
+  color: var(--primary-navy);
   font-family: 'Inter', sans-serif;
   margin: 0;
   height: 100%;

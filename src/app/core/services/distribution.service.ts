@@ -1,23 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Page } from '../models/processo.model';
-
-export interface AtribuicaoProcesso {
-  id: string;
-  processo: {
-    numero: string;
-    classeJudicial: string;
-    assuntoJudicial: string;
-    scoreFinal: number;
-    nivel: string;
-  };
-  equipe: { id: string; nome: string };
-  usuario: { id: string; nome: string } | null;
-  status: string;
-  prazoFinal: string;
-  statusPrazo: string;
-}
+import { Page } from '../models/processo/pagination.model';
+import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-processo-resumo.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,11 +10,15 @@ export interface AtribuicaoProcesso {
 export class DistributionService {
   private http = inject(HttpClient);
 
-  getMeusProcessos(): Observable<Page<AtribuicaoProcesso>> {
-    return this.http.get<Page<AtribuicaoProcesso>>('/distribuicao/meus-processos');
+  getMeusProcessos(): Observable<Page<AtribuicaoProcessoResumoDTO>> {
+    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/meus-processos');
   }
 
-  getProcessosEquipe(): Observable<Page<AtribuicaoProcesso>> {
-    return this.http.get<Page<AtribuicaoProcesso>>('/distribuicao/equipe');
+  getProcessosEquipe(): Observable<Page<AtribuicaoProcessoResumoDTO>> {
+    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/equipe');
+  }
+
+  executarDistribuicao(): Observable<void> {
+    return this.http.post<void>('/distribuicao/executar', {});
   }
 }

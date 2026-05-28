@@ -1,27 +1,18 @@
-<div class="score-breakdown-container">
-  <h3>Por que este processo?</h3>
-  <table mat-table [dataSource]="hipoteses()" class="mat-elevation-z0">
-
-    <ng-container matColumnDef="nomeRegra">
-      <th mat-header-cell *matHeaderCellDef> Regra </th>
-      <td mat-cell *matCellDef="let element"> {{element.nomeRegra}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="pontos">
-      <th mat-header-cell *matHeaderCellDef> Pontos </th>
-      <td mat-cell *matCellDef="let element" class="font-mono">
-        <span [class.positive]="element.pontos > 0" [class.negative]="element.pontos < 0">
-          {{element.pontos > 0 ? '+' : ''}}{{element.pontos}}
-        </span>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="justificativa">
-      <th mat-header-cell *matHeaderCellDef> Justificativa </th>
-      <td mat-cell *matCellDef="let element"> {{element.justificativa}} </td>
-    </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-  </table>
-</div>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Explicação do Score: {{ processo.numero }}</mat-card-title>
+    <mat-card-subtitle>Score Final: <span class="font-mono">{{ processo.scoreFinal }}</span></mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <h3>Justificativas</h3>
+    <mat-list>
+      @for (item of processo.hipoteses; track item.nomeRegra) {
+        <mat-list-item>
+          <div matListItemTitle>{{ item.nomeRegra }}</div>
+          <div matListItemLine>Pontos: {{ item.pontos }}</div>
+          <div matListItemLine>{{ item.justificativa }}</div>
+        </mat-list-item>
+      }
+    </mat-list>
+  </mat-card-content>
+</mat-card>

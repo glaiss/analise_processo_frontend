@@ -19,6 +19,28 @@ export const routes: Routes = [
     loadComponent: () => import('./features/ingestion/ingestion.component').then(m => m.IngestionComponent)
   },
   {
+    path: 'processos',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/processos/processos.component').then(m => m.ProcessosComponent)
+  },
+  {
+    path: 'distribuicao',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/distribuicao/distribuicao.component').then(m => m.DistribuicaoComponent)
+  },
+  {
+    path: 'meus-processos',
+    canActivate: [authGuard],
+    loadComponent: () => import('./shared/components/assigned-processes-list/assigned-processes-list.component').then(m => m.AssignedProcessesListComponent),
+    data: { mode: 'meus', title: 'Meus Processos' }
+  },
+  {
+    path: 'processos-equipe',
+    canActivate: [authGuard],
+    loadComponent: () => import('./shared/components/assigned-processes-list/assigned-processes-list.component').then(m => m.AssignedProcessesListComponent),
+    data: { mode: 'equipe', title: 'Processos da Equipe' }
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

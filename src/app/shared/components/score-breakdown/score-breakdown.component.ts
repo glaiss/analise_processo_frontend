@@ -1,17 +1,16 @@
-import { Component, input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { ScoreItemDTO } from '../../../core/models/processo.model';
+import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
 
 @Component({
   selector: 'app-score-breakdown',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatListModule],
   templateUrl: './score-breakdown.component.html',
   styleUrl: './score-breakdown.component.scss'
 })
 export class ScoreBreakdownComponent {
-  hipoteses = input.required<ScoreItemDTO[]>();
-  displayedColumns: string[] = ['nomeRegra', 'pontos', 'justificativa'];
+  @Input({ required: true }) processo!: ProcessoDetalheDTO;
 }

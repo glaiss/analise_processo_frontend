@@ -1,47 +1,13 @@
 <mat-sidenav-container class="app-container">
   @if (showMenu && auth.isAuthenticated()) {
     <mat-sidenav #sidenav mode="side" opened class="app-sidenav">
-      <div class="logo-container">
-        <mat-icon class="logo-icon">balance</mat-icon>
-        <span class="logo-text">Sherlok UI</span>
-      </div>
-
-      <mat-nav-list>
-        <a mat-list-item (click)="navigate('/dashboard')" routerLinkActive="active">
-          <mat-icon matListItemIcon>dashboard</mat-icon>
-          <span matListItemTitle>Dashboard</span>
-        </a>
-        <a mat-list-item (click)="navigate('/ingestao')" routerLinkActive="active">
-          <mat-icon matListItemIcon>cloud_download</mat-icon>
-          <span matListItemTitle>Ingestão</span>
-        </a>
-        <a mat-list-item (click)="navigate('/processos')" routerLinkActive="active">
-          <mat-icon matListItemIcon>assignment</mat-icon>
-          <span matListItemTitle>Processos</span>
-        </a>
-        <a mat-list-item (click)="navigate('/relatorios')" routerLinkActive="active">
-          <mat-icon matListItemIcon>analytics</mat-icon>
-          <span matListItemTitle>Relatórios</span>
-        </a>
-      </mat-nav-list>
+      <app-sidebar></app-sidebar>
     </mat-sidenav>
   }
 
   <mat-sidenav-content>
     @if (showMenu && auth.isAuthenticated()) {
-      <mat-toolbar color="primary" class="app-toolbar">
-        <button mat-icon-button (click)="toggleSidenav()">
-          <mat-icon>menu</mat-icon>
-        </button>
-        <span>{{ auth.currentUser()?.equipe || 'Análise de Processos' }}</span>
-        <span class="spacer"></span>
-        <div class="user-toolbar-info">
-            <span class="user-name">{{ auth.currentUser()?.nome }}</span>
-            <button mat-button (click)="logout()">
-                <mat-icon>logout</mat-icon> Sair
-            </button>
-        </div>
-      </mat-toolbar>
+      <app-header (toggleSidenav)="toggleSidenav()"></app-header>
     }
 
     <main class="content-wrapper">

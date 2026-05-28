@@ -1,0 +1,75 @@
+<mat-card class="assigned-process-card" [ngClass]="situationColorClass" (click)="openDetails()">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>gavel</mat-icon>
+      <span class="process-number font-mono">{{ atribuicao.processoNumero }}</span>
+    </mat-card-title>
+    <mat-card-subtitle>
+      {{ atribuicao.processoTribunal }} - {{ atribuicao.processoOrgaoJulgadorNome }}
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content class="card-content-grid">
+    <div class="left-column">
+      <div class="info-row">
+        <span class="label">Score Final:</span>
+        <mat-chip-listbox>
+          <mat-chip [color]="scoreColor" selected class="font-mono">{{ atribuicao.processoScoreFinal }}</mat-chip>
+        </mat-chip-listbox>
+      </div>
+      <div class="info-row">
+        <span class="label">Data Ajuizamento:</span>
+        <span>{{ atribuicao.processoDataAjuizamento | date: 'dd/MM/yyyy' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Valor Causa:</span>
+        <span class="font-mono">{{ atribuicao.processoValorCausa | currency: 'BRL' }}</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Tipologia:</span>
+        <span>{{ atribuicao.processoTipologia }}</span>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="info-row">
+        <span class="label">Status Atribuição:</span>
+        <mat-chip-listbox>
+          <mat-chip [color]="statusColor" selected>{{ atribuicao.status }}</mat-chip>
+        </mat-chip-listbox>
+      </div>
+      <div class="info-row">
+        <span class="label">Status Prazo:</span>
+        @if (atribuicao.statusPrazo) {
+          <mat-chip-listbox>
+            <mat-chip [color]="statusPrazoColor" selected>
+              {{ atribuicao.statusPrazo }}
+              @if (atribuicao.isVencendoPrazo) {
+                <mat-icon matChipTrailingIcon>warning</mat-icon>
+              }
+            </mat-chip>
+          </mat-chip-listbox>
+        } @else {
+          <span>Sem prazo</span>
+        }
+      </div>
+      <div class="info-row">
+        <span class="label">Situação:</span>
+        <span>{{ atribuicao.processoSituacao }}</span>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-divider></mat-divider>
+
+  <mat-card-footer class="footer-info">
+    <div class="footer-row">
+      @if (atribuicao.usuarioNome) {
+        <span><strong>Responsável:</strong> {{ atribuicao.usuarioNome }}</span>
+      }
+      @if (atribuicao.equipeNome) {
+        <span><strong>Equipe:</strong> {{ atribuicao.equipeNome }}</span>
+      }
+      <button mat-button color="primary" class="details-button">VER DETALHES</button>
+    </div>
+  </mat-card-footer>
+</mat-card>

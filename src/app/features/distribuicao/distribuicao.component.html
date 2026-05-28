@@ -1,0 +1,12 @@
+<div class="page-container">
+  <h1>Distribuição de Processos</h1>
+  
+  <mat-card>
+    <mat-card-content>
+      <p>Clique abaixo para executar a distribuição automática de processos para a equipe.</p>
+      <button mat-raised-button color="primary" (click)="executar()" [disabled]="loading()">
+        {{ loading() ? 'Executando...' : 'Executar Distribuição' }}
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,72 @@
+<div class="page-container">
+  <h1>Processos</h1>
+
+  @if (processState.isLoading()) {
+    <p>Carregando...</p>
+  }
+
+  <mat-card class="filter-card">
+    <mat-card-content>
+      <label>Filtrar por nível: </label>
+      <mat-button-toggle-group (change)="onFilterChange($event.value)" multiple>
+        <mat-button-toggle value="ALTO">Alto</mat-button-toggle>
+        <mat-button-toggle value="INTERMEDIARIO_ALTO">Intermediário Alto</mat-button-toggle>
+        <mat-button-toggle value="MEDIO">Médio</mat-button-toggle>
+      </mat-button-toggle-group>
+    </mat-card-content>
+  </mat-card>
+
+  <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="processState.isLoading()">
+    <mat-card>
+      <table mat-table [dataSource]="processState.filteredProcesses()" class="mat-elevation-z8">
+        <!-- Número -->
+        <ng-container matColumnDef="numero">
+          <th mat-header-cell *matHeaderCellDef>Número</th>
+          <td mat-cell *matCellDef="let p" class="font-mono">{{ p.numero }}</td>
+        </ng-container>
+
+        <!-- Assunto -->
+        <ng-container matColumnDef="assunto">
+          <th mat-header-cell *matHeaderCellDef>Assunto</th>
+          <td mat-cell *matCellDef="let p">{{ p.assuntoJudicial }}</td>
+        </ng-container>
+
+        <!-- Nível -->
+        <ng-container matColumnDef="nivel">
+          <th mat-header-cell *matHeaderCellDef>Nível</th>
+          <td mat-cell *matCellDef="let p">{{ p.nivel }}</td>
+        </ng-container>
+
+        <!-- Score -->
+        <ng-container matColumnDef="score">
+          <th mat-header-cell *matHeaderCellDef>Score</th>
+          <td mat-cell *matCellDef="let p" class="font-mono">{{ p.scoreFinal }}</td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let p">{{ p.statusAtribuicao }}</td>
+        </ng-container>
+
+        <!-- Situação do Processo -->
+        <ng-container matColumnDef="processoSituacao">
+          <th mat-header-cell *matHeaderCellDef>Situação</th>
+          <td mat-cell *matCellDef="let p">{{ p.processoSituacao }}</td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="['numero', 'assunto', 'nivel', 'score', 'status', 'processoSituacao']"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            columns: ['numero', 'assunto', 'nivel', 'score', 'status', 'processoSituacao']
+          "
+        ></tr>
+      </table>
+    </mat-card>
+  </app-infinite-scroll>
+</div>

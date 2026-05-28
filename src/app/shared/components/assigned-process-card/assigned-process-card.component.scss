@@ -1,0 +1,132 @@
+.assigned-process-card {
+  width: 100%;
+  min-height: auto;
+  margin: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: 16px;
+  }
+
+  .footer-info {
+    padding: 16px;
+    background-color: #f5f5f5;
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+  }
+
+  mat-card-header {
+    flex-shrink: 0;
+  }
+
+  mat-card-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-bottom: 0;
+  }
+
+  mat-card-actions {
+    flex-shrink: 0;
+    margin-top: auto;
+    padding: 0 16px 8px 16px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.2em;
+    font-weight: bold;
+
+    mat-icon {
+      color: var(--primary-navy);
+    }
+
+    .process-number {
+      color: var(--primary-navy);
+    }
+  }
+
+  mat-card-subtitle {
+    color: var(--secondary-slate);
+    font-size: 0.9em;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px dotted #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      font-weight: 500;
+      color: var(--secondary-slate);
+    }
+
+    &.error-message {
+      color: var(--urgency-red);
+      font-weight: bold;
+    }
+  }
+
+  mat-chip-listbox {
+    .mat-chip {
+      height: 24px;
+      font-size: 0.8em;
+      font-weight: 500;
+    }
+    .mat-chip-basic {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+    .mat-chip-primary {
+      background-color: var(--primary-navy);
+      color: white;
+    }
+    .mat-chip-accent {
+      background-color: var(--accent-gold);
+      color: white;
+    }
+    .mat-chip-warn {
+      background-color: var(--urgency-red);
+      color: white;
+    }
+    .mat-chip-success { /* Custom success color */
+      background-color: #4CAF50; /* Green */
+      color: white;
+    }
+  }
+
+  /* Classes de situação do processo */
+  &.situation-ativo {
+    border-left: 5px solid var(--primary-navy);
+  }
+  &.situation-arquivado {
+    border-left: 5px solid var(--secondary-slate);
+  }
+  &.situation-baixado {
+    border-left: 5px solid #4CAF50; /* Green for success-like */
+  }
+}
+

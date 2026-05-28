@@ -4,7 +4,9 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProcessCardComponent } from '../../shared/components/process-card/process-card.component';
-import { DistributionService, AtribuicaoProcesso } from '../../core/services/distribution.service';
+import { DistributionService } from '../../core/services/distribution.service';
+import { AtribuicaoProcessoResumoDTO } from '../../core/models/processo/atribuicao-processo-resumo.model';
+import { ProcessoResumoDTO } from '../../core/models/processo/processo-resumo.model'; // Added missing import
 
 @Component({
   selector: 'app-dashboard',
@@ -21,7 +23,7 @@ import { DistributionService, AtribuicaoProcesso } from '../../core/services/dis
 })
 export class DashboardComponent implements OnInit {
   private distributionService = inject(DistributionService);
-  processes = signal<AtribuicaoProcesso[]>([]);
+  processes = signal<AtribuicaoProcessoResumoDTO[]>([]);
   loading = signal(false);
   viewMode = signal<'meus' | 'equipe'>('meus');
 
