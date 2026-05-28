@@ -1,5 +1,8 @@
 <div class="page-container">
-  <h1>{{ title }}</h1>
+  <div class="header-container">
+    <h1>{{ title }}</h1>
+    <span class="count-badge">Total: {{ totalElements }}</span>
+  </div>
   
   @if (isLoading()) {
     <p>Carregando...</p>

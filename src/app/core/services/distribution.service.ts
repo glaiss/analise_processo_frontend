@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page } from '../models/processo/pagination.model';
 import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-processo-resumo.model';
@@ -10,12 +10,14 @@ import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-proce
 export class DistributionService {
   private http = inject(HttpClient);
 
-  getMeusProcessos(): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/meus-processos');
+  getMeusProcessos(page: number = 0, size: number = 20): Observable<Page<AtribuicaoProcessoResumoDTO>> {
+    const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/meus-processos', { params });
   }
 
-  getProcessosEquipe(): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/equipe');
+  getProcessosEquipe(page: number = 0, size: number = 20): Observable<Page<AtribuicaoProcessoResumoDTO>> {
+    const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    return this.http.get<Page<AtribuicaoProcessoResumoDTO>>('/distribuicao/equipe', { params });
   }
 
   executarDistribuicao(): Observable<void> {

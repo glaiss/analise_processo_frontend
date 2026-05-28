@@ -13,35 +13,5 @@
     </div>
   </header>
 
-  @if (loading()) {
-    <div class="loading-overlay">
-      <mat-spinner diameter="50"></mat-spinner>
-    </div>
-  } @else if (processes().length === 0) {
-    <div class="empty-state">
-      <mat-icon>inbox</mat-icon>
-      <p>Nenhuma distribuição de processos encontrada ainda.</p>
-    </div>
-  } @else {
-    <div class="groups-container">
-      <div class="process-grid">
-        @for (p of processes(); track p.id) {
-          <app-process-card [processo]="{
-            numero: p.processoNumero,
-            classeJudicial: p.processoOrgaoJulgadorNome,
-            assuntoJudicial: 'N/A',
-            dataAjuizamento: p.processoDataAjuizamento,
-            scoreFinal: p.processoScoreFinal,
-            nivel: 'N/A',
-            statusAtribuicao: p.status,
-            usuarioResponsavel: p.usuarioNome || 'Não atribuído',
-            equipeNome: p.equipeNome,
-            prazoVencendo: p.statusPrazo === 'URGENTE',
-            diasParaVencer: undefined,
-            processoSituacao: p.processoSituacao
-          }"></app-process-card>
-        }
-
-      </div>
-    </div>
-  }
+  <app-assigned-processes-list [mode]="viewMode()"></app-assigned-processes-list>
+</div>

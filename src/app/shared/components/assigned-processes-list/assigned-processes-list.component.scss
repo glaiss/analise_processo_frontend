@@ -1,6 +1,22 @@
 .page-container {
   padding: 24px;
 
+  .header-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    .count-badge {
+      background-color: var(--secondary-slate);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 0.9em;
+      font-weight: 500;
+    }
+  }
+
   .assigned-process-list-item {
     margin-bottom: 16px; /* Espaço entre os cards */
     width: 100%; /* Ocupar toda a largura */
