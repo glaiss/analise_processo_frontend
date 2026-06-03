@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
@@ -9,7 +10,7 @@ import { InfiniteScrollComponent } from '../../shared/components/infinite-scroll
 @Component({
   selector: 'app-processos',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatTableModule, MatButtonToggleModule, InfiniteScrollComponent],
+  imports: [CommonModule, RouterModule, MatCardModule, MatTableModule, MatButtonToggleModule, InfiniteScrollComponent],
   templateUrl: './processos.component.html',
   styleUrl: './processos.component.scss'
 })

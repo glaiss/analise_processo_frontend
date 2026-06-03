@@ -77,6 +77,19 @@ export class ProcessStateService {
     this.currentPage.update(p => p + 1);
     this.loadProcesses(true);
   }
+
+  getProcessoDetalhe(numero: string) {
+    return this.http.get<any>(`${this.apiUrl}/${numero}`);
+  }
+
+  getAuditoriaScore(numero: string) {
+    return this.http.get<any[]>(`${this.apiUrl}/${numero}/auditoria-score`);
+  }
+
+  adicionarAnotacao(numero: string, texto: string) {
+    return this.http.post<void>(`${this.apiUrl}/${numero}/anotacoes`, texto);
+  }
+
   readonly groupedProcesses = computed(() => {
     const key = this.groupBy();
     const filtered = this.filteredProcesses();

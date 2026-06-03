@@ -1,0 +1,234 @@
+<div class="details-container">
+  @if (processo(); as p) {
+    <!-- Header Section -->
+    <header class="details-header">
+      <div class="top-bar">
+        <button mat-icon-button (click)="goBack()" matTooltip="Voltar">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="breadcrumb">
+          <span>Processos</span>
+          <mat-icon>chevron_right</mat-icon>
+          <span class="active">Detalhes</span>
+        </div>
+      </div>
+      <div class="title-row">
+        <h1 class="font-mono">{{ p.numero }}</h1>
+        <div class="status-chips">
+          <mat-chip-set>
+            <mat-chip highlighted [color]="getLevelColor(p.nivel)">
+              {{ p.nivel }}
+            </mat-chip>
+            <mat-chip>
+              {{ p.statusAtribuicao }}
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </div>
+      <div class="subtitle-row">
+        <span>{{ p.classeJudicial }}</span>
+        <mat-icon>chevron_right</mat-icon>
+        <span>{{ p.assuntoJudicial }}</span>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <!-- Info Summary Bar -->
+      <div class="info-summary-bar">
+        <div class="summary-item">
+          <span class="label">Tribunal</span>
+          <span class="value">{{ p.tribunal }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Sistema</span>
+          <span class="value">{{ p.sistemaNome }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Grau</span>
+          <span class="value">{{ p.grau }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="label">Valor da Causa</span>
+          <span class="value">{{ p.valorCausa | currency:'BRL' }}</span>
+        </div>
+        <div class="summary-item highlight">
+          <span class="label">Score Final</span>
+          <span class="value" [class]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>
+        </div>
+      </div>
+
+      <div class="details-layout">
+        <div class="left-column">
+          <mat-tab-group class="content-tabs">
+            <!-- Movimentações -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">history</mat-icon>
+                Movimentações
+              </ng-template>
+              <div class="tab-content">
+                <mat-list class="movimentacoes-list">
+                  @for (mov of p.movimentacoes; track mov.dataHora) {
+                    <mat-list-item>
+                      <div matListItemTitle class="mov-type">{{ mov.tipo }}</div>
+                      <div matListItemLine class="mov-desc">{{ mov.descricao }}</div>
+                      <div matListItemMeta class="mov-date">{{ mov.dataHora | date:'dd/MM/yyyy HH:mm' }}</div>
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                  } @empty {
+                    <p class="empty-state">Nenhuma movimentação encontrada.</p>
+                  }
+                </mat-list>
+              </div>
+            </mat-tab>
+
+            <!-- Partes -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">groups</mat-icon>
+                Partes e Advogados
+              </ng-template>
+              <div class="tab-content">
+                <div class="partes-grid">
+                  @for (parte of p.partes; track parte.nome) {
+                    <mat-card class="parte-card">
+                      <mat-card-header>
+                        <mat-icon mat-card-avatar>person</mat-icon>
+                        <mat-card-title>{{ parte.nome }}</mat-card-title>
+                        <mat-card-subtitle>{{ parte.polo }} • {{ parte.documento || 'Sem doc' }}</mat-card-subtitle>
+                      </mat-card-header>
+                      <mat-card-content>
+                        <div class="advogados-section">
+                          <span class="section-title">Advogados:</span>
+                          @for (adv of parte.advogados; track adv) {
+                            <div class="adv-item">
+                              <mat-icon>account_balance</mat-icon>
+                              <span>{{ adv }}</span>
+                            </div>
+                          } @empty {
+                            <p class="no-adv">Nenhum advogado cadastrado</p>
+                          }
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  }
+                </div>
+              </div>
+            </mat-tab>
+
+            <!-- Score Hypotheses -->
+            <mat-tab>
+              <ng-template mat-tab-label>
+                <mat-icon class="tab-icon">analytics</mat-icon>
+                Análise de Score
+              </ng-template>
+              <div class="tab-content">
+                <mat-list class="score-list">
+                  @for (item of p.hipoteses; track item.nomeRegra) {
+                    <mat-list-item>
+                      <mat-icon matListItemIcon color="primary">rule</mat-icon>
+                      <div matListItemTitle>{{ item.nomeRegra }}</div>
+                      <div matListItemLine>{{ item.justificativa }}</div>
+                      <div matListItemMeta class="points" [class.positive]="item.pontos > 0">
+                        {{ item.pontos > 0 ? '+' : '' }}{{ item.pontos }}
+                      </div>
+                    </mat-list-item>
+                  } @empty {
+                    <p class="empty-state">Nenhuma regra de score aplicada.</p>
+                  }
+                </mat-list>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+        <div class="right-column">
+          <!-- Information Sidebar -->
+          <mat-card class="side-card">
+            <mat-card-header>
+              <mat-card-title>Informações</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <dl class="side-info-list">
+                <div class="info-item">
+                  <dt>Órgão Julgador</dt>
+                  <dd>{{ p.orgaoJulgador }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Foro</dt>
+                  <dd>{{ p.foro }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Data Ajuizamento</dt>
+                  <dd>{{ p.dataAjuizamento | date:'dd/MM/yyyy' }}</dd>
+                </div>
+                <mat-divider></mat-divider>
+                <div class="info-item">
+                  <dt>Responsável</dt>
+                  <dd>{{ p.usuarioResponsavel || 'Não atribuído' }}</dd>
+                </div>
+                <div class="info-item">
+                  <dt>Equipe</dt>
+                  <dd>{{ p.equipeNome || 'N/A' }}</dd>
+                </div>
+              </dl>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Annotations and Contacts -->
+          <mat-card class="side-card annotations-card">
+            <mat-card-header>
+              <mat-card-title>Anotações e CRM</mat-card-title>
+              <button mat-icon-button class="add-note-btn" matTooltip="Nova Anotação" (click)="noteInput.focus()">
+                <mat-icon>add_comment</mat-icon>
+              </button>
+            </mat-card-header>
+            <mat-card-content>
+              <!-- Input for new annotation -->
+              <div class="new-annotation">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nova anotação...</mat-label>
+                  <textarea matInput #noteInput [(ngModel)]="novaAnotacao" rows="3" [disabled]="enviandoAnotacao()"></textarea>
+                </mat-form-field>
+                <div class="actions">
+                  <button mat-flat-button color="primary" [disabled]="!novaAnotacao() || enviandoAnotacao()" (click)="adicionarAnotacao()">
+                    @if (enviandoAnotacao()) {
+                      <mat-spinner diameter="20"></mat-spinner>
+                    } @else {
+                      Salvar
+                    }
+                  </button>
+                </div>
+              </div>
+
+              <!-- Combined Timeline (Anotações + Eventos Contato) -->
+              <div class="timeline">
+                @for (item of timeline(); track (item.id || item.dataCriacao)) {
+                  <div class="timeline-item" [class.contact]="item.type === 'CONTATO'">
+                    <div class="timeline-marker">
+                      <mat-icon>{{ item.type === 'ANOTACAO' ? 'sticky_note_2' : 'phone_in_talk' }}</mat-icon>
+                    </div>
+                    <div class="timeline-content">
+                      <div class="timeline-header">
+                        <span class="user">{{ item.usuarioNome }}</span>
+                        <span class="date">{{ item.dataCriacao | date:'dd/MM HH:mm' }}</span>
+                      </div>
+                      <p class="text">{{ item.texto }}</p>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="empty-state">Nenhuma anotação ou contato registrado.</p>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading-state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Carregando detalhes do processo...</p>
+    </div>
+  }
+</div>
