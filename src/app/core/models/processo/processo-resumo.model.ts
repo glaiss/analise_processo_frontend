@@ -13,4 +13,5 @@ export interface ProcessoResumoDTO {
   prazoVencendo: boolean;
   diasParaVencer?: number;
   processoSituacao: ProcessoSituacao;
+  monitorado: boolean;
 }

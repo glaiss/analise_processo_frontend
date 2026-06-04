@@ -22,6 +22,7 @@ export class ProcessStateService {
   // Filters
   private filterNivel = signal<string[]>([]);
   private filterStatus = signal<StatusAtribuicao[]>([]);
+  private searchQuery = signal<string>('');
   private groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
 
   // Computed
@@ -29,15 +30,6 @@ export class ProcessStateService {
   readonly isLoading = computed(() => this.loading());
   readonly errorMessage = computed(() => this.error());
   readonly isLastPage = computed(() => this.currentPage() >= this.totalPages() - 1);
-
-  readonly filteredProcesses = computed(() => {
-    return this.processes().filter(p => {
-      const matchNivel = this.filterNivel().length === 0 || this.filterNivel().includes(p.nivel);
-      const matchStatus = this.filterStatus().length === 0 || this.filterStatus().includes(p.statusAtribuicao);
-
-      return matchNivel && matchStatus;
-    });
-  });
 
   // Actions
   loadProcesses(append: boolean = false) {
@@ -51,7 +43,19 @@ export class ProcessStateService {
     this.loading.set(true);
     let params = new HttpParams()
       .set('page', this.currentPage().toString())
-      .set('size', '20')
+      .set('size', '20');
+
+    if (this.searchQuery()) {
+      params = params.set('numero', this.searchQuery());
+    }
+
+    this.filterNivel().forEach(nivel => {
+      params = params.append('niveis', nivel);
+    });
+
+    this.filterStatus().forEach(status => {
+      params = params.append('status', status);
+    });
 
     this.http.get<Page<ProcessoResumoDTO>>(`${this.apiUrl}`, { params }).pipe(
       tap({
@@ -78,6 +82,23 @@ export class ProcessStateService {
     this.loadProcesses(true);
   }
 
+  setFilterNivel(niveis: string[]) {
+    this.filterNivel.set(niveis);
+    this.loadProcesses();
+  }
+
+  setFilterStatus(status: StatusAtribuicao[]) {
+    this.filterStatus.set(status);
+    this.loadProcesses();
+  }
+
+  setSearchQuery(query: string) {
+    this.searchQuery.set(query);
+    this.loadProcesses();
+  }
+
+  readonly filteredProcesses = computed(() => this.processes());
+
   getProcessoDetalhe(numero: string) {
     return this.http.get<any>(`${this.apiUrl}/${numero}`);
   }
@@ -90,9 +111,15 @@ export class ProcessStateService {
     return this.http.post<void>(`${this.apiUrl}/${numero}/anotacoes`, texto);
   }
 
+  alternarMonitoramento(numero: string) {
+    return this.http.post<void>(`${this.apiUrl}/${numero}/monitorar`, {}).pipe(
+      tap(() => this.loadProcesses())
+    );
+  }
+
   readonly groupedProcesses = computed(() => {
     const key = this.groupBy();
-    const filtered = this.filteredProcesses();
+    const filtered = this.allProcesses();
     const groups: Record<string, ProcessoResumoDTO[]> = {};
 
     filtered.forEach(p => {
@@ -122,10 +149,6 @@ export class ProcessStateService {
 
   setError(err: string | null) {
     this.error.set(err);
-  }
-
-  setFilterNivel(niveis: string[]) {
-    this.filterNivel.set(niveis);
   }
 
   setGroupBy(key: 'equipeNome' | 'usuarioResponsavel') {

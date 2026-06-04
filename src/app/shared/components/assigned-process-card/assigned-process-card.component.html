@@ -1,7 +1,9 @@
 <mat-card class="assigned-process-card" [ngClass]="situationColorClass" (click)="openDetails()">
   <mat-card-header>
     <mat-card-title>
-      <mat-icon>gavel</mat-icon>
+      <mat-icon [color]="atribuicao.monitorado ? 'accent' : ''" (click)="toggleMonitoramento($event)" matTooltip="Alternar Monitoramento">
+        {{ atribuicao.monitorado ? 'star' : 'star_border' }}
+      </mat-icon>
       <span class="process-number font-mono">{{ atribuicao.processoNumero }}</span>
     </mat-card-title>
     <mat-card-subtitle>

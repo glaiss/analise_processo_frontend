@@ -13,7 +13,12 @@
         </div>
       </div>
       <div class="title-row">
-        <h1 class="font-mono">{{ p.numero }}</h1>
+        <div class="title-with-actions">
+          <h1 class="font-mono">{{ p.numero }}</h1>
+          <button mat-icon-button (click)="toggleMonitoramento()" matTooltip="Alternar Monitoramento">
+            <mat-icon [color]="p.monitorado ? 'accent' : ''">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
+          </button>
+        </div>
         <div class="status-chips">
           <mat-chip-set>
             <mat-chip highlighted [color]="getLevelColor(p.nivel)">
@@ -28,7 +33,7 @@
       <div class="subtitle-row">
         <span>{{ p.classeJudicial }}</span>
         <mat-icon>chevron_right</mat-icon>
-        <span>{{ p.assuntoJudicial }}</span>
+        <span>{{ p.assuntoJudicial || 'assunto não tem nome' }}</span>
       </div>
     </header>
 
@@ -76,7 +81,10 @@
                     </mat-list-item>
                     <mat-divider></mat-divider>
                   } @empty {
-                    <p class="empty-state">Nenhuma movimentação encontrada.</p>
+                    <div class="empty-state">
+                      <mat-icon>info</mat-icon>
+                      <p>Nenhuma movimentação registrada para este processo.</p>
+                    </div>
                   }
                 </mat-list>
               </div>
@@ -111,6 +119,11 @@
                         </div>
                       </mat-card-content>
                     </mat-card>
+                  } @empty {
+                    <div class="empty-state" style="height: 100%; width: 100%;">
+                      <mat-icon>info</mat-icon>
+                      <p>Nenhuma parte registrada neste processo.</p>
+                    </div>
                   }
                 </div>
               </div>
@@ -134,7 +147,10 @@
                       </div>
                     </mat-list-item>
                   } @empty {
-                    <p class="empty-state">Nenhuma regra de score aplicada.</p>
+                    <div class="empty-state">
+                      <mat-icon>info</mat-icon>
+                      <p>Nenhuma análise de score realizada.</p>
+                    </div>
                   }
                 </mat-list>
               </div>
@@ -150,6 +166,10 @@
             </mat-card-header>
             <mat-card-content>
               <dl class="side-info-list">
+                <div class="info-item">
+                  <dt>Assunto</dt>
+                  <dd>{{ p.assuntoJudicial || 'assunto não tem nome' }}</dd>
+                </div>
                 <div class="info-item">
                   <dt>Órgão Julgador</dt>
                   <dd>{{ p.orgaoJulgador }}</dd>

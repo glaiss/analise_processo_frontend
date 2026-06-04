@@ -32,6 +32,7 @@ export class App implements OnInit {
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       this.showMenu = !event.url.includes('/login');
+      window.scrollTo(0, 0);
     });
   }
 

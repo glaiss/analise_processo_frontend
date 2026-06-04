@@ -67,7 +67,7 @@ export class ProcessDetailsComponent implements OnInit {
       type: 'CONTATO' as const
     }));
 
-    return [...annotations, ...contacts].sort((a, b) => 
+    return [...annotations, ...contacts].sort((a, b) =>
       new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
     );
   });
@@ -101,6 +101,13 @@ export class ProcessDetailsComponent implements OnInit {
       error: () => {
         this.enviandoAnotacao.set(false);
       }
+    });
+  }
+
+  toggleMonitoramento() {
+    if (!this.numero()) return;
+    this.processState.alternarMonitoramento(this.numero()!).subscribe(() => {
+      this.refreshDetails();
     });
   }
 

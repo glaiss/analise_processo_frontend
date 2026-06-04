@@ -31,4 +31,5 @@ export interface ProcessoDetalheDTO {
   partes: ProcessoParteDTO[];
   movimentacoes: MovimentacaoDTO[];
   anotacoes: ProcessoAnotacaoDTO[];
+  monitorado: boolean;
 }

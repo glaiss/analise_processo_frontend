@@ -1,6 +1,6 @@
 <div class="logo-container">
   <mat-icon class="logo-icon">balance</mat-icon>
-  <span class="logo-text">Sherlock UI</span>
+  <span class="logo-text">Sherlock Law</span>
 </div>
 
 <mat-nav-list>
@@ -19,6 +19,10 @@
   <a mat-list-item (click)="navigate('/distribuicao')" routerLinkActive="active">
     <mat-icon matListItemIcon>share</mat-icon>
     <span matListItemTitle>Distribuição</span>
+  </a>
+  <a mat-list-item (click)="navigate('/admin')" routerLinkActive="active">
+    <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+    <span matListItemTitle>Administração</span>
   </a>
   <mat-divider></mat-divider>
   <a mat-list-item (click)="navigate('/relatorios')" routerLinkActive="active">

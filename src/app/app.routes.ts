@@ -46,6 +46,16 @@ export const routes: Routes = [
     data: { mode: 'equipe', title: 'Processos da Equipe' }
   },
   {
+    path: 'admin',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
+  },
+  {
+    path: 'enriquecimento',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/enriquecimento/reprocessar.component').then(m => m.ReprocessarComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

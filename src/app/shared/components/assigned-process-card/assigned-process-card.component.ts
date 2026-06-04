@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AtribuicaoProcessoResumoDTO, StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/index';
 import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
+import { ProcessStateService } from '../../../core/services/process-state.service';
 
 @Component({
   selector: 'app-assigned-process-card',
@@ -18,8 +19,17 @@ import { Router } from '@angular/router';
 export class AssignedProcessCardComponent {
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Output() viewDetails = new EventEmitter<string>();
+  @Output() monitoramentoToggled = new EventEmitter<void>();
 
   private router = inject(Router);
+  private processState = inject(ProcessStateService);
+
+  toggleMonitoramento(event: Event) {
+    event.stopPropagation();
+    this.processState.alternarMonitoramento(this.atribuicao.processoNumero).subscribe(() => {
+        this.monitoramentoToggled.emit();
+    });
+  }
 
   get statusColor(): string {
     switch (this.atribuicao.status) {

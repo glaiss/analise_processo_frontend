@@ -11,7 +11,7 @@
   <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="isLoading()">
     @for (atribuicao of atribuicoes; track atribuicao.id) {
       <div class="assigned-process-list-item">
-        <app-assigned-process-card [atribuicao]="atribuicao"></app-assigned-process-card>
+        <app-assigned-process-card [atribuicao]="atribuicao" (monitoramentoToggled)="resetList()"></app-assigned-process-card>
       </div>
     }
   </app-infinite-scroll>

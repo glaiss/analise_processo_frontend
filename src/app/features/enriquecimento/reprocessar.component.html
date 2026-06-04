@@ -1,0 +1,34 @@
+<div class="page-container">
+  <h1>Enriquecimento de Dados</h1>
+  <p>Gerencie o processamento e reprocessamento de dados.</p>
+
+  <div class="actions-grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Processar Novos</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Inicia o processamento de processos que ainda não foram enriquecidos.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" [disabled]="loading()" (click)="executarProcessamento()">
+          Executar Processamento
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Reprocessar Falhas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Inicia o reprocessamento de processos que falharam no enriquecimento.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="warn" [disabled]="loading()" (click)="executarReprocessamento()">
+          Executar Reprocessamento
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

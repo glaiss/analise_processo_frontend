@@ -19,4 +19,5 @@ export interface AtribuicaoProcessoResumoDTO {
 
     equipeNome: string;
     usuarioNome: string;
+    monitorado: boolean;
 }
