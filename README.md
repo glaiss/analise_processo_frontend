@@ -1,59 +1,66 @@
-# AnaliseProcessoFrontend
+# Análise de Processos - Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.12.
+Este é o frontend da aplicação de Análise de Processos, desenvolvido em **Angular 21** com foco em alta performance e experiência do usuário (UX).
 
-## Development server
+## 🚀 Tecnologias Utilizadas
 
-To start a local development server, run:
+- **Angular 21**: Framework principal.
+- **Angular Material & CDK**: Componentes de UI e acessibilidade.
+- **Sass (SCSS)**: Pré-processador CSS para estilos modernos e modulares.
+- **Vitest**: Framework de testes unitários ultrarrápido.
+- **Prettier**: Formatação de código padronizada.
+- **Vercel**: Hospedagem e infraestrutura de deploy.
 
+## 🛠️ Desenvolvimento Local
+
+### Pré-requisitos
+- Node.js 20+
+- npm (gerenciador de pacotes)
+
+### Comandos Principais
 ```bash
-ng serve
+# Instalar dependências
+npm install
+
+# Iniciar servidor de desenvolvimento (com proxy para o backend)
+npm start
+
+# Executar testes unitários
+npm test
+
+# Gerar build de produção
+npm run build
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🏗️ CI/CD (GitHub Actions)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+O projeto possui um workflow automatizado que gerencia o ciclo de vida da aplicação.
 
-```bash
-ng generate component component-name
-```
+### Fluxo do Workflow:
+1. **Validação**: Roda em todos os Pull Requests para a `main`. Executa build e testes.
+2. **Versionamento**: Após o merge na `main`, o sistema incrementa automaticamente a versão (patch) no `package.json`.
+3. **Deploy**: O deploy é realizado automaticamente para a **Vercel** após o incremento de versão.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 🔑 Variáveis Necessárias (GitHub Secrets)
 
-```bash
-ng generate --help
-```
+Para que o deploy automático funcione, você deve configurar os seguintes **Secrets** no seu repositório GitHub em `Settings > Secrets and variables > Actions`:
 
-## Building
+| Secret | Descrição | Onde encontrar |
+| :--- | :--- | :--- |
+| `VERCEL_TOKEN` | Token de autenticação da API | Vercel Dashboard > Account Settings > Tokens |
+| `VERCEL_ORG_ID` | ID da organização/usuário | No arquivo `.vercel/project.json` (após rodar `vercel link` localmente) ou nas configurações do time na Vercel. |
+| `VERCEL_PROJECT_ID` | ID do projeto na Vercel | No arquivo `.vercel/project.json`. |
 
-To build the project run:
+> **Nota**: O `GITHUB_TOKEN` padrão do repositório também é utilizado, mas ele já é fornecido automaticamente pelo GitHub Actions para o incremento de versão.
 
-```bash
-ng build
-```
+---
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## 📁 Estrutura do Projeto
 
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- `src/app/core`: Singleton services, interceptors, e modelos globais.
+- `src/app/features`: Módulos de funcionalidades específicas da aplicação.
+- `src/app/shared`: Componentes, diretivas e pipes reutilizáveis.
+- `src/assets`: Arquivos estáticos (imagens, fontes).
+- `public`: Arquivos públicos (favicon, etc).
