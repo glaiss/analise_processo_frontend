@@ -13,8 +13,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { ProcessStateService } from '../../../core/services/process-state.service';
+import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Page } from '../../../core/models/processo';
+import { SafePipe } from '../../../shared/pipes/safe.pipe';
 
 @Component({
   selector: 'app-process-details',
@@ -32,7 +37,9 @@ import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detal
     MatFormFieldModule,
     MatInputModule,
     MatTabsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatSidenavModule,
+    SafePipe
   ],
   templateUrl: './process-details.component.html',
   styleUrl: './process-details.component.scss'
@@ -40,12 +47,103 @@ import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detal
 export class ProcessDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private processState = inject(ProcessStateService);
+  private documentoService = inject(DocumentoService);
+  private snackBar = inject(MatSnackBar);
   private location = inject(Location);
 
   numero = signal<string | null>(null);
   processo = signal<ProcessoDetalheDTO | null>(null);
+  documentos = signal<Page<Documento>>({ content: [], totalElements: 0, totalPages: 0, size: 0, number: 0, last: true, first: true, empty: true });
+  documentoSelecionado = signal<Documento | null>(null);
+  previewUrl = signal<string | null>(null);
+  carregandoPreview = signal<boolean>(false);
   novaAnotacao = signal<string>('');
   enviandoAnotacao = signal<boolean>(false);
+
+  ngOnInit() {
+    const num = this.route.snapshot.paramMap.get('numero');
+    if (num) {
+      this.numero.set(num);
+      this.refreshDetails();
+      this.carregarDocumentos();
+    }
+  }
+
+  carregarDocumentos() {
+    if (this.numero()) {
+      this.documentoService.listar(this.numero()!).subscribe(docs => {
+        this.documentos.set(docs);
+        if (docs.content.length > 0 && !this.documentoSelecionado()) {
+          this.selecionarDocumento(docs.content[0]);
+        }
+      });
+    }
+  }
+
+  selecionarDocumento(doc: Documento) {
+    this.documentoSelecionado.set(doc);
+    this.gerarPreview(doc);
+  }
+
+  private gerarPreview(doc: Documento) {
+    if (!this.numero()) return;
+
+    this.carregandoPreview.set(true);
+    // Revogar URL anterior para evitar vazamento de memória
+    if (this.previewUrl()) {
+      window.URL.revokeObjectURL(this.previewUrl()!);
+    }
+
+    this.documentoService.download(this.numero()!, doc.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        this.previewUrl.set(url);
+        this.carregandoPreview.set(false);
+      },
+      error: () => {
+        this.previewUrl.set(null);
+        this.carregandoPreview.set(false);
+        this.snackBar.open('Erro ao carregar pré-visualização', 'Fechar', { duration: 3000 });
+      }
+    });
+  }
+
+  baixarDocumento(doc: Documento) {
+    if (this.numero()) {
+      this.documentoService.download(this.numero()!, doc.id).subscribe(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = doc.nomeArquivo;
+        a.click();
+        // Não revogamos aqui se for o mesmo do preview, 
+        // mas para download pontual é seguro revogar após o click se não for o atual
+        if (url !== this.previewUrl()) {
+          window.URL.revokeObjectURL(url);
+        }
+      });
+    }
+  }
+
+  downloadTodosDocumentos() {
+    this.snackBar.open('Iniciando download de todos os documentos...', 'Fechar', { duration: 2000 });
+    this.documentos().content.forEach(doc => this.baixarDocumento(doc));
+  }
+
+  // Removido getDocumentUrl pois agora usamos previewUrl()
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file && this.numero()) {
+      this.documentoService.upload(this.numero()!, file).subscribe({
+        next: () => {
+          this.snackBar.open('Documento enviado com sucesso', 'Fechar', { duration: 3000 });
+          this.carregarDocumentos();
+        },
+        error: () => this.snackBar.open('Erro ao enviar documento', 'Fechar', { duration: 3000 })
+      });
+    }
+  }
 
   timeline = computed(() => {
     const p = this.processo();
@@ -71,14 +169,6 @@ export class ProcessDetailsComponent implements OnInit {
       new Date(b.dataCriacao).getTime() - new Date(a.dataCriacao).getTime()
     );
   });
-
-  ngOnInit() {
-    const num = this.route.snapshot.paramMap.get('numero');
-    if (num) {
-      this.numero.set(num);
-      this.refreshDetails();
-    }
-  }
 
   refreshDetails() {
     if (this.numero()) {
