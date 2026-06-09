@@ -1,0 +1,22 @@
+name: Frontend Develop CI/CD
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: analise_processo_frontend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Netlify CLI
+        run: npm install --global netlify-cli
+
+      - name: Build and Deploy to Netlify
+        run: netlify deploy --dir=dist/analise_processo_frontend/browser --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
