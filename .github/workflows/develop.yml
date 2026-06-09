@@ -8,9 +8,6 @@ jobs:
   deploy:
     name: Deploy to Vercel
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: analise_processo_frontend
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
