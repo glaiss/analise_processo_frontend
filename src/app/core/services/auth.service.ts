@@ -26,7 +26,7 @@ export class AuthService {
 
   login(credentials: { username: string; password: string }) {
     this.loading.set(true);
-    
+
     const body = new HttpParams()
       .set('username', credentials.username)
       .set('password', credentials.password);
