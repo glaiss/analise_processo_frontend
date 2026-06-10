@@ -75,8 +75,7 @@
               "buildTarget": "analise_processo_frontend:build:production"
             },
             "development": {
-              "buildTarget": "analise_processo_frontend:build:development",
-              "proxyConfig": "proxy.conf.json"
+              "buildTarget": "analise_processo_frontend:build:development"
             }
           },
           "defaultConfiguration": "development"

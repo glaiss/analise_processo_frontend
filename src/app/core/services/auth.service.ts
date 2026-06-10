@@ -1,5 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -26,7 +26,16 @@ export class AuthService {
 
   login(credentials: { username: string; password: string }) {
     this.loading.set(true);
-    return this.http.post<User>(`${this.apiUrl}/login`, credentials).pipe(
+    
+    const body = new HttpParams()
+      .set('username', credentials.username)
+      .set('password', credentials.password);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+
+    return this.http.post<User>(`${this.apiUrl}/login`, body.toString(), { headers }).pipe(
       tap(user => {
         this.user.set(user);
         this.loading.set(false);

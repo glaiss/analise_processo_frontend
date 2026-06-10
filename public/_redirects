@@ -1,2 +1,2 @@
-/analise-processos/* https://SEU_DOMINIO_CLOUDFRONT.cloudfront.net/analise-processos/:splat 200
+/analise-processos/* http://localhost:8081/analise-processos/analise-processos/:splat 200
 /* /index.html 200
