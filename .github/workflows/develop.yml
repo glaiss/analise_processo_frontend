@@ -19,10 +19,12 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Project
-        run: npx ng build
+        run: npm run build
+        env:
+          API_URL: ${{ secrets.CLOUDFRONT_URL }}
 
       - name: Install Netlify CLI
         run: npm install --global netlify-cli

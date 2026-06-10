@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, tap } from 'rxjs';
 import { Page } from '../models/processo';
+import { environment } from '../../../environments/environment';
 
 export interface Documento {
   id: string;
@@ -16,7 +17,7 @@ export interface Documento {
 })
 export class DocumentoService {
   private http = inject(HttpClient);
-  private apiUrl = '/v1/analise/processos';
+  private apiUrl = `${environment.apiUrl}/v1/analise/processos`;
   private blobCache = new Map<string, Blob>();
 
   upload(numero: string, file: File): Observable<Documento> {

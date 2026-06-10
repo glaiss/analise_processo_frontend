@@ -1,5 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
 import { StatusAtribuicao } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
@@ -10,7 +11,7 @@ import { tap } from 'rxjs';
 })
 export class ProcessStateService {
   private http = inject(HttpClient);
-  private apiUrl = '/v1/analise/processos';
+  private apiUrl = `${environment.apiUrl}/v1/analise/processos`;
 
   // State
   private processes = signal<ProcessoResumoDTO[]>([]);
