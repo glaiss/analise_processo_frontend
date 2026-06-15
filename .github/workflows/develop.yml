@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       API_URL: ${{ secrets.CLOUDFRONT_URL }}
+      NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -26,7 +27,7 @@ jobs:
       - name: Debug Environment
         run: |
           if [ -z "$API_URL" ]; then echo "ERROR: API_URL is empty"; else echo "API_URL is set"; fi
-          if [ -z "${{ secrets.NETLIFY_SITE_ID }}" ]; then echo "ERROR: NETLIFY_SITE_ID is empty"; else echo "NETLIFY_SITE_ID is set"; fi
+          if [ -z "${{ env.NETLIFY_SITE_ID }}" ]; then echo "ERROR: NETLIFY_SITE_ID is empty"; else echo "NETLIFY_SITE_ID is set"; fi
 
       - name: Build Project
         run: npm run build
@@ -40,5 +41,5 @@ jobs:
         run: npm install --global netlify-cli
 
       - name: Deploy to Netlify
-        run: netlify deploy --dir=dist/analise_processo_frontend/browser --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ secrets.NETLIFY_SITE_ID }}
+        run: netlify deploy --dir=dist/analise_processo_frontend/browser --prod --auth=${{ secrets.NETLIFY_AUTH_TOKEN }} --site=${{ env.NETLIFY_SITE_ID }}
 
