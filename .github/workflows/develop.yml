@@ -8,6 +8,8 @@ jobs:
   deploy:
     name: Deploy to Netlify
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.CLOUDFRONT_URL }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -21,10 +23,21 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Debug API_URL
+        run: |
+          if [ -z "$API_URL" ]; then
+            echo "ERROR: API_URL secret is empty or not found!"
+          else
+            echo "API_URL is set (value is masked)"
+          fi
+
       - name: Build Project
         run: npm run build
-        env:
-          API_URL: ${{ secrets.CLOUDFRONT_URL }}
+
+      - name: Verify Generated Environment
+        run: |
+          echo "Checking generated environment.prod.ts:"
+          cat src/environments/environment.prod.ts
 
       - name: Install Netlify CLI
         run: npm install --global netlify-cli

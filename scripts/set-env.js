@@ -19,7 +19,11 @@ if (fs.existsSync(envPath)) {
 
 const apiUrl = process.env.API_URL || 'http://localhost:8081/analise-processos';
 
-console.log(`Configuring environments with API_URL: ${apiUrl}`);
+if (!process.env.API_URL) {
+  console.warn('WARNING: API_URL environment variable is not set. Using default: http://localhost:8081/analise-processos');
+} else {
+  console.log(`Configuring environments with API_URL: ${apiUrl}`);
+}
 
 const generateConfig = (isProd) => `export const environment = {
   production: ${isProd},
