@@ -3,11 +3,15 @@ import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+export interface Authority {
+  authority: string;
+}
 
 export interface User {
   username: string;
   nome: string;
   equipe?: string;
+  authorities: Authority[];
 }
 
 @Injectable({
@@ -15,6 +19,16 @@ export interface User {
 })
 export class AuthService {
   private user = signal<User | null>(null);
+  // ... (mantém o resto do código)
+
+  hasRole(role: string): boolean {
+    const user = this.user();
+    if (!user) return false;
+    // O backend retorna 'ROLE_ADMIN', então verificamos se a authority bate
+    return user.authorities.some(a => a.authority === role || a.authority === `ROLE_${role}`);
+  }
+// ...
+
   private loading = signal<boolean>(false);
   private apiUrl = `${environment.apiUrl}/usuarios`;
 
@@ -49,8 +63,16 @@ export class AuthService {
 
   logout() {
     return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => this.user.set(null))
+      tap(() => this.clearLocalSession()),
+      catchError(() => {
+        this.clearLocalSession();
+        return of(null);
+      })
     );
+  }
+
+  clearLocalSession() {
+    this.user.set(null);
   }
 
   checkSession() {
