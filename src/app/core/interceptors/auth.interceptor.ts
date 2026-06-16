@@ -11,10 +11,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const notification = inject(NotificationService);
   const authService = inject(AuthService);
   
-  // Tenta recuperar o token XSRF do localStorage
+  // Tenta recuperar o token atualizado mais recentemente
   const xsrfToken = localStorage.getItem('XSRF-TOKEN');
 
-  // Clona a requisição adicionando credenciais e o token CSRF se existir
+  // Se for uma requisição de logout, prossegue sem a lógica de catchError/tap
+  // MAS injeta o token atual se disponível
   let headers = req.headers;
   if (xsrfToken) {
     headers = headers.set('X-XSRF-TOKEN', xsrfToken);
@@ -25,16 +26,25 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     headers: headers
   });
 
-  // Se for uma requisição de logout, prossegue sem a lógica de catchError/tap
   if (req.url.includes('/usuarios/logout')) {
     return next(authReq);
   }
 
   return next(authReq).pipe(
     tap(event => {
-      // Captura o token do cabeçalho da resposta (enviado pelo backend)
+      // Captura o token de resposta (Header ou Cookie) e atualiza o localStorage
       if (event instanceof HttpResponse) {
-        const token = event.headers.get('X-XSRF-TOKEN');
+        let token = event.headers.get('X-XSRF-TOKEN');
+        
+        // Fallback: se não vier no header, tenta ler do Set-Cookie
+        if (!token) {
+          const cookieHeader = event.headers.get('Set-Cookie');
+          if (cookieHeader && cookieHeader.includes('XSRF-TOKEN=')) {
+            const match = cookieHeader.match(/XSRF-TOKEN=([^;]+)/);
+            token = match ? match[1] : null;
+          }
+        }
+
         if (token) {
           localStorage.setItem('XSRF-TOKEN', token);
         }
