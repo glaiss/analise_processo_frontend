@@ -12,9 +12,13 @@
     <mat-icon matListItemIcon>cloud_download</mat-icon>
     <span matListItemTitle>Ingestão</span>
   </a>
-  <a mat-list-item (click)="navigate('/processos')" routerLinkActive="active">
+  <a mat-list-item (click)="navigate('/processos')" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
     <mat-icon matListItemIcon>assignment</mat-icon>
     <span matListItemTitle>Todos os Processos</span>
+  </a>
+  <a mat-list-item (click)="navigate('/processos/monitorados')" routerLinkActive="active">
+    <mat-icon matListItemIcon>star</mat-icon>
+    <span matListItemTitle>Monitorados</span>
   </a>
   <a mat-list-item (click)="navigate('/distribuicao')" routerLinkActive="active">
     <mat-icon matListItemIcon>share</mat-icon>

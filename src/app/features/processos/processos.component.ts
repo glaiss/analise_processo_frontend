@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -40,12 +40,28 @@ import { StatusAtribuicao } from '../../core/models/processo/enums.model';
 })
 export class ProcessosComponent implements OnInit {
   processState = inject(ProcessStateService);
+  private route = inject(ActivatedRoute);
   
   searchQuery = signal<string>('');
   statusOptions = Object.values(StatusAtribuicao);
 
+  title = computed(() => 
+    this.processState.currentMode() === 'monitorados' 
+      ? 'Processos Monitorados' 
+      : 'Processos'
+  );
+
+  subtitle = computed(() => 
+    this.processState.currentMode() === 'monitorados'
+      ? 'Lista de processos que você está acompanhando'
+      : 'Gerenciamento e análise de processos judiciais'
+  );
+
   ngOnInit() {
-    this.processState.loadProcesses();
+    this.route.data.subscribe(data => {
+      const isMonitorados = data['monitorados'] === true;
+      this.processState.setMode(isMonitorados ? 'monitorados' : 'all');
+    });
   }
 
   onSearch() {

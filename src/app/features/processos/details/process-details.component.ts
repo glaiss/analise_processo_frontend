@@ -201,6 +201,19 @@ export class ProcessDetailsComponent implements OnInit {
     });
   }
 
+  onDiscard() {
+    if (!this.numero()) return;
+    if (confirm('Tem certeza que deseja descartar este processo?')) {
+      this.processState.discardProcess(this.numero()!).subscribe({
+        next: () => {
+          this.snackBar.open('Processo descartado com sucesso', 'Fechar', { duration: 3000 });
+          this.goBack();
+        },
+        error: () => this.snackBar.open('Erro ao descartar processo', 'Fechar', { duration: 3000 })
+      });
+    }
+  }
+
   goBack() {
     this.location.back();
   }

@@ -19,6 +19,7 @@ export class ProcessStateService {
   private error = signal<string | null>(null);
   private currentPage = signal<number>(0);
   private totalPages = signal<number>(0);
+  private mode = signal<'all' | 'monitorados'>('all');
 
   // Filters
   private filterNivel = signal<string[]>([]);
@@ -31,8 +32,14 @@ export class ProcessStateService {
   readonly isLoading = computed(() => this.loading());
   readonly errorMessage = computed(() => this.error());
   readonly isLastPage = computed(() => this.currentPage() >= this.totalPages() - 1);
+  readonly currentMode = computed(() => this.mode());
 
   // Actions
+  setMode(mode: 'all' | 'monitorados') {
+    this.mode.set(mode);
+    this.loadProcesses();
+  }
+
   loadProcesses(append: boolean = false) {
     if (this.loading()) return;
 
@@ -58,7 +65,9 @@ export class ProcessStateService {
       params = params.append('status', status);
     });
 
-    this.http.get<Page<ProcessoResumoDTO>>(`${this.apiUrl}`, { params }).pipe(
+    const endpoint = this.mode() === 'monitorados' ? `${this.apiUrl}/monitorados` : this.apiUrl;
+
+    this.http.get<Page<ProcessoResumoDTO>>(endpoint, { params }).pipe(
       tap({
         next: (pageData) => {
           if (append) {
@@ -154,5 +163,9 @@ export class ProcessStateService {
 
   setGroupBy(key: 'equipeNome' | 'usuarioResponsavel') {
     this.groupBy.set(key);
+  }
+
+  discardProcess(numero: string) {
+    return this.http.delete<void>(`${this.apiUrl}/${numero}/descartar`);
   }
 }

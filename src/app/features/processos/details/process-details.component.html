@@ -18,6 +18,9 @@
           <button mat-icon-button (click)="toggleMonitoramento()" matTooltip="Alternar Monitoramento">
             <mat-icon [color]="p.monitorado ? 'accent' : ''">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
           </button>
+          <button mat-icon-button color="warn" (click)="onDiscard()" matTooltip="Descartar Processo">
+            <mat-icon>delete_forever</mat-icon>
+          </button>
         </div>
         <div class="status-chips">
           <mat-chip-set>

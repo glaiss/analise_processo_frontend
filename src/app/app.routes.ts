@@ -25,6 +25,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/processos/processos.component').then(m => m.ProcessosComponent)
   },
   {
+    path: 'processos/monitorados',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/processos/processos.component').then(m => m.ProcessosComponent),
+    data: { monitorados: true }
+  },
+  {
     path: 'processos/:numero',
     canActivate: [authGuard],
     loadComponent: () => import('./features/processos/details/process-details.component').then(m => m.ProcessDetailsComponent)
