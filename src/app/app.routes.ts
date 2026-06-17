@@ -58,6 +58,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
   },
   {
+    path: 'usuarios',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent)
+  },
+  {
     path: 'enriquecimento',
     canActivate: [authGuard],
     loadComponent: () => import('./features/enriquecimento/reprocessar.component').then(m => m.ReprocessarComponent)

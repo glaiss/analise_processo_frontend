@@ -4,6 +4,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +15,7 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class SidebarComponent {
   private router = inject(Router);
+  auth = inject(AuthService);
 
   navigate(path: string) {
     this.router.navigate([path]);

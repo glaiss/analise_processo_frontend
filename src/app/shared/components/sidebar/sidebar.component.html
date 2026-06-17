@@ -8,11 +8,12 @@
     <mat-icon matListItemIcon>dashboard</mat-icon>
     <span matListItemTitle>Dashboard</span>
   </a>
-  <a mat-list-item (click)="navigate('/ingestao')" routerLinkActive="active">
-    <mat-icon matListItemIcon>cloud_download</mat-icon>
-    <span matListItemTitle>Ingestão</span>
-  </a>
-  <a mat-list-item (click)="navigate('/processos')" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+  <a
+    mat-list-item
+    (click)="navigate('/processos')"
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     <mat-icon matListItemIcon>assignment</mat-icon>
     <span matListItemTitle>Todos os Processos</span>
   </a>
@@ -20,17 +21,16 @@
     <mat-icon matListItemIcon>star</mat-icon>
     <span matListItemTitle>Monitorados</span>
   </a>
-  <a mat-list-item (click)="navigate('/distribuicao')" routerLinkActive="active">
-    <mat-icon matListItemIcon>share</mat-icon>
-    <span matListItemTitle>Distribuição</span>
-  </a>
-  <a mat-list-item (click)="navigate('/admin')" routerLinkActive="active">
-    <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
-    <span matListItemTitle>Administração</span>
-  </a>
-  <mat-divider></mat-divider>
   <a mat-list-item (click)="navigate('/relatorios')" routerLinkActive="active">
     <mat-icon matListItemIcon>analytics</mat-icon>
     <span matListItemTitle>Relatórios</span>
   </a>
+  <mat-divider></mat-divider>
+
+  @if (auth.hasRole('ADMIN')) {
+    <a mat-list-item (click)="navigate('/admin')" routerLinkActive="active">
+      <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
+      <span matListItemTitle>Administração</span>
+    </a>
+  }
 </mat-nav-list>

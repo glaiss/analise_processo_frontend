@@ -5,7 +5,7 @@
   <span>{{ auth.currentUser()?.equipe || 'Sherlock Law' }}</span>
   <span class="spacer"></span>
   <div class="user-toolbar-info">
-      <span class="user-name">{{ auth.currentUser()?.nome }}</span>
+      <span class="user-name">{{ auth.currentUser()?.nome || auth.currentUser()?.username }}</span>
       <button mat-button (click)="logout()">
           <mat-icon>logout</mat-icon> Sair
       </button>

@@ -421,7 +421,68 @@
   }
 }
 
+.score-analysis-container {
+  padding: 16px;
+
+  .score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .total-score-badge {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+
+      &.high { background-color: #ffebee; color: #c62828; }
+      &.medium { background-color: #fff3e0; color: #ef6c00; }
+      &.low { background-color: #e8f5e9; color: #2e7d32; }
+    }
+  }
+
+  .hipoteses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .hipotese-card {
+      border-left: 4px solid #1976d2;
+
+      mat-card-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 8px;
+
+        .hip-points {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #2e7d32;
+          min-width: 50px;
+
+          &.negative { color: #c62828; }
+        }
+      }
+
+      .justificativa {
+        margin: 0;
+        color: #666;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
 .timeline {
+
   display: flex;
   flex-direction: column;
   gap: 20px;

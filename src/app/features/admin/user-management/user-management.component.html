@@ -1,0 +1,81 @@
+<div class="user-management-container">
+  <div class="header-actions">
+    <button mat-icon-button (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Criar Novo Usuário</h1>
+  </div>
+
+  <mat-card class="form-card">
+    <mat-card-content>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome Completo</mat-label>
+            <input matInput formControlName="nome" placeholder="Ex: João Silva">
+            @if (userForm.get('nome')?.invalid && userForm.get('nome')?.touched) {
+              <mat-error>Nome é obrigatório</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail (Username)</mat-label>
+            <input matInput formControlName="username" type="email" placeholder="exemplo@email.com">
+            @if (userForm.get('username')?.invalid && userForm.get('username')?.touched) {
+              <mat-error>Insira um e-mail válido</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Senha</mat-label>
+            <input matInput formControlName="password" type="password">
+            @if (userForm.get('password')?.invalid && userForm.get('password')?.touched) {
+              <mat-error>A senha deve ter no mínimo 6 caracteres</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="form-row grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Perfil (Role)</mat-label>
+            <mat-select formControlName="role">
+              @for (role of roles; track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Equipe</mat-label>
+            <mat-select formControlName="equipeId" (openedChange)="onSelectOpened()">
+              <div class="select-scroll-container" (scroll)="onEquipesScroll($event)">
+                <mat-option [value]="null">Nenhuma</mat-option>
+                @for (equipe of equipes(); track equipe.id) {
+                  <mat-option [value]="equipe.id">{{ equipe.nome }}</mat-option>
+                }
+                @if (loadingEquipes()) {
+                  <mat-option disabled>Carregando...</mat-option>
+                }
+              </div>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" (click)="back()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid || loading()">
+            @if (loading()) {
+              Salvando...
+            } @else {
+              Criar Usuário
+            }
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

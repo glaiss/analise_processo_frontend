@@ -1,34 +1,33 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { tap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
+
 export interface Authority {
   authority: string;
 }
 
 export interface User {
   username: string;
-  nome: string;
+  nome?: string;
   equipe?: string;
   authorities: Authority[];
+  password?: string | null;
+  accountNonExpired?: boolean;
+  accountNonLocked?: boolean;
+  credentialsNonExpired?: boolean;
+  enabled?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private user = signal<User | null>(null);
-  // ... (mantém o resto do código)
-
-  hasRole(role: string): boolean {
-    const user = this.user();
-    if (!user) return false;
-    // O backend retorna 'ROLE_ADMIN', então verificamos se a authority bate
-    return user.authorities.some(a => a.authority === role || a.authority === `ROLE_${role}`);
-  }
-// ...
-
+  private readonly USER_KEY = 'auth_user';
+  private platformId = inject(PLATFORM_ID);
+  private user = signal<User | null>(this.getUserFromSession());
   private loading = signal<boolean>(false);
   private apiUrl = `${environment.apiUrl}/usuarios`;
 
@@ -37,6 +36,28 @@ export class AuthService {
   readonly isLoading = computed(() => this.loading());
 
   constructor(private http: HttpClient) {}
+
+  private getUserFromSession(): User | null {
+    if (isPlatformBrowser(this.platformId)) {
+      const storedUser = sessionStorage.getItem(this.USER_KEY);
+      return storedUser ? JSON.parse(storedUser) : null;
+    }
+    return null;
+  }
+
+  private saveSession(user: User) {
+    this.user.set(user);
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    }
+  }
+
+  hasRole(role: string): boolean {
+    const user = this.user();
+    if (!user) return false;
+    // O backend retorna 'ROLE_ADMIN', então verificamos se a authority bate
+    return user.authorities.some(a => a.authority === role || a.authority === `ROLE_${role}`);
+  }
 
   login(credentials: { username: string; password: string }) {
     this.loading.set(true);
@@ -51,7 +72,7 @@ export class AuthService {
 
     return this.http.post<User>(`${this.apiUrl}/login`, body.toString(), { headers }).pipe(
       tap(user => {
-        this.user.set(user);
+        this.saveSession(user);
         this.loading.set(false);
       }),
       catchError(err => {
@@ -73,17 +94,19 @@ export class AuthService {
 
   clearLocalSession() {
     this.user.set(null);
+    if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.removeItem(this.USER_KEY);
+      localStorage.removeItem('XSRF-TOKEN');
+    }
   }
 
   checkSession() {
     return this.http.get<User>(`${this.apiUrl}/me`).pipe(
-      tap(user => this.user.set(user)),
+      tap(user => this.saveSession(user)),
       catchError(() => {
-        this.user.set(null);
+        this.clearLocalSession();
         return of(null);
       })
     );
   }
-
-
 }
