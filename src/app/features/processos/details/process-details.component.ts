@@ -18,8 +18,10 @@ import { ProcessStateService } from '../../../core/services/process-state.servic
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { Page } from '../../../core/models/processo';
 import { SafePipe } from '../../../shared/pipes/safe.pipe';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-process-details',
@@ -49,6 +51,7 @@ export class ProcessDetailsComponent implements OnInit {
   private processState = inject(ProcessStateService);
   private documentoService = inject(DocumentoService);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
   private location = inject(Location);
 
   numero = signal<string | null>(null);
@@ -203,15 +206,25 @@ export class ProcessDetailsComponent implements OnInit {
 
   onDiscard() {
     if (!this.numero()) return;
-    if (confirm('Tem certeza que deseja descartar este processo?')) {
-      this.processState.discardProcess(this.numero()!).subscribe({
-        next: () => {
-          this.snackBar.open('Processo descartado com sucesso', 'Fechar', { duration: 3000 });
-          this.goBack();
-        },
-        error: () => this.snackBar.open('Erro ao descartar processo', 'Fechar', { duration: 3000 })
-      });
-    }
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Confirmar descarte',
+        message: 'Tem certeza que deseja descartar este processo?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.processState.discardProcess(this.numero()!).subscribe({
+          next: () => {
+            this.snackBar.open('Processo descartado com sucesso', 'Fechar', { duration: 3000 });
+            this.goBack();
+          },
+          error: () => this.snackBar.open('Erro ao descartar processo', 'Fechar', { duration: 3000 })
+        });
+      }
+    });
   }
 
   goBack() {
