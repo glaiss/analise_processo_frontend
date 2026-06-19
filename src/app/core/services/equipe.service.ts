@@ -32,4 +32,8 @@ export class EquipeService {
 
     return this.http.get<Page<EquipeDto>>(`${this.apiUrl}/ativas`, { params });
   }
+
+  criarEquipe(equipe: Partial<EquipeDto>): Observable<EquipeDto> {
+    return this.http.post<EquipeDto>(this.apiUrl, equipe);
+  }
 }

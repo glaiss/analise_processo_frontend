@@ -1,0 +1,100 @@
+<div class="team-management-container">
+  <div class="header-actions">
+    <button mat-icon-button (click)="back()" aria-label="Voltar ao painel administrativo">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Gestão de Equipes</h1>
+  </div>
+
+  <div class="management-grid">
+    <!-- Formulário de Criação -->
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Criar Nova Equipe</mat-card-title>
+        <mat-card-subtitle>Cadastre uma equipe para atribuição de processos</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Nome da Equipe</mat-label>
+              <input matInput formControlName="nome" placeholder="Ex: Equipe Tributária, Cível, etc.">
+              @if (teamForm.get('nome')?.invalid && teamForm.get('nome')?.touched) {
+                <mat-error>
+                  @if (teamForm.get('nome')?.errors?.['required']) {
+                    Nome da equipe é obrigatório
+                  }
+                  @if (teamForm.get('nome')?.errors?.['minlength']) {
+                    O nome deve ter no mínimo 3 caracteres
+                  }
+                </mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="back()">Voltar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="teamForm.invalid || loading()">
+              @if (loading()) {
+                <span class="spinner-button">
+                  <mat-spinner diameter="20" color="accent"></mat-spinner> Criando...
+                </span>
+              } @else {
+                Criar Equipe
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Listagem de Equipes -->
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>Equipes Cadastradas</mat-card-title>
+        <mat-card-subtitle>Lista das equipes registradas no sistema</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (loadingList()) {
+          <div class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Carregando equipes...</p>
+          </div>
+        } @else {
+          @if (equipes().length === 0) {
+            <div class="empty-state">
+              <mat-icon>group_off</mat-icon>
+              <p>Nenhuma equipe cadastrada no momento.</p>
+            </div>
+          } @else {
+            <div class="table-container">
+              <table mat-table [dataSource]="equipes()" class="mat-elevation-z1">
+                
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                  <th mat-header-cell *matHeaderCellDef> Nome da Equipe </th>
+                  <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
+                </ng-container>
+
+                <!-- Status Column -->
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef> Status </th>
+                  <td mat-cell *matCellDef="let element">
+                    <span class="badge" [ngClass]="element.ativo ? 'badge-active' : 'badge-inactive'">
+                      {{ element.ativo ? 'Ativo' : 'Inativo' }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
