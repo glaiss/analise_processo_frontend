@@ -61,8 +61,7 @@
               "outputHashing": "all",
               "optimization": true,
               "sourceMap": false,
-              "aot": true,
-              "extractCss": true
+              "aot": true
             },
             "development": {
               "optimization": false,

@@ -11,6 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -27,25 +28,27 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
 @Component({
   selector: 'app-process-details',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatCardModule,
-    MatListModule,
-    MatIconModule,
-    MatChipsModule,
-    MatProgressSpinnerModule,
-    MatDividerModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
+    imports: [
+      CommonModule,
+      FormsModule,
+      MatCardModule,
+      MatListModule,
+      MatIconModule,
+      MatChipsModule,
+      MatProgressSpinnerModule,
+      MatDividerModule,
+      MatButtonModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatTabsModule,
 
-    MatTooltipModule,
-    MatSidenavModule,
-    MatDialogModule,
+      MatTooltipModule,
+      MatSidenavModule,
+      MatDialogModule,
+      UploadDocumentDialogComponent,
 
-    SafePipe
-  ],
+      SafePipe
+    ],
   templateUrl: './process-details.component.html',
   styleUrls: []
 })
