@@ -3,8 +3,21 @@
   
   <mat-card>
     <mat-card-content>
-      <p>Clique abaixo para executar a distribuição automática de processos para a equipe.</p>
-      <button mat-raised-button color="primary" (click)="executar()" [disabled]="loading()">
+      <p>Selecione a equipe de destino ou execute para todas as equipes de forma global:</p>
+      
+      <div class="selection-container">
+        <mat-form-field appearance="outline">
+          <mat-label>Equipe Alvo</mat-label>
+          <mat-select [value]="selectedEquipeId()" (selectionChange)="selectedEquipeId.set($event.value)" [disabled]="loading()">
+            <mat-option value="todos">Todas as Equipes (Global)</mat-option>
+            @for (equipe of equipes(); track equipe.id) {
+              <mat-option [value]="equipe.id">{{ equipe.nome }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button color="primary" (click)="executar()" [disabled]="loading() || loadingEquipes()">
         {{ loading() ? 'Executando...' : 'Executar Distribuição' }}
       </button>
     </mat-card-content>

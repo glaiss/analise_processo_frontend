@@ -25,4 +25,8 @@ export class DistributionService {
   executarDistribuicao(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/executar`, {});
   }
+
+  executarDistribuicaoPorEquipe(equipeId: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${equipeId}/distribuir`, {});
+  }
 }

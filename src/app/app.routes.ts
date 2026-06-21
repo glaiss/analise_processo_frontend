@@ -68,6 +68,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/team-management/team-management.component').then(m => m.TeamManagementComponent)
   },
   {
+    path: 'usuarios/equipe',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/user-team-association/user-team-association.component').then(m => m.UserTeamAssociationComponent)
+  },
+  {
     path: 'enriquecimento',
     canActivate: [authGuard],
     loadComponent: () => import('./features/enriquecimento/reprocessar.component').then(m => m.ReprocessarComponent)

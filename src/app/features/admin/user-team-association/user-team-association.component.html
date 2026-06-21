@@ -1,0 +1,148 @@
+<div class="association-container">
+  <div class="header-actions">
+    <button mat-icon-button (click)="back()" aria-label="Voltar ao painel administrativo">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Vincular Usuários a Equipes</h1>
+  </div>
+
+  <div class="association-grid">
+    <!-- Formulário de Vinculação -->
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Vincular Usuário</mat-card-title>
+        <mat-card-subtitle>Selecione o usuário e a equipe para realizar o vínculo</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="associationForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Seleção do Usuário -->
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Selecione o Usuário</mat-label>
+              <mat-select formControlName="usuarioId">
+                @for (user of usuarios(); track user.id) {
+                  <mat-option [value]="user.id">
+                    {{ user.nome }} ({{ user.username }})
+                  </mat-option>
+                }
+              </mat-select>
+              @if (associationForm.get('usuarioId')?.invalid && associationForm.get('usuarioId')?.touched) {
+                <mat-error>Usuário é obrigatório</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <!-- Seleção da Equipe -->
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Selecione a Equipe</mat-label>
+              <mat-select formControlName="equipeId">
+                @for (equipe of equipes(); track equipe.id) {
+                  <mat-option [value]="equipe.id">{{ equipe.nome }}</mat-option>
+                }
+              </mat-select>
+              @if (associationForm.get('equipeId')?.invalid && associationForm.get('equipeId')?.touched) {
+                <mat-error>Equipe é obrigatória</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-stroked-button type="button" (click)="back()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="associationForm.invalid || loading()">
+              @if (loading()) {
+                <span class="spinner-button">
+                  <mat-spinner diameter="20" color="accent"></mat-spinner> Vinculando...
+                </span>
+              } @else {
+                Vincular Usuário
+              }
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Listagem de Usuários e Equipes -->
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>Status dos Usuários</mat-card-title>
+        <mat-card-subtitle>Usuários cadastrados e seus vínculos atuais</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (loadingList()) {
+          <div class="loading-container">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Carregando usuários...</p>
+          </div>
+        } @else {
+          @if (usuarios().length === 0) {
+            <div class="empty-state">
+              <mat-icon>person_off</mat-icon>
+              <p>Nenhum usuário cadastrado no sistema.</p>
+            </div>
+          } @else {
+            <div class="table-container">
+              <table mat-table [dataSource]="usuarios()" class="mat-elevation-z1">
+                
+                <!-- Nome Column -->
+                <ng-container matColumnDef="nome">
+                  <th mat-header-cell *matHeaderCellDef> Nome </th>
+                  <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
+                </ng-container>
+
+                <!-- Username Column -->
+                <ng-container matColumnDef="username">
+                  <th mat-header-cell *matHeaderCellDef> Username </th>
+                  <td mat-cell *matCellDef="let element"> {{ element.username }} </td>
+                </ng-container>
+
+                <!-- Role Column -->
+                <ng-container matColumnDef="role">
+                  <th mat-header-cell *matHeaderCellDef> Perfil </th>
+                  <td mat-cell *matCellDef="let element"> 
+                    <span class="role-badge">{{ element.role }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Equipe Column -->
+                <ng-container matColumnDef="equipe">
+                  <th mat-header-cell *matHeaderCellDef> Equipe </th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (element.equipeNome) {
+                      <span class="team-badge">{{ element.equipeNome }}</span>
+                    } @else {
+                      <span class="no-team-badge">Sem Equipe</span>
+                    }
+                  </td>
+                </ng-container>
+
+                <!-- Ações Column -->
+                <ng-container matColumnDef="acoes">
+                  <th mat-header-cell *matHeaderCellDef> Ações </th>
+                  <td mat-cell *matCellDef="let element">
+                    @if (element.equipeNome) {
+                      <button mat-icon-button color="warn" (click)="desvincular(element.id)" matTooltip="Remover usuário da equipe">
+                        <mat-icon>link_off</mat-icon>
+                      </button>
+                    } @else {
+                      <button mat-icon-button disabled>
+                        <mat-icon>link_off</mat-icon>
+                      </button>
+                    }
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
