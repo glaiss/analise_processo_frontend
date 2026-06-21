@@ -11,7 +11,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatTabsModule } from '@angular/material/tabs';
+
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ProcessStateService } from '../../../core/services/process-state.service';
@@ -39,7 +39,7 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatTabsModule,
+
     MatTooltipModule,
     MatSidenavModule,
     MatDialogModule,
@@ -47,7 +47,7 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
     SafePipe
   ],
   templateUrl: './process-details.component.html',
-  styleUrl: './process-details.component.scss'
+  styleUrls: []
 })
 export class ProcessDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
