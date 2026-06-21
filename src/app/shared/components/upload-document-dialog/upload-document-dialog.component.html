@@ -1,0 +1,9 @@
+<h2 mat-dialog-title>Upload de Documento</h2>
+<div mat-dialog-content>
+  <p>Nome do arquivo: {{fileName}}</p>
+  <mat-checkbox [(ngModel)]="isContrato">Este documento é um contrato</mat-checkbox>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-flat-button color="primary" (click)="onConfirm()">Confirmar</button>
+</div>

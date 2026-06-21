@@ -18,10 +18,11 @@ import { ProcessStateService } from '../../../core/services/process-state.servic
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Page } from '../../../core/models/processo';
 import { SafePipe } from '../../../shared/pipes/safe.pipe';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { UploadDocumentDialogComponent } from '../../../shared/components/upload-document-dialog/upload-document-dialog.component';
 
 @Component({
   selector: 'app-process-details',
@@ -41,6 +42,8 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
     MatTabsModule,
     MatTooltipModule,
     MatSidenavModule,
+    MatDialogModule,
+
     SafePipe
   ],
   templateUrl: './process-details.component.html',
@@ -138,12 +141,19 @@ export class ProcessDetailsComponent implements OnInit {
   onFileSelected(event: any) {
     const file: File = event.target.files[0];
     if (file && this.numero()) {
-      this.documentoService.upload(this.numero()!, file).subscribe({
-        next: () => {
-          this.snackBar.open('Documento enviado com sucesso', 'Fechar', { duration: 3000 });
-          this.carregarDocumentos();
-        },
-        error: () => this.snackBar.open('Erro ao enviar documento', 'Fechar', { duration: 3000 })
+      const dialogRef = this.dialog.open(UploadDocumentDialogComponent, {
+        data: { fileName: file.name }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        const isContrato = result?.isContrato ?? false;
+        this.documentoService.upload(this.numero()!, file, isContrato).subscribe({
+          next: () => {
+            this.snackBar.open('Documento enviado com sucesso', 'Fechar', { duration: 3000 });
+            this.carregarDocumentos();
+          },
+          error: () => this.snackBar.open('Erro ao enviar documento', 'Fechar', { duration: 3000 })
+        });
       });
     }
   }

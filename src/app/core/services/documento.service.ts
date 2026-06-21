@@ -20,10 +20,11 @@ export class DocumentoService {
   private apiUrl = `${environment.apiUrl}/v1/analise/processos`;
   private blobCache = new Map<string, Blob>();
 
-  upload(numero: string, file: File): Observable<Documento> {
+  upload(numero: string, file: File, isContrato: boolean = false): Observable<Documento> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<Documento>(`${this.apiUrl}/${numero}/documentos`, formData);
+    const url = `${this.apiUrl}/${numero}/documentos${isContrato ? `?isContrato=${isContrato}` : ''}`;
+    return this.http.post<Documento>(url, formData);
   }
 
   listar(numero: string): Observable<Page<Documento>> {
