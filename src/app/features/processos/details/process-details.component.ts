@@ -50,7 +50,7 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
       SafePipe
     ],
   templateUrl: './process-details.component.html',
-  styleUrls: []
+  styleUrl: './process-details.component.scss'
 })
 export class ProcessDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);

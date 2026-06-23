@@ -15,7 +15,7 @@ interface DialogData {
   standalone: true,
   imports: [MatDialogModule, MatButtonModule, MatCheckboxModule, MatFormFieldModule, FormsModule],
   templateUrl: './upload-document-dialog.component.html',
-  styleUrls: ['./upload-document-dialog.component.scss']
+  styleUrl: './upload-document-dialog.component.scss'
 })
 export class UploadDocumentDialogComponent {
   fileName: string;

@@ -14,6 +14,7 @@ jobs:
     env:
       API_URL: ${{ secrets.CLOUDFRONT_URL }}
       NETLIFY_SITE_ID: ${{ vars.NETLIFY_SITE_ID }}
+      API_KEY_DATAJUD: ${{ vars.API_KEY_DATAJUD }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

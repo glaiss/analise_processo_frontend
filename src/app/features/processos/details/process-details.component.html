@@ -183,6 +183,9 @@
                     <button mat-stroked-button color="primary" (click)="downloadTodosDocumentos()" class="full-width">
                       <mat-icon>download</mat-icon> Baixar Todos
                     </button>
+                    <button mat-stroked-button color="primary" (click)="fileInput.click()" class="full-width">
+                      <mat-icon>upload</mat-icon> Enviar Documento
+                    </button>
                   </div>
                   <mat-nav-list class="documents-nav-list">
                     @for (doc of documentos().content; track doc.id) {
@@ -339,8 +342,4 @@
   }
 
   <input type="file" (change)="onFileSelected($event)" #fileInput style="display: none">
-  <button mat-fab color="primary" class="floating-upload-btn" (click)="fileInput.click()" matTooltip="Enviar novo documento">
-    <mat-icon>upload</mat-icon>
-  </button>
-  <app-upload-document-dialog *ngIf="false"></app-upload-document-dialog>
 </div>
