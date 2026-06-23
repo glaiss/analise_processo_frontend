@@ -10,6 +10,7 @@ export interface Documento {
   contentType: string;
   tamanho: number;
   createdDate: string;
+  isContrato?: boolean;
 }
 
 @Injectable({
@@ -46,6 +47,10 @@ export class DocumentoService {
 
   getDownloadUrl(numero: string, documentoId: string): string {
     return `${this.apiUrl}/${numero}/documentos/${documentoId}/download`;
+  }
+
+  deletar(numero: string, documentoId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${numero}/documentos/${documentoId}`);
   }
 
   limparCache() {

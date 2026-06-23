@@ -185,6 +185,15 @@
         color: #64748b;
       }
     }
+
+    .delete-doc-btn {
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .doc-item:hover .delete-doc-btn {
+      opacity: 1;
+    }
   }
 }
 
@@ -209,6 +218,11 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    .viewer-actions {
+      display: flex;
+      gap: 4px;
     }
   }
 

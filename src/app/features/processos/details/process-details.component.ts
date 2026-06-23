@@ -134,6 +134,33 @@ export class ProcessDetailsComponent implements OnInit {
     }
   }
 
+  onDeleteDocument(doc: Documento) {
+    if (!this.numero()) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Excluir documento',
+        message: `Tem certeza que deseja excluir "${doc.nomeArquivo}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.documentoService.deletar(this.numero()!, doc.id).subscribe({
+          next: () => {
+            this.snackBar.open('Documento excluído com sucesso', 'Fechar', { duration: 3000 });
+            if (this.documentoSelecionado()?.id === doc.id) {
+              this.documentoSelecionado.set(null);
+              this.previewUrl.set(null);
+            }
+            this.carregarDocumentos();
+          },
+          error: () => this.snackBar.open('Erro ao excluir documento', 'Fechar', { duration: 3000 })
+        });
+      }
+    });
+  }
+
   downloadTodosDocumentos() {
     this.snackBar.open('Iniciando download de todos os documentos...', 'Fechar', { duration: 2000 });
     this.documentos().content.forEach(doc => this.baixarDocumento(doc));

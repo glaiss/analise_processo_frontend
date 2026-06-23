@@ -193,6 +193,9 @@
                         <mat-icon matListItemIcon>description</mat-icon>
                         <div matListItemTitle>{{ doc.nomeArquivo }}</div>
                         <div matListItemLine>{{ doc.tamanho / 1024 | number:'1.0-0' }} KB - {{ doc.createdDate | date:'dd/MM/yyyy' }}</div>
+                        <button mat-icon-button (click)="$event.stopPropagation(); onDeleteDocument(doc)" matTooltip="Excluir documento" class="delete-doc-btn">
+                          <mat-icon color="warn">delete</mat-icon>
+                        </button>
                       </mat-list-item>
                     } @empty {
                       <div class="empty-state">
@@ -207,9 +210,14 @@
                   @if (documentoSelecionado(); as selectedDoc) {
                     <div class="viewer-header">
                       <h3>{{ selectedDoc.nomeArquivo }}</h3>
-                      <button mat-icon-button (click)="baixarDocumento(selectedDoc)" matTooltip="Baixar documento">
-                        <mat-icon>download</mat-icon>
-                      </button>
+                      <div class="viewer-actions">
+                        <button mat-icon-button (click)="baixarDocumento(selectedDoc)" matTooltip="Baixar documento">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="onDeleteDocument(selectedDoc)" matTooltip="Excluir documento">
+                          <mat-icon color="warn">delete</mat-icon>
+                        </button>
+                      </div>
                     </div>
                     <div class="viewer-content">
                       @if (carregandoPreview()) {
