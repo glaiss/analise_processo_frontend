@@ -1,0 +1,185 @@
+.monitoring-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f8fafc;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+.monitoring-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .title-section {
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-size: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  color: #64748b;
+}
+
+.monitoring-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+}
+
+.metric-card {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+
+  mat-card-header {
+    mat-icon[mat-card-avatar] {
+      color: #3b82f6;
+    }
+  }
+
+  mat-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  mat-card-content {
+    padding-top: 16px;
+  }
+}
+
+.health-card {
+  .health-status {
+    margin-bottom: 16px;
+  }
+
+  .health-components {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .health-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      span {
+        font-size: 0.875rem;
+        color: #475569;
+      }
+
+      .value {
+        font-weight: 600;
+        color: #1e293b;
+      }
+    }
+  }
+}
+
+.metric-bar-section {
+  margin-bottom: 16px;
+
+  .metric-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .metric-label {
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+
+  .metric-value {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+
+  .metric-percent {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+
+  mat-progress-bar {
+    border-radius: 4px;
+    height: 8px;
+  }
+}
+
+.metric-simple {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+
+  .metric-label {
+    font-size: 0.8125rem;
+    color: #64748b;
+  }
+
+  .metric-value {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+}
+
+.no-data {
+  color: #94a3b8;
+  font-style: italic;
+  font-size: 0.875rem;
+  padding: 8px 0;
+}
+
+.metric-note {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 12px 0 0;
+  line-height: 1.4;
+}

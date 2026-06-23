@@ -1,0 +1,59 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+export interface Health {
+  status: string;
+  components?: {
+    db?: { status: string; details?: { database?: string } };
+    diskSpace?: { status: string; details?: { total?: number; free?: number } };
+    ping?: { status: string };
+  };
+}
+
+export interface MetricSample {
+  statistic?: string;
+  value: number;
+}
+
+export interface Metric {
+  name: string;
+  measurements: MetricSample[];
+  availableTags: { tag: string; values: string[] }[];
+}
+
+export interface HeapMemory {
+  used: number;
+  max: number;
+  committed: number;
+  usagePercent: number;
+}
+
+export interface CpuInfo {
+  system: number;
+  process: number;
+  loadAverage: number;
+}
+
+export interface DbPoolInfo {
+  active: number;
+  idle: number;
+  max: number;
+  usagePercent: number;
+}
+
+@Injectable({ providedIn: 'root' })
+export class ActuatorService {
+  private http = inject(HttpClient);
+  private baseUrl = `${environment.apiUrl}/actuator`;
+
+  getHealth(): Observable<Health> {
+    return this.http.get<Health>(`${this.baseUrl}/health`);
+  }
+
+  getMetric(name: string, tag?: string): Observable<Metric> {
+    const params = tag ? { tag } : undefined;
+    return this.http.get<Metric>(`${this.baseUrl}/metrics/${name}`, { params });
+  }
+}

@@ -1,0 +1,289 @@
+<div class="monitoring-container">
+  <header class="monitoring-header">
+    <div class="title-section">
+      <h1>Monitoramento</h1>
+      <p class="subtitle">Saúde e performance da aplicação — atualizado a cada 15s</p>
+    </div>
+    <button mat-stroked-button (click)="refresh()" matTooltip="Atualizar agora">
+      <mat-icon>refresh</mat-icon> Atualizar
+    </button>
+  </header>
+
+  @if (loading() && !health()) {
+    <div class="loading-state">
+      <p>Carregando métricas...</p>
+    </div>
+  }
+
+  <div class="monitoring-grid">
+
+    <!-- Health Card -->
+    <mat-card class="metric-card health-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>monitor_heart</mat-icon>
+        <mat-card-title>Status da Aplicação</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (health(); as h) {
+          <div class="health-status">
+            <mat-chip [color]="getStatusColor(h.status)" highlighted>{{
+              h.status === 'UP' ? 'Online' : h.status
+            }}</mat-chip>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="health-components">
+            <div class="health-row">
+              <span>Banco de Dados</span>
+              <mat-chip [color]="getStatusColor(h.components?.db?.status)" highlighted>
+                {{ h.components?.db?.status === 'UP' ? 'Conectado' : h.components?.db?.status }}
+              </mat-chip>
+            </div>
+            <div class="health-row">
+              <span>Disco</span>
+              <mat-chip [color]="getStatusColor(h.components?.diskSpace?.status)" highlighted>
+                {{ h.components?.diskSpace?.status === 'UP' ? 'OK' : h.components?.diskSpace?.status }}
+              </mat-chip>
+            </div>
+            <div class="health-row">
+              <span>Uptime</span>
+              <span class="value">{{ formatUptime(uptime() ?? 0) }}</span>
+            </div>
+            <div class="health-row">
+              <span>Classes Carregadas</span>
+              <span class="value">{{ classes() ?? 0 }}</span>
+            </div>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de saúde</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Memory + Buffers Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>memory</mat-icon>
+        <mat-card-title>Memória</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (heap(); as h) {
+          <div class="metric-bar-section">
+            <div class="metric-info">
+              <span class="metric-label">Heap</span>
+              <span class="metric-value">{{ formatBytes(h.used) }} / {{ formatBytes(h.max) }}</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="h.percent"
+              [color]="h.percent > 80 ? 'warn' : h.percent > 60 ? 'accent' : 'primary'"
+            ></mat-progress-bar>
+            <span class="metric-percent">{{ h.percent | number:'1.0-0' }}%</span>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de heap</p>
+        }
+
+        @if (nonHeap(); as nh) {
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Non-Heap</span>
+            <span class="metric-value">{{ formatBytes(nh.used) }}</span>
+          </div>
+        }
+
+        @if (bufferDirect() !== null || bufferMapped() !== null) {
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Buffers Direct</span>
+            <span class="metric-value">{{ formatBytes(bufferDirect() ?? 0) }}</span>
+          </div>
+          <div class="metric-simple">
+            <span class="metric-label">Buffers Mapped</span>
+            <span class="metric-value">{{ formatBytes(bufferMapped() ?? 0) }}</span>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- GC Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>cleaning_services</mat-icon>
+        <mat-card-title>Garbage Collection</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (gcPause(); as gc) {
+          <div class="metric-simple">
+            <span class="metric-label">Eventos</span>
+            <span class="metric-value">{{ gc.count }}</span>
+          </div>
+          <div class="metric-simple">
+            <span class="metric-label">Tempo Total</span>
+            <span class="metric-value">{{ formatMs(gc.totalTime) }}</span>
+          </div>
+          <div class="metric-simple">
+            <span class="metric-label">Máx. Pausa</span>
+            <span class="metric-value">{{ formatMs(gc.maxTime) }}</span>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de GC</p>
+        }
+
+        @if (gcAllocated() !== null || gcLiveData() !== null) {
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Alocado entre GCs</span>
+            <span class="metric-value">{{ formatBytes(gcAllocated() ?? 0) }}</span>
+          </div>
+          <div class="metric-simple">
+            <span class="metric-label">Live Data</span>
+            <span class="metric-value">{{ formatBytes(gcLiveData() ?? 0) }}</span>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- CPU + Load Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>speed</mat-icon>
+        <mat-card-title>CPU</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (cpu(); as c) {
+          <div class="metric-bar-section">
+            <div class="metric-info">
+              <span class="metric-label">Sistema</span>
+              <span class="metric-value">{{ (c.system * 100) | number:'1.0-0' }}%</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="c.system * 100"
+              [color]="c.system > 0.8 ? 'warn' : c.system > 0.5 ? 'accent' : 'primary'"
+            ></mat-progress-bar>
+          </div>
+
+          <div class="metric-bar-section">
+            <div class="metric-info">
+              <span class="metric-label">Processo</span>
+              <span class="metric-value">{{ (c.process * 100) | number:'1.0-0' }}%</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="c.process * 100"
+              [color]="c.process > 0.8 ? 'warn' : c.process > 0.5 ? 'accent' : 'primary'"
+            ></mat-progress-bar>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de CPU</p>
+        }
+
+        @if (loadAverage() !== null) {
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Load Average (1m)</span>
+            <span class="metric-value">{{ loadAverage() | number:'1.0-2' }}</span>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Threads Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>developer_board</mat-icon>
+        <mat-card-title>Threads</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (threads(); as t) {
+          <div class="metric-simple">
+            <span class="metric-label">Ativas</span>
+            <span class="metric-value">{{ t.live }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Pico</span>
+            <span class="metric-value">{{ t.peak }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Daemon</span>
+            <span class="metric-value">{{ daemonThreads() ?? 0 }}</span>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de threads</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <!-- DB Pool Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>storage</mat-icon>
+        <mat-card-title>Pool de Conexões (HikariCP)</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (dbPool(); as db) {
+          <div class="metric-bar-section">
+            <div class="metric-info">
+              <span class="metric-label">Ativas</span>
+              <span class="metric-value">{{ db.used }} / {{ db.max }}</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="db.percent"
+              [color]="db.percent > 80 ? 'warn' : db.percent > 50 ? 'accent' : 'primary'"
+            ></mat-progress-bar>
+            <span class="metric-percent">{{ db.percent | number:'1.0-0' }}%</span>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados do pool</p>
+        }
+
+        @if (dbPending() !== null) {
+          <mat-divider></mat-divider>
+          <div class="metric-simple">
+            <span class="metric-label">Pendentes</span>
+            <span class="metric-value">{{ dbPending() }}</span>
+          </div>
+        }
+
+        @if (dbTimeout() !== null) {
+          <div class="metric-simple">
+            <span class="metric-label">Timeouts Acumulados</span>
+            <span class="metric-value">{{ dbTimeout() }}</span>
+          </div>
+        }
+
+        <p class="metric-note">O pool libera conexões ociosas automaticamente. Pendentes > 0 indica contenção.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- File Descriptors Card -->
+    <mat-card class="metric-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>folder_open</mat-icon>
+        <mat-card-title>File Descriptors</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (fileOpen() !== null && fileMax() !== null) {
+          <div class="metric-bar-section">
+            <div class="metric-info">
+              <span class="metric-label">Abertos</span>
+              <span class="metric-value">{{ fileOpen() }} / {{ fileMax() }}</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="(fileOpen()! / fileMax()!) * 100"
+              [color]="(fileOpen()! / fileMax()!) > 0.8 ? 'warn' : (fileOpen()! / fileMax()!) > 0.5 ? 'accent' : 'primary'"
+            ></mat-progress-bar>
+            <span class="metric-percent">{{ ((fileOpen()! / fileMax()!) * 100) | number:'1.0-0' }}%</span>
+          </div>
+        } @else {
+          <p class="no-data">Sem dados de file descriptors</p>
+        }
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

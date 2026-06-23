@@ -58,6 +58,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/admin.component').then(m => m.AdminComponent)
   },
   {
+    path: 'admin/monitoramento',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/monitoring/monitoring.component').then(m => m.MonitoringComponent)
+  },
+  {
     path: 'usuarios',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent)

@@ -45,6 +45,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
           notification.error(`Erro no Servidor (${error.status}): ${errorMessage}`);
         }
+      } else if (error.status === 404 && req.url.includes('/actuator/metrics/')) {
+        return throwError(() => error);
       } else if (error.status >= 400) {
         notification.error(`Erro na Requisição (${error.status}): ${errorMessage}`);
       } else {

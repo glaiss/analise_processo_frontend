@@ -45,7 +45,6 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
       MatTooltipModule,
       MatSidenavModule,
       MatDialogModule,
-      UploadDocumentDialogComponent,
 
       SafePipe
     ],
