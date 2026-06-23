@@ -3,11 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface DiskSpaceDetails {
+  total?: number;
+  free?: number;
+  threshold?: number;
+  exists?: boolean;
+}
+
 export interface Health {
   status: string;
   components?: {
     db?: { status: string; details?: { database?: string } };
-    diskSpace?: { status: string; details?: { total?: number; free?: number } };
+    diskSpace?: { status: string; details?: DiskSpaceDetails };
     ping?: { status: string };
   };
 }

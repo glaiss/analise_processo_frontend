@@ -44,6 +44,12 @@
                 {{ h.components?.diskSpace?.status === 'UP' ? 'OK' : h.components?.diskSpace?.status }}
               </mat-chip>
             </div>
+            @if (diskTotal() && diskFree() !== null) {
+              <div class="health-row">
+                <span>Disco Livre</span>
+                <span class="value">{{ formatBytes(diskFree() ?? 0) }} / {{ formatBytes(diskTotal() ?? 0) }}</span>
+              </div>
+            }
             <div class="health-row">
               <span>Uptime</span>
               <span class="value">{{ formatUptime(uptime() ?? 0) }}</span>
@@ -52,6 +58,12 @@
               <span>Classes Carregadas</span>
               <span class="value">{{ classes() ?? 0 }}</span>
             </div>
+            @if (unloadedClasses() !== null) {
+              <div class="health-row">
+                <span>Classes Descarregadas</span>
+                <span class="value">{{ unloadedClasses() }}</span>
+              </div>
+            }
           </div>
         } @else {
           <p class="no-data">Sem dados de saúde</p>
@@ -185,6 +197,12 @@
             <span class="metric-value">{{ loadAverage() | number:'1.0-2' }}</span>
           </div>
         }
+        @if (cpuCount() !== null) {
+          <div class="metric-simple">
+            <span class="metric-label">Núcleos</span>
+            <span class="metric-value">{{ cpuCount() }}</span>
+          </div>
+        }
       </mat-card-content>
     </mat-card>
 
@@ -210,6 +228,13 @@
             <span class="metric-label">Daemon</span>
             <span class="metric-value">{{ daemonThreads() ?? 0 }}</span>
           </div>
+          @if (activeSessions() !== null) {
+            <mat-divider></mat-divider>
+            <div class="metric-simple">
+              <span class="metric-label">Sessões Ativas</span>
+              <span class="metric-value">{{ activeSessions() }}</span>
+            </div>
+          }
         } @else {
           <p class="no-data">Sem dados de threads</p>
         }
@@ -252,6 +277,13 @@
           <div class="metric-simple">
             <span class="metric-label">Timeouts Acumulados</span>
             <span class="metric-value">{{ dbTimeout() }}</span>
+          </div>
+        }
+
+        @if (hikariAcquire() !== null) {
+          <div class="metric-simple">
+            <span class="metric-label">Tempo de Aquisição</span>
+            <span class="metric-value">{{ formatMs(hikariAcquire()!) }}</span>
           </div>
         }
 

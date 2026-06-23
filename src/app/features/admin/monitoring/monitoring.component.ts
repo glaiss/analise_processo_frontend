@@ -63,6 +63,13 @@ export class MonitoringComponent implements OnInit {
   dbPending = signal<number | null>(null);
   dbTimeout = signal<number | null>(null);
 
+  diskFree = signal<number | null>(null);
+  diskTotal = signal<number | null>(null);
+  cpuCount = signal<number | null>(null);
+  activeSessions = signal<number | null>(null);
+  unloadedClasses = signal<number | null>(null);
+  hikariAcquire = signal<number | null>(null);
+
   loading = signal(true);
   error = signal<string | null>(null);
   autoRefreshHandle: ReturnType<typeof setInterval> | null = null;
@@ -77,7 +84,14 @@ export class MonitoringComponent implements OnInit {
     this.error.set(null);
 
     this.actuator.getHealth().subscribe({
-      next: h => this.health.set(h),
+      next: h => {
+        this.health.set(h);
+        const disk = h.components?.diskSpace?.details;
+        if (disk) {
+          this.diskFree.set(disk.free ?? null);
+          this.diskTotal.set(disk.total ?? null);
+        }
+      },
       error: () => {}
     });
 
@@ -198,6 +212,29 @@ export class MonitoringComponent implements OnInit {
 
     this.actuator.getMetric('hikaricp.connections.timeout').subscribe({
       next: m => this.dbTimeout.set(m.measurements[0]?.value ?? 0),
+      error: () => {}
+    });
+
+    this.actuator.getMetric('system.cpu.count').subscribe({
+      next: m => this.cpuCount.set(m.measurements[0]?.value ?? 0),
+      error: () => {}
+    });
+
+    this.actuator.getMetric('jvm.classes.unloaded').subscribe({
+      next: m => this.unloadedClasses.set(m.measurements[0]?.value ?? 0),
+      error: () => {}
+    });
+
+    this.actuator.getMetric('tomcat.sessions.active.current').subscribe({
+      next: m => this.activeSessions.set(m.measurements[0]?.value ?? 0),
+      error: () => {}
+    });
+
+    this.actuator.getMetric('hikaricp.connections.acquire').subscribe({
+      next: m => {
+        const maxSample = m.measurements.reduce((best, s) => Math.max(best, s.value), 0);
+        this.hikariAcquire.set(maxSample);
+      },
       error: () => {}
     });
 
