@@ -13,7 +13,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #C5A059;
+  background-color: var(--accent-gold);
   transition: opacity 0.15s;
 
   &:hover {
@@ -22,7 +22,7 @@
 }
 
 .user-avatar {
-  color: #fff;
+  color: var(--text-on-card-bg);
   font-size: 0.9375rem;
   font-weight: 700;
   line-height: 1;
@@ -37,12 +37,12 @@
   .menu-user-name {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
     padding: 10px;
   }
 
   .menu-user-equipe {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--text-tertiary);
   }
 }

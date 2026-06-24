@@ -16,13 +16,13 @@
   width: 48px;
   height: 48px;
   margin-bottom: 16px;
-  color: #ef4444;
+  color: var(--red-500);
 }
 
 .error-message {
   margin: 0 0 24px;
   font-size: 1.125rem;
-  color: #dc2626;
+  color: var(--red-600);
 
   @media (max-width: 768px) {
     font-size: 1rem;

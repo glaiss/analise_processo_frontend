@@ -1,6 +1,6 @@
 // Skeleton animation
 .skeleton-pulse {
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background: linear-gradient(90deg, var(--border-strong) 25%, var(--border-color) 50%, var(--border-strong) 75%);
   background-size: 200% 100%;
   animation: pulse 1.5s ease-in-out infinite;
   border-radius: 6px;
@@ -44,7 +44,7 @@
   display: flex;
   gap: 12px;
   padding: 12px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border-strong);
   margin-bottom: 4px;
 }
 
@@ -70,8 +70,8 @@
 .skeleton-card {
   padding: 20px;
   border-radius: 12px;
-  background-color: white;
-  border: 1px solid #e2e8f0;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-strong);
 }
 
 .skeleton-card-header {

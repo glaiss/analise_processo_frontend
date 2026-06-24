@@ -45,8 +45,8 @@
           </div>
 
           <div class="form-actions">
-            <button mat-stroked-button type="button" (click)="back()">Cancelar</button>
-            <button mat-raised-button color="primary" type="submit" [disabled]="associationForm.invalid || loading()">
+            <button mat-button type="button" (click)="back()">Cancelar</button>
+            <button mat-flat-button color="primary" type="submit" [disabled]="associationForm.invalid || loading()">
               @if (loading()) {
                 <span class="spinner-button">
                   <mat-spinner diameter="20" color="accent"></mat-spinner> Vinculando...

@@ -17,6 +17,11 @@
     <span class="menu-user-equipe">{{ auth.currentUser()?.equipe }}</span>
   </div>
   <mat-divider></mat-divider>
+  <button mat-menu-item (click)="theme.toggle()">
+    <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    <span>{{ theme.isDark() ? 'Modo Claro' : 'Modo Escuro' }}</span>
+  </button>
+  <mat-divider></mat-divider>
   <button mat-menu-item (click)="logout()">
     <mat-icon>logout</mat-icon>
     <span>Sair</span>

@@ -2,7 +2,7 @@
   padding: 24px;
   max-width: 1400px;
   margin: 0 auto;
-  background-color: #f8fafc;
+  background-color: var(--bg-page);
   min-height: 100vh;
 
   @media (max-width: 768px) {
@@ -27,7 +27,7 @@
       margin: 0;
       font-size: 2rem;
       font-weight: 700;
-      color: #1e293b;
+      color: var(--text-primary);
 
       @media (max-width: 768px) {
         font-size: 1.5rem;
@@ -36,7 +36,7 @@
 
     .subtitle {
       margin: 4px 0 0;
-      color: #64748b;
+      color: var(--text-tertiary);
       font-size: 1rem;
 
       @media (max-width: 768px) {
@@ -51,7 +51,7 @@
   align-items: center;
   justify-content: center;
   padding: 60px;
-  color: #64748b;
+  color: var(--text-tertiary);
 }
 
 .monitoring-grid {
@@ -74,7 +74,7 @@
 
   mat-card-header {
     mat-icon[mat-card-avatar] {
-      color: #3b82f6;
+      color: var(--blue-500);
     }
   }
 
@@ -106,12 +106,12 @@
 
       span {
         font-size: 0.875rem;
-        color: #475569;
+        color: var(--text-secondary);
       }
 
       .value {
         font-weight: 600;
-        color: #1e293b;
+        color: var(--text-primary);
       }
     }
   }
@@ -129,20 +129,20 @@
 
   .metric-label {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--text-tertiary);
   }
 
   .metric-value {
     font-weight: 600;
     font-size: 0.875rem;
-    color: #1e293b;
+    color: var(--text-primary);
   }
 
   .metric-percent {
     display: block;
     text-align: right;
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: var(--text-tertiary);
     margin-top: 4px;
   }
 
@@ -160,18 +160,18 @@
 
   .metric-label {
     font-size: 0.8125rem;
-    color: #64748b;
+    color: var(--text-tertiary);
   }
 
   .metric-value {
     font-weight: 600;
     font-size: 0.875rem;
-    color: #1e293b;
+    color: var(--text-primary);
   }
 }
 
 .no-data {
-  color: #94a3b8;
+  color: var(--text-tertiary);
   font-style: italic;
   font-size: 0.875rem;
   padding: 8px 0;
@@ -179,7 +179,7 @@
 
 .metric-note {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
   margin: 12px 0 0;
   line-height: 1.4;
 }

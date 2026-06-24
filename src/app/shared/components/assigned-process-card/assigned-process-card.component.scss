@@ -14,7 +14,6 @@
 
   .footer-info {
     padding: 16px;
-    background-color: #f5f5f5;
     .footer-row {
       display: flex;
       justify-content: space-between;
@@ -49,7 +48,7 @@
     font-weight: bold;
 
     mat-icon {
-      color: var(--primary-navy);
+      color: var(--text-primary);
 
       &.monitored {
         color: var(--accent-gold);
@@ -57,7 +56,7 @@
     }
 
     .process-number {
-      color: var(--primary-navy);
+      color: var(--text-primary);
       cursor: copy;
 
       &:hover {
@@ -67,7 +66,7 @@
   }
 
   mat-card-subtitle {
-    color: var(--secondary-slate);
+    color: var(--text-secondary);
     font-size: 0.9em;
   }
 
@@ -76,7 +75,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 4px 0;
-    border-bottom: 1px dotted #eee;
+    border-bottom: 1px dotted var(--border-color);
 
     &:last-child {
       border-bottom: none;
@@ -84,7 +83,7 @@
 
     .label {
       font-weight: 500;
-      color: var(--secondary-slate);
+      color: var(--text-secondary);
     }
 
     &.error-message {
@@ -100,8 +99,8 @@
       font-weight: 500;
     }
     .mat-chip-basic {
-      background-color: #e0e0e0;
-      color: #333;
+      background-color: var(--border-strong);
+      color: var(--text-primary);
     }
     .mat-chip-primary {
       background-color: var(--primary-navy);
@@ -116,7 +115,7 @@
       color: white;
     }
     .mat-chip-success { /* Custom success color */
-      background-color: #4CAF50; /* Green */
+      background-color: var(--green-500); /* Green */
       color: white;
     }
   }
@@ -129,7 +128,7 @@
     border-left: 5px solid var(--secondary-slate);
   }
   &.situation-baixado {
-    border-left: 5px solid #4CAF50; /* Green for success-like */
+    border-left: 5px solid var(--green-500); /* Green for success-like */
   }
 }
 

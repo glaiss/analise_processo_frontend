@@ -144,6 +144,10 @@ export class ProcessStateService {
     return this.http.post<void>(`${this.apiUrl}/${numero}/anotacoes`, texto);
   }
 
+  deletarAnotacao(numero: string, anotacaoId: string) {
+    return this.http.delete<void>(`${this.apiUrl}/${numero}/anotacoes/${anotacaoId}`);
+  }
+
   alternarMonitoramento(numero: string) {
     const previous = this.processes();
     this.processes.update(list =>

@@ -230,6 +230,29 @@ export class ProcessDetailsComponent implements OnInit {
     this.refreshDetails();
   }
 
+  deletarAnotacao(anotacaoId: string | undefined) {
+    if (!anotacaoId || !this.numero()) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Excluir anotação',
+        message: 'Tem certeza que deseja excluir esta anotação?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.processState.deletarAnotacao(this.numero()!, anotacaoId).subscribe({
+          next: () => {
+            this.notification.success('Anotação excluída com sucesso', 3000);
+            this.refreshDetails();
+          },
+          error: () => this.notification.error('Erro ao excluir anotação', 3000)
+        });
+      }
+    });
+  }
+
   onRetryDocumentos() {
     this.carregarDocumentos();
   }

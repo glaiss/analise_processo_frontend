@@ -332,7 +332,14 @@
                     <div class="timeline-content">
                       <div class="timeline-header">
                         <span class="user">{{ item.usuarioNome }}</span>
-                        <span class="date">{{ item.dataCriacao | date:'dd/MM HH:mm' }}</span>
+                      </div>
+                      <div class="timeline-date-row">
+                        <span class="date">{{ item.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
+                        @if (item.type === 'ANOTACAO') {
+                          <button mat-icon-button (click)="deletarAnotacao(item.id)" matTooltip="Excluir anotação" class="delete-annotation-btn">
+                            <mat-icon color="warn">delete_outline</mat-icon>
+                          </button>
+                        }
                       </div>
                       <p class="text">{{ item.texto }}</p>
                     </div>

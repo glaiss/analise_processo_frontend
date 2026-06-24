@@ -6,6 +6,120 @@
   --accent-gold: #C5A059;
   --surface-off-white: #F8F9FA;
   --urgency-red: #B00020;
+
+  --bg-page: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-hover: #f8fafc;
+  --bg-header-row: #f8fafc;
+  --bg-monitored: #fffbeb;
+  --bg-monitored-hover: #fef3c7;
+  --bg-indigo-50: #eef2ff;
+  --bg-blue-50: #eff6ff;
+  --bg-red-50: #ffebee;
+  --bg-orange-50: #fff3e0;
+  --bg-green-50: #e8f5e9;
+
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+
+  --primary-blue: #2563eb;
+  --text-on-primary: #ffffff;
+  --text-on-card-bg: #ffffff;
+
+  --border-color: #f1f5f9;
+  --border-strong: #e2e8f0;
+
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-800: #c62828;
+  --amber-500: #f59e0b;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --green-500: #4CAF50;
+  --green-800: #2e7d32;
+  --orange-800: #ef6c00;
+  --blue-500: #3b82f6;
+  --blue-700: #1976d2;
+  --indigo-600: #4f46e5;
+  --cyan-600: #0891b2;
+
+  --risk-bg-high: #fee2e2;
+  --risk-bg-medium-high: #ffedd5;
+  --risk-bg-medium: #fef3c7;
+  --risk-text-high: #dc2626;
+  --risk-text-medium-high: #ea580c;
+  --risk-text-medium: #d97706;
+  --risk-border-high: #fecaca;
+  --risk-border-medium-high: #fed7aa;
+  --risk-border-medium: #fde68a;
+
+  --table-min-width: 700px;
+}
+
+html {
+  height: 100%;
+
+  &.dark-mode {
+    --accent-gold: #fbbf24;
+    --urgency-red: #fca5a5;
+
+    --bg-page: #0f172a;
+    --bg-card: #1e293b;
+    --bg-surface: #1e293b;
+    --bg-hover: #334155;
+    --bg-header-row: #1e293b;
+    --bg-monitored: #1a1a2e;
+    --bg-monitored-hover: #2a2a4e;
+    --bg-indigo-50: #1e1b4b;
+    --bg-blue-50: #172554;
+    --bg-red-50: #450a0a;
+    --bg-orange-50: #431407;
+    --bg-green-50: #052e16;
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --text-tertiary: #94a3b8;
+
+    --primary-blue: #93c5fd;
+    --text-on-primary: #ffffff;
+    --text-on-card-bg: #f1f5f9;
+
+    --border-color: #334155;
+    --border-strong: #475569;
+
+    --red-500: #f87171;
+    --red-600: #fca5a5;
+    --red-800: #fecaca;
+    --amber-500: #fbbf24;
+    --emerald-500: #34d399;
+    --emerald-600: #6ee7b7;
+    --green-500: #4CAF50;
+    --green-800: #a5d6a7;
+    --orange-800: #ffcc80;
+    --blue-500: #60a5fa;
+    --blue-700: #90caf9;
+    --indigo-600: #a5b4fc;
+    --cyan-600: #67e8f9;
+
+    --risk-bg-high: #450a0a;
+    --risk-bg-medium-high: #431407;
+    --risk-bg-medium: #451a03;
+    --risk-text-high: #fca5a5;
+    --risk-text-medium-high: #fdba74;
+    --risk-text-medium: #fde68a;
+    --risk-border-high: #7f1d1d;
+    --risk-border-medium-high: #7c2d12;
+    --risk-border-medium: #78350f;
+
+    --chip-bg-alto: #450a0a;
+    --chip-text-alto: #fca5a5;
+    --chip-bg-intermediario: #431407;
+    --chip-text-intermediario: #fdba74;
+    --chip-bg-medio: #451a03;
+    --chip-text-medio: #fde68a;
+  }
 }
 
 $theme: mat.define-theme((
@@ -16,27 +130,59 @@ $theme: mat.define-theme((
   ),
 ));
 
-html {
-  height: 100%;
-}
+$dark-theme: mat.define-theme((
+  color: (
+    theme-type: dark,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+));
 
 body {
   @include mat.all-component-themes($theme);
   @include mat.system-level-typography($theme);
   @include mat.color-variants-backwards-compatibility($theme);
-  
-  background-color: var(--surface-off-white);
-  color: var(--primary-navy);
+
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   font-family: 'Inter', sans-serif;
   margin: 0;
   height: 100%;
+}
+
+html.dark-mode body {
+  @include mat.all-component-colors($dark-theme);
+  @include mat.color-variants-backwards-compatibility($dark-theme);
+}
+
+html.dark-mode {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
+    box-shadow: 0 0 0 1000px var(--bg-surface) inset !important;
+    -webkit-text-fill-color: var(--text-primary) !important;
+    caret-color: var(--text-primary);
+  }
+}
+
+html.dark-mode {
+  .mdc-text-field--outlined {
+    --mdc-outlined-text-field-outline-color: var(--border-color);
+  }
 }
 
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-// Snackbar Custom Styles
 .error-snackbar {
   background-color: #B00020 !important;
   color: white !important;

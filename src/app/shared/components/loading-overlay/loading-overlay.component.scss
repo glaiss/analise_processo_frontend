@@ -5,7 +5,7 @@
   justify-content: center;
   padding: 80px 24px;
   gap: 16px;
-  color: #64748b;
+  color: var(--text-tertiary);
 
   &.full-page {
     min-height: 60vh;
@@ -24,7 +24,7 @@
 .loading-message {
   margin: 0;
   font-size: 1rem;
-  color: #94a3b8;
+  color: var(--text-tertiary);
 
   @media (max-width: 768px) {
     font-size: 0.875rem;

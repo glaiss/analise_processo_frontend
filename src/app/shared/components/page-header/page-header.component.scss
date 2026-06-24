@@ -20,7 +20,7 @@
     margin: 0;
     font-size: 2rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-primary);
     line-height: 1.2;
 
     @media (max-width: 768px) {
@@ -30,7 +30,7 @@
 
   .subtitle {
     margin: 4px 0 0;
-    color: #64748b;
+    color: var(--text-tertiary);
     font-size: 1rem;
 
     @media (max-width: 768px) {

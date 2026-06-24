@@ -115,8 +115,8 @@
   }
 
   .role-badge {
-    background-color: #ECEFF1;
-    color: #455A64;
+    background-color: var(--bg-hover);
+    color: var(--text-secondary);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 11px;
@@ -124,8 +124,8 @@
   }
 
   .team-badge {
-    background-color: #E8F5E9;
-    color: #2E7D32;
+    background-color: var(--bg-green-50);
+    color: var(--green-800);
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
@@ -133,8 +133,8 @@
   }
 
   .no-team-badge {
-    background-color: #F5F5F5;
-    color: #757575;
+    background-color: var(--bg-hover);
+    color: var(--text-tertiary);
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 12px;
