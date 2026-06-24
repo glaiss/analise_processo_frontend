@@ -1,0 +1,18 @@
+<header class="page-header">
+  <div class="title-section">
+    @if (backButton) {
+      <button mat-icon-button class="back-btn" [routerLink]="backRouterLink || '..'">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+    }
+    <div>
+      <h1>{{ title }}</h1>
+      @if (subtitle) {
+        <p class="subtitle">{{ subtitle }}</p>
+      }
+    </div>
+  </div>
+  <div class="actions-section">
+    <ng-content/>
+  </div>
+</header>

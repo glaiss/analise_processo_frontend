@@ -15,12 +15,14 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Senha</mat-label>
-          <input matInput type="password" name="password" [(ngModel)]="credentials.password" required>
-          <mat-icon matSuffix>lock</mat-icon>
+          <input matInput [type]="hidePassword() ? 'password' : 'text'" name="password" [(ngModel)]="credentials.password" required>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword.set(!hidePassword())" [matTooltip]="hidePassword() ? 'Mostrar senha' : 'Ocultar senha'">
+            <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
 
-        @if (error) {
-          <p class="error-text">{{ error }}</p>
+        @if (error()) {
+          <p class="error-text">{{ error() }}</p>
         }
 
         <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!loginForm.form.valid || auth.isLoading()">

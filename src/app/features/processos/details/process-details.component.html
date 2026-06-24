@@ -84,10 +84,7 @@
                     </mat-list-item>
                     <mat-divider></mat-divider>
                   } @empty {
-                    <div class="empty-state">
-                      <mat-icon>info</mat-icon>
-                      <p>Nenhuma movimentação registrada para este processo.</p>
-                    </div>
+                    <app-empty-state icon="info" message="Nenhuma movimentação registrada para este processo."/>
                   }
                 </mat-list>
               </div>
@@ -123,10 +120,7 @@
                       </mat-card-content>
                     </mat-card>
                   } @empty {
-                    <div class="empty-state" style="height: 100%; width: 100%;">
-                      <mat-icon>info</mat-icon>
-                      <p>Nenhuma parte registrada neste processo.</p>
-                    </div>
+                    <app-empty-state icon="info" message="Nenhuma parte registrada neste processo."/>
                   }
                 </div>
               </div>
@@ -161,10 +155,7 @@
                         </mat-card-content>
                       </mat-card>
                     } @empty {
-                      <div class="empty-state">
-                        <mat-icon>info</mat-icon>
-                        <p>Nenhuma hipótese de score aplicada a este processo.</p>
-                      </div>
+                      <app-empty-state icon="info" message="Nenhuma hipótese de score aplicada a este processo."/>
                     }
                   </div>
                 </div>
@@ -198,10 +189,7 @@
                         </button>
                       </mat-list-item>
                     } @empty {
-                      <div class="empty-state">
-                        <mat-icon>info</mat-icon>
-                        <p>Nenhum documento encontrado.</p>
-                      </div>
+                      <app-empty-state icon="info" message="Nenhum documento encontrado."/>
                     }
                   </mat-nav-list>
                 </div>
@@ -334,7 +322,7 @@
                     </div>
                   </div>
                 } @empty {
-                  <p class="empty-state">Nenhuma anotação ou contato registrado.</p>
+                  <app-empty-state icon="sticky_note_2" message="Nenhuma anotação ou contato registrado."/>
                 }
               </div>
             </mat-card-content>
@@ -343,10 +331,7 @@
       </div>
     </div>
   } @else {
-    <div class="loading-state">
-      <mat-spinner diameter="40"></mat-spinner>
-      <p>Carregando detalhes do processo...</p>
-    </div>
+    <app-loading-overlay [isLoading]="true" message="Carregando detalhes do processo..." [fullPage]="true"/>
   }
 
   <input type="file" (change)="onFileSelected($event)" #fileInput style="display: none">

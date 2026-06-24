@@ -18,7 +18,17 @@
   }
 
   .assigned-process-list-item {
-    margin-bottom: 16px; /* Espaço entre os cards */
-    width: 100%; /* Ocupar toda a largura */
+    margin-bottom: 16px;
+    width: 100%;
+  }
+
+  .loading-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 24px;
+    color: #64748b;
+    font-size: 0.875rem;
   }
 }

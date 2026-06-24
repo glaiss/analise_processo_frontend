@@ -8,6 +8,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActuatorService, Health, Metric } from '../../../core/services/actuator.service';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
 
 interface MetricValue {
   label: string;
@@ -35,6 +37,8 @@ interface GcPause {
     MatDividerModule,
     MatChipsModule,
     MatTooltipModule,
+    PageHeaderComponent,
+    LoadingOverlayComponent,
   ],
   templateUrl: './monitoring.component.html',
   styleUrl: './monitoring.component.scss'

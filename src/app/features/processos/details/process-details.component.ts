@@ -24,6 +24,8 @@ import { Page } from '../../../core/models/processo';
 import { SafePipe } from '../../../shared/pipes/safe.pipe';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { UploadDocumentDialogComponent } from '../../../shared/components/upload-document-dialog/upload-document-dialog.component';
+import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-process-details',
@@ -46,7 +48,9 @@ import { UploadDocumentDialogComponent } from '../../../shared/components/upload
       MatSidenavModule,
       MatDialogModule,
 
-      SafePipe
+      SafePipe,
+      LoadingOverlayComponent,
+      EmptyStateComponent
     ],
   templateUrl: './process-details.component.html',
   styleUrl: './process-details.component.scss'
@@ -218,6 +222,14 @@ export class ProcessDetailsComponent implements OnInit {
         this.processo.set(p);
       });
     }
+  }
+
+  onRetryDetails() {
+    this.refreshDetails();
+  }
+
+  onRetryDocumentos() {
+    this.carregarDocumentos();
   }
 
   adicionarAnotacao() {

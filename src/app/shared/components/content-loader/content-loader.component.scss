@@ -1,0 +1,140 @@
+// Skeleton animation
+.skeleton-pulse {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: pulse 1.5s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// Text loader
+.skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+
+  &.w-30 { width: 30%; }
+  &.w-40 { width: 40%; }
+  &.w-50 { width: 50%; }
+  &.w-60 { width: 60%; }
+  &.w-70 { width: 70%; }
+  &.w-80 { width: 80%; }
+  &.w-90 { width: 90%; }
+}
+
+// Table loader
+.skeleton-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.skeleton-header {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.skeleton-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+}
+
+.skeleton-cell {
+  flex: 1;
+  height: 16px;
+}
+
+// Card loader
+.skeleton-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.skeleton-card {
+  padding: 20px;
+  border-radius: 12px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+}
+
+.skeleton-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.skeleton-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-card-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.skeleton-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// Chart loader
+.skeleton-chart {
+  display: flex;
+  gap: 16px;
+  padding: 24px 0;
+  min-height: 200px;
+  align-items: flex-end;
+}
+
+.skeleton-chart-y {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+
+.skeleton-chart-bars {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.skeleton-bar {
+  flex: 1;
+  height: 120px;
+  border-radius: 6px 6px 0 0;
+
+  &:nth-child(1) { height: 80px; }
+  &:nth-child(2) { height: 120px; }
+  &:nth-child(3) { height: 60px; }
+  &:nth-child(4) { height: 100px; }
+  &:nth-child(5) { height: 140px; }
+  &:nth-child(6) { height: 50px; }
+  &:nth-child(7) { height: 90px; }
+  &:nth-child(8) { height: 110px; }
+}

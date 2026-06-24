@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IngestionService } from '../../core/services/ingestion.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-ingestion',
@@ -21,7 +22,8 @@ import { NotificationService } from '../../core/services/notification.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    PageHeaderComponent
   ],
   templateUrl: './ingestion.component.html',
   styleUrl: './ingestion.component.scss'

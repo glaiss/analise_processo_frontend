@@ -1,0 +1,59 @@
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+}
+
+.title-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  .subtitle {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 1rem;
+
+    @media (max-width: 768px) {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.back-btn {
+  margin-top: 2px;
+}
+
+.actions-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 100%;
+
+    ::ng-deep > * {
+      flex: 1;
+    }
+  }
+}

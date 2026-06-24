@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-admin',
@@ -13,7 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
     RouterModule,
     MatCardModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    PageHeaderComponent
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'

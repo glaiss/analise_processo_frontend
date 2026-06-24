@@ -1,6 +1,5 @@
 <div class="page-container">
-  <h1>Enriquecimento de Dados</h1>
-  <p>Gerencie o processamento e reprocessamento de dados.</p>
+  <app-page-header title="Enriquecimento de Dados" subtitle="Gerencie o processamento e reprocessamento de dados"/>
 
   <div class="actions-grid">
     <mat-card>
@@ -12,7 +11,12 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-flat-button color="primary" [disabled]="loading()" (click)="executarProcessamento()">
-          Executar Processamento
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            Processando...
+          } @else {
+            Executar Processamento
+          }
         </button>
       </mat-card-actions>
     </mat-card>
@@ -26,7 +30,12 @@
       </mat-card-content>
       <mat-card-actions>
         <button mat-flat-button color="warn" [disabled]="loading()" (click)="executarReprocessamento()">
-          Executar Reprocessamento
+          @if (loading()) {
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            Reprocessando...
+          } @else {
+            Executar Reprocessamento
+          }
         </button>
       </mat-card-actions>
     </mat-card>

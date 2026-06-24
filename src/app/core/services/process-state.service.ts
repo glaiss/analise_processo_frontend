@@ -19,11 +19,14 @@ export class ProcessStateService {
   private error = signal<string | null>(null);
   private currentPage = signal<number>(0);
   private totalPages = signal<number>(0);
+  private totalElements = signal<number>(0);
   private mode = signal<'all' | 'monitorados'>('all');
 
   // Filters
   private filterNivel = signal<string[]>([]);
   private filterStatus = signal<StatusAtribuicao[]>([]);
+  private filterSituacao = signal<string[]>([]);
+  private filterAssunto = signal<string>('');
   private searchQuery = signal<string>('');
   private groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
 
@@ -33,6 +36,7 @@ export class ProcessStateService {
   readonly errorMessage = computed(() => this.error());
   readonly isLastPage = computed(() => this.currentPage() >= this.totalPages() - 1);
   readonly currentMode = computed(() => this.mode());
+  readonly totalElementCount = computed(() => this.totalElements());
 
   // Actions
   setMode(mode: 'all' | 'monitorados') {
@@ -57,12 +61,20 @@ export class ProcessStateService {
       params = params.set('numero', this.searchQuery());
     }
 
+    if (this.filterAssunto()) {
+      params = params.set('assunto', this.filterAssunto());
+    }
+
     this.filterNivel().forEach(nivel => {
       params = params.append('niveis', nivel);
     });
 
     this.filterStatus().forEach(status => {
       params = params.append('status', status);
+    });
+
+    this.filterSituacao().forEach(situacao => {
+      params = params.append('situacao', situacao);
     });
 
     const endpoint = this.mode() === 'monitorados' ? `${this.apiUrl}/monitorados` : this.apiUrl;
@@ -76,6 +88,7 @@ export class ProcessStateService {
             this.processes.set(pageData.content);
           }
           this.totalPages.set(pageData.totalPages);
+          this.totalElements.set(pageData.totalElements);
           this.loading.set(false);
         },
         error: (err) => {
@@ -104,6 +117,16 @@ export class ProcessStateService {
 
   setSearchQuery(query: string) {
     this.searchQuery.set(query);
+    this.loadProcesses();
+  }
+
+  setFilterSituacao(situacoes: string[]) {
+    this.filterSituacao.set(situacoes);
+    this.loadProcesses();
+  }
+
+  setFilterAssunto(assunto: string) {
+    this.filterAssunto.set(assunto);
     this.loadProcesses();
   }
 

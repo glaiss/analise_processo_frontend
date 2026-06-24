@@ -1,10 +1,5 @@
 <div class="user-management-container">
-  <div class="header-actions">
-    <button mat-icon-button (click)="back()">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Criar Novo Usuário</h1>
-  </div>
+  <app-page-header title="Criar Novo Usuário" [backButton]="true" backRouterLink="/admin"/>
 
   <mat-card class="form-card">
     <mat-card-content>
@@ -69,6 +64,7 @@
           <button mat-stroked-button type="button" (click)="back()">Cancelar</button>
           <button mat-raised-button color="primary" type="submit" [disabled]="userForm.invalid || loading()">
             @if (loading()) {
+              <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
               Salvando...
             } @else {
               Criar Usuário

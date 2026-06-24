@@ -7,11 +7,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService, Role } from '../../../core/services/user.service';
 import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { Page } from '../../../core/models/processo/pagination.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-user-management',
@@ -24,7 +26,9 @@ import { Page } from '../../../core/models/processo/pagination.model';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatProgressSpinnerModule,
+    PageHeaderComponent
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'

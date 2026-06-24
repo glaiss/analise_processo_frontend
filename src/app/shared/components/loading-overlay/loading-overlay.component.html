@@ -1,0 +1,6 @@
+@if (isLoading) {
+  <div class="loading-overlay" [class.full-page]="fullPage">
+    <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+    <p class="loading-message">{{ message }}</p>
+  </div>
+}

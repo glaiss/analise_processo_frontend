@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo/pagination.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-team-management',
@@ -25,7 +27,9 @@ import { Page } from '../../../core/models/processo/pagination.model';
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    PageHeaderComponent,
+    EmptyStateComponent
   ],
   templateUrl: './team-management.component.html',
   styleUrl: './team-management.component.scss'

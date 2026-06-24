@@ -4,11 +4,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { DistributionService } from '../../core/services/distribution.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { EquipeService, EquipeDto } from '../../core/services/equipe.service';
 import { Page } from '../../core/models/processo/pagination.model';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { LoadingOverlayComponent } from '../../shared/components/loading-overlay/loading-overlay.component';
 
 @Component({
   selector: 'app-distribuicao',
@@ -19,7 +22,10 @@ import { Page } from '../../core/models/processo/pagination.model';
     MatButtonModule,
     MatSelectModule,
     MatFormFieldModule,
-    FormsModule
+    MatProgressSpinnerModule,
+    FormsModule,
+    PageHeaderComponent,
+    LoadingOverlayComponent
   ],
   templateUrl: './distribuicao.component.html',
   styleUrl: './distribuicao.component.scss'

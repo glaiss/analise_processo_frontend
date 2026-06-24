@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { AssignedProcessesListComponent } from '../../shared/components/assigned-processes-list/assigned-processes-list.component';
+import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,8 @@ import { AssignedProcessesListComponent } from '../../shared/components/assigned
     CommonModule,
     MatButtonToggleModule,
     MatIconModule,
-    AssignedProcessesListComponent
+    AssignedProcessesListComponent,
+    PageHeaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

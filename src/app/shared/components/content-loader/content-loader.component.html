@@ -1,0 +1,58 @@
+@switch (type) {
+  @case ('table') {
+    <div class="skeleton-table">
+      <div class="skeleton-header">
+        @for (col of columnsArray; track col) {
+          <div class="skeleton-cell skeleton-pulse"></div>
+        }
+      </div>
+      @for (row of rowsArray; track row) {
+        <div class="skeleton-row">
+          @for (col of columnsArray; track col) {
+            <div class="skeleton-cell skeleton-pulse"></div>
+          }
+        </div>
+      }
+    </div>
+  }
+  @case ('card') {
+    <div class="skeleton-cards">
+      @for (row of rowsArray; track row) {
+        <div class="skeleton-card skeleton-pulse">
+          <div class="skeleton-card-header">
+            <div class="skeleton-avatar skeleton-pulse"></div>
+            <div class="skeleton-card-lines">
+              <div class="skeleton-line w-60 skeleton-pulse"></div>
+              <div class="skeleton-line w-40 skeleton-pulse"></div>
+            </div>
+          </div>
+          <div class="skeleton-card-body">
+            <div class="skeleton-line w-80 skeleton-pulse"></div>
+            <div class="skeleton-line w-50 skeleton-pulse"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+  @case ('chart') {
+    <div class="skeleton-chart">
+      <div class="skeleton-chart-y">
+        @for (row of rowsArray; track row) {
+          <div class="skeleton-line w-30 skeleton-pulse"></div>
+        }
+      </div>
+      <div class="skeleton-chart-bars">
+        @for (row of rowsArray; track row) {
+          <div class="skeleton-bar skeleton-pulse"></div>
+        }
+      </div>
+    </div>
+  }
+  @default {
+    <div class="skeleton-text">
+      @for (row of rowsArray; track row) {
+        <div class="skeleton-line" [class]="'w-' + [60, 80, 70, 90, 50][row % 5] + ' skeleton-pulse'"></div>
+      }
+    </div>
+  }
+}

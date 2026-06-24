@@ -1,10 +1,5 @@
 <div class="team-management-container">
-  <div class="header-actions">
-    <button mat-icon-button (click)="back()" aria-label="Voltar ao painel administrativo">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Gestão de Equipes</h1>
-  </div>
+  <app-page-header title="Gestão de Equipes" [backButton]="true" backRouterLink="/admin"/>
 
   <div class="management-grid">
     <!-- Formulário de Criação -->
@@ -64,10 +59,7 @@
           </div>
         } @else {
           @if (equipes().length === 0) {
-            <div class="empty-state">
-              <mat-icon>group_off</mat-icon>
-              <p>Nenhuma equipe cadastrada no momento.</p>
-            </div>
+            <app-empty-state icon="group_off" message="Nenhuma equipe cadastrada no momento."/>
           } @else {
             <div class="table-container">
               <table mat-table [dataSource]="equipes()" class="mat-elevation-z1">

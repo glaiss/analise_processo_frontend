@@ -1,18 +1,30 @@
 <div class="page-container">
   <div class="header-container">
     <h1>{{ title }}</h1>
-    <span class="count-badge">Total: {{ totalElements }}</span>
+    @if (totalElements > 0) {
+      <span class="count-badge">Total: {{ totalElements }}</span>
+    }
   </div>
-  
-  @if (isLoading()) {
-    <p>Carregando...</p>
+
+  <app-loading-overlay [isLoading]="isLoading() && atribuicoes.length === 0" message="Carregando {{ title.toLowerCase() }}..."/>
+
+  @if (atribuicoes.length === 0 && !isLoading()) {
+    <app-empty-state icon="assignment" message="Nenhum processo atribuído {{ mode === 'meus' ? 'a você' : 'à equipe' }} ainda."/>
   }
 
-  <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="isLoading()">
-    @for (atribuicao of atribuicoes; track atribuicao.id) {
-      <div class="assigned-process-list-item">
-        <app-assigned-process-card [atribuicao]="atribuicao" (monitoramentoToggled)="resetList()"></app-assigned-process-card>
-      </div>
-    }
-  </app-infinite-scroll>
+  @if (atribuicoes.length > 0) {
+    <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="isLoading()">
+      @for (atribuicao of atribuicoes; track atribuicao.id) {
+        <div class="assigned-process-list-item">
+          <app-assigned-process-card [atribuicao]="atribuicao" (monitoramentoToggled)="resetList()"></app-assigned-process-card>
+        </div>
+      }
+      @if (isLoading()) {
+        <div class="loading-more">
+          <mat-spinner diameter="24"></mat-spinner>
+          <span>Carregando mais...</span>
+        </div>
+      }
+    </app-infinite-scroll>
+  }
 </div>

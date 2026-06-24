@@ -6,11 +6,13 @@ import { DistributionService } from '../../../core/services/distribution.service
 import { InfiniteScrollComponent } from '../infinite-scroll/infinite-scroll.component';
 import { AssignedProcessCardComponent } from '../assigned-process-card/assigned-process-card.component';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
+import { LoadingOverlayComponent } from '../loading-overlay/loading-overlay.component';
+import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 @Component({
   selector: 'app-assigned-processes-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatProgressSpinnerModule, InfiniteScrollComponent, AssignedProcessCardComponent],
+  imports: [CommonModule, MatCardModule, MatProgressSpinnerModule, InfiniteScrollComponent, AssignedProcessCardComponent, LoadingOverlayComponent, EmptyStateComponent],
   templateUrl: './assigned-processes-list.component.html',
   styleUrl: './assigned-processes-list.component.scss'
 })

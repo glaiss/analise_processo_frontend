@@ -1,10 +1,5 @@
 <div class="association-container">
-  <div class="header-actions">
-    <button mat-icon-button (click)="back()" aria-label="Voltar ao painel administrativo">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>Vincular Usuários a Equipes</h1>
-  </div>
+  <app-page-header title="Vincular Usuários a Equipes" [backButton]="true" backRouterLink="/admin"/>
 
   <div class="association-grid">
     <!-- Formulário de Vinculação -->
@@ -80,10 +75,7 @@
           </div>
         } @else {
           @if (usuarios().length === 0) {
-            <div class="empty-state">
-              <mat-icon>person_off</mat-icon>
-              <p>Nenhum usuário cadastrado no sistema.</p>
-            </div>
+            <app-empty-state icon="person_off" message="Nenhum usuário cadastrado no sistema."/>
           } @else {
             <div class="table-container">
               <table mat-table [dataSource]="usuarios()" class="mat-elevation-z1">

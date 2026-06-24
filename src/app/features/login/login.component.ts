@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../core/services/auth.service';
 import { Router } from '@angular/router';
 
@@ -21,7 +22,8 @@ import { Router } from '@angular/router';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatTooltipModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
@@ -35,15 +37,23 @@ export class LoginComponent {
     password: ''
   };
 
-  error: string | null = null;
+  hidePassword = signal(true);
+  error = signal<string | null>(null);
 
   onSubmit() {
+    this.error.set(null);
     this.auth.login(this.credentials).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']);
       },
-      error: () => {
-        this.error = 'Usuário ou senha inválidos';
+      error: (err) => {
+        if (err.status === 0) {
+          this.error.set('Sistema indisponível. Verifique sua conexão e tente novamente.');
+        } else if (err.status >= 500) {
+          this.error.set('Erro interno do servidor. Tente novamente mais tarde.');
+        } else {
+          this.error.set('Usuário ou senha inválidos.');
+        }
       }
     });
   }

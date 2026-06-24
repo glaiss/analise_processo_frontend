@@ -1,6 +1,8 @@
 <div class="page-container">
-  <h1>Distribuição de Processos</h1>
-  
+  <app-page-header title="Distribuição de Processos" subtitle="Distribuir processos para equipes de análise"/>
+
+  <app-loading-overlay [isLoading]="loadingEquipes()" message="Carregando equipes..."/>
+
   <mat-card>
     <mat-card-content>
       <p>Selecione a equipe de destino ou execute para todas as equipes de forma global:</p>
@@ -18,7 +20,12 @@
       </div>
 
       <button mat-raised-button color="primary" (click)="executar()" [disabled]="loading() || loadingEquipes()">
-        {{ loading() ? 'Executando...' : 'Executar Distribuição' }}
+        @if (loading()) {
+          <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+          Executando...
+        } @else {
+          Executar Distribuição
+        }
       </button>
     </mat-card-content>
   </mat-card>

@@ -14,6 +14,8 @@ import { UserService, UsuarioResponse } from '../../../core/services/user.servic
 import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo/pagination.model';
+import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
+import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-user-team-association',
@@ -28,7 +30,9 @@ import { Page } from '../../../core/models/processo/pagination.model';
     MatButtonModule,
     MatIconModule,
     MatTableModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    PageHeaderComponent,
+    EmptyStateComponent
   ],
   templateUrl: './user-team-association.component.html',
   styleUrl: './user-team-association.component.scss'
