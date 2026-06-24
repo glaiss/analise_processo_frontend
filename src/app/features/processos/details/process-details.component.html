@@ -142,7 +142,7 @@
                       {{ p.scoreFinal }} pontos
                     </div>
                   </div>
-                  
+
                   <div class="hipoteses-list">
                     @for (hip of p.hipoteses; track $index) {
                       <mat-card class="hipotese-card">
@@ -173,38 +173,50 @@
               <div class="tab-content documents-tab-layout">
                 <div class="documents-sidebar">
                   <div class="sidebar-actions">
-                    <button mat-stroked-button color="primary" (click)="downloadTodosDocumentos()" class="full-width">
-                      <mat-icon>download</mat-icon> Baixar Todos
-                    </button>
-                    <button mat-stroked-button color="primary" (click)="fileInput.click()" class="full-width">
-                      <mat-icon>upload</mat-icon> Enviar Documento
-                    </button>
-                  </div>
-                  <mat-nav-list class="documents-nav-list">
-                    @for (doc of documentos().content; track doc.id) {
-                      <mat-list-item (click)="selecionarDocumento(doc)" [class.selected]="documentoSelecionado()?.id === doc.id" class="doc-item">
-                        <mat-icon matListItemIcon>description</mat-icon>
-                        <div matListItemTitle>{{ doc.nomeArquivo }}</div>
-                        <div matListItemLine>{{ doc.tamanho / 1024 | number:'1.0-0' }} KB - {{ doc.createdDate | date:'dd/MM/yyyy' }}</div>
-                        <button mat-icon-button (click)="$event.stopPropagation(); onDeleteDocument(doc)" matTooltip="Excluir documento" class="delete-doc-btn">
-                          <mat-icon color="warn">delete</mat-icon>
-                        </button>
-                      </mat-list-item>
-                    } @empty {
-                      <app-empty-state icon="info" message="Nenhum documento encontrado."/>
+                    <span class="sidebar-title">Documentos</span>
+                    @if (documentos().content.length > 0) {
+                      <span class="doc-count-badge">{{ documentos().content.length }}</span>
                     }
-                  </mat-nav-list>
+                    <span class="spacer"></span>
+                    <button mat-flat-button color="primary" class="upload-btn" (click)="fileInput.click()">Upload</button>
+                  </div>
+                  @if (documentos().content.length > 0) {
+                    <div class="documents-list">
+                      @for (doc of documentos().content; track doc.id) {
+                        <div (click)="selecionarDocumento(doc)" [class.selected]="documentoSelecionado()?.id === doc.id" class="doc-item">
+                          <mat-icon class="doc-check-icon">check_circle</mat-icon>
+                          <span class="doc-name">{{ doc.nomeArquivo }}</span>
+                        </div>
+                      }
+                    </div>
+                  } @else {
+                    <div class="sidebar-empty">
+                      <app-empty-state icon="description" message="Nenhum documento encontrado."/>
+                    </div>
+                  }
                 </div>
 
                 <div class="document-viewer">
                   @if (documentoSelecionado(); as selectedDoc) {
                     <div class="viewer-header">
-                      <h3>{{ selectedDoc.nomeArquivo }}</h3>
+                      <div class="viewer-info">
+                        <mat-icon class="viewer-doc-icon" [class]="getDocIcon(selectedDoc.contentType)">{{ getDocIcon(selectedDoc.contentType) }}</mat-icon>
+                        <div class="viewer-doc-details">
+                          <h3>{{ selectedDoc.nomeArquivo }}</h3>
+                          <span class="viewer-doc-meta">
+                            <span class="meta-type">{{ selectedDoc.contentType }}</span>
+                            <span class="meta-sep">•</span>
+                            <span>{{ formatFileSize(selectedDoc.tamanho) }}</span>
+                            <span class="meta-sep">•</span>
+                            <span>{{ selectedDoc.createdDate | date:'dd/MM/yyyy' }}</span>
+                          </span>
+                        </div>
+                      </div>
                       <div class="viewer-actions">
-                        <button mat-icon-button (click)="baixarDocumento(selectedDoc)" matTooltip="Baixar documento">
+                        <button mat-icon-button (click)="baixarDocumento(selectedDoc)" matTooltip="Baixar">
                           <mat-icon>download</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="onDeleteDocument(selectedDoc)" matTooltip="Excluir documento">
+                        <button mat-icon-button (click)="onDeleteDocument(selectedDoc)" matTooltip="Excluir">
                           <mat-icon color="warn">delete</mat-icon>
                         </button>
                       </div>
@@ -224,8 +236,9 @@
                           </div>
                         } @else {
                           <div class="unsupported-viewer">
-                            <mat-icon>visibility_off</mat-icon>
-                            <p>Visualização não disponível para este tipo de arquivo ({{ selectedDoc.contentType }}).</p>
+                            <mat-icon class="unsupported-icon">insert_drive_file</mat-icon>
+                            <p class="unsupported-text">Visualização não disponível para este tipo de arquivo</p>
+                            <span class="unsupported-type">{{ selectedDoc.contentType }}</span>
                             <button mat-flat-button color="primary" (click)="baixarDocumento(selectedDoc)">
                               <mat-icon>download</mat-icon> Baixar para visualizar
                             </button>
@@ -235,8 +248,9 @@
                     </div>
                   } @else {
                     <div class="no-selection">
-                      <mat-icon>description</mat-icon>
-                      <p>Selecione um documento na lateral para visualizar</p>
+                      <mat-icon class="no-sel-icon">folder_open</mat-icon>
+                      <p class="no-sel-text">Selecione um documento na lista ao lado</p>
+                      <span class="no-sel-hint">ou clique em "Upload" para adicionar um novo documento</span>
                     </div>
                   }
                 </div>

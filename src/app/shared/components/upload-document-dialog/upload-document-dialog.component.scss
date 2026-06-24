@@ -1,1 +1,19 @@
-/* empty stylesheet */
+:host {
+  display: block;
+  min-width: 480px;
+}
+
+mat-dialog-content {
+  min-height: 90px;
+  padding: 24px;
+  max-height: none;
+  overflow: hidden;
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+}
+
+p {
+  margin: 0 0 16px;
+}

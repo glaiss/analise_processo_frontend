@@ -175,7 +175,9 @@ export class ProcessDetailsComponent implements OnInit {
     const file: File = event.target.files[0];
     if (file && this.numero()) {
       const dialogRef = this.dialog.open(UploadDocumentDialogComponent, {
-        data: { fileName: file.name }
+        data: { fileName: file.name },
+        width: '500px',
+        disableClose: true
       });
 
       dialogRef.afterClosed().subscribe(result => {
@@ -286,6 +288,21 @@ export class ProcessDetailsComponent implements OnInit {
     if (score > 100) return 'high';
     if (score > 50) return 'medium';
     return 'low';
+  }
+
+  getDocIcon(contentType: string): string {
+    if (contentType.includes('pdf')) return 'picture_as_pdf';
+    if (contentType.includes('image')) return 'image';
+    if (contentType.includes('word') || contentType.includes('document')) return 'article';
+    if (contentType.includes('spreadsheet') || contentType.includes('excel') || contentType.includes('sheet')) return 'table_chart';
+    if (contentType.includes('text') || contentType.includes('plain')) return 'text_snippet';
+    return 'insert_drive_file';
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
   getLevelColor(level: string): 'primary' | 'accent' | 'warn' | undefined {
