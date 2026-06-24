@@ -1,3 +1,48 @@
 .app-toolbar { display: flex; align-items: center; }
 .spacer { flex: 1 1 auto; }
 .user-toolbar-info { display: flex; align-items: center; gap: 8px; }
+
+.user-avatar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #C5A059;
+  transition: opacity 0.15s;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.user-avatar {
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+:host ::ng-deep .menu-user-info {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px;
+  gap: 2px;
+
+  .menu-user-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 10px;
+  }
+
+  .menu-user-equipe {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+}

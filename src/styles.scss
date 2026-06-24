@@ -8,8 +8,13 @@
   --urgency-red: #B00020;
 }
 
-// Define a minimal theme
-$theme: mat.define-theme();
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+));
 
 html {
   height: 100%;
@@ -18,6 +23,7 @@ html {
 body {
   @include mat.all-component-themes($theme);
   @include mat.system-level-typography($theme);
+  @include mat.color-variants-backwards-compatibility($theme);
   
   background-color: var(--surface-off-white);
   color: var(--primary-navy);

@@ -61,6 +61,10 @@
       gap: 12px;
       min-width: 0;
       flex: 1 1 auto;
+
+      .monitored {
+        color: #C5A059;
+      }
     }
 
     h1 {

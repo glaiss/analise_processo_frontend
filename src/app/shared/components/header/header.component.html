@@ -5,9 +5,20 @@
   <span>{{ auth.currentUser()?.equipe || 'Sherlock Law' }}</span>
   <span class="spacer"></span>
   <div class="user-toolbar-info">
-      <span class="user-name">{{ auth.currentUser()?.nome || auth.currentUser()?.username }}</span>
-      <button mat-button (click)="logout()">
-          <mat-icon>logout</mat-icon> Sair
-      </button>
+    <button class="user-avatar-btn" [matMenuTriggerFor]="userMenu">
+      <span class="user-avatar">{{ avatarLetter }}</span>
+    </button>
   </div>
 </mat-toolbar>
+
+<mat-menu #userMenu="matMenu" xPosition="before" yPosition="below">
+  <div class="menu-user-info">
+    <span class="menu-user-name">{{ auth.currentUser()?.nome || auth.currentUser()?.username }}</span>
+    <span class="menu-user-equipe">{{ auth.currentUser()?.equipe }}</span>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()">
+    <mat-icon>logout</mat-icon>
+    <span>Sair</span>
+  </button>
+</mat-menu>
