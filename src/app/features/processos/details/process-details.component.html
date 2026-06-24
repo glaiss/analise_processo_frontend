@@ -97,32 +97,34 @@
                 Partes e Advogados
               </ng-template>
               <div class="tab-content">
-                <div class="partes-grid">
-                  @for (parte of p.partes; track $index) {
-                    <mat-card class="parte-card">
-                      <mat-card-header>
-                        <mat-icon mat-card-avatar>person</mat-icon>
-                        <mat-card-title>{{ parte.nome }}</mat-card-title>
-                        <mat-card-subtitle>{{ parte.polo }} • {{ parte.documento || 'Sem doc' }}</mat-card-subtitle>
-                      </mat-card-header>
-                      <mat-card-content>
-                        <div class="advogados-section">
-                          <span class="section-title">Advogados:</span>
-                          @for (adv of parte.advogados; track $index) {
-                            <div class="adv-item">
-                              <mat-icon>account_balance</mat-icon>
-                              <span>{{ adv }}</span>
-                            </div>
-                          } @empty {
-                            <p class="no-adv">Nenhum advogado cadastrado</p>
-                          }
-                        </div>
-                      </mat-card-content>
-                    </mat-card>
-                  } @empty {
-                    <app-empty-state icon="info" message="Nenhuma parte registrada neste processo."/>
-                  }
-                </div>
+                @if (p.partes.length > 0) {
+                  <div class="partes-grid">
+                    @for (parte of p.partes; track $index) {
+                      <mat-card class="parte-card">
+                        <mat-card-header>
+                          <mat-icon mat-card-avatar>person</mat-icon>
+                          <mat-card-title>{{ parte.nome }}</mat-card-title>
+                          <mat-card-subtitle>{{ parte.polo }} • {{ parte.documento || 'Sem doc' }}</mat-card-subtitle>
+                        </mat-card-header>
+                        <mat-card-content>
+                          <div class="advogados-section">
+                            <span class="section-title">Advogados:</span>
+                            @for (adv of parte.advogados; track $index) {
+                              <div class="adv-item">
+                                <mat-icon>account_balance</mat-icon>
+                                <span>{{ adv }}</span>
+                              </div>
+                            } @empty {
+                              <p class="no-adv">Nenhum advogado cadastrado</p>
+                            }
+                          </div>
+                        </mat-card-content>
+                      </mat-card>
+                    }
+                  </div>
+                } @else {
+                  <app-empty-state icon="info" message="Nenhuma parte registrada neste processo."/>
+                }
               </div>
             </mat-tab>
 

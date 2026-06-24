@@ -202,13 +202,21 @@
 
   .tab-content {
     padding: 24px;
+    display: flex;
+    flex-direction: column;
     min-height: 400px;
 
     @media (max-width: 768px) {
       padding: 16px;
       min-height: 300px;
     }
-    
+
+    &:has(> app-empty-state:only-child) {
+      align-items: center;
+      justify-content: center;
+      min-height: 300px;
+    }
+
     &.documents-tab-layout {
       padding: 0;
       display: flex;
@@ -713,28 +721,6 @@
         line-height: 1.4;
       }
     }
-  }
-}
-
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px;
-  color: #94a3b8;
-  font-style: italic;
-  
-  mat-icon {
-    font-size: 32px;
-    width: 32px;
-    height: 32px;
-    margin-bottom: 8px;
-  }
-
-  @media (max-width: 768px) {
-    padding: 24px 16px;
   }
 }
 
