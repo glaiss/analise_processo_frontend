@@ -77,6 +77,14 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       min-width: 0;
+
+      &.copy-number {
+        cursor: copy;
+
+        &:hover {
+          color: #2563eb;
+        }
+      }
     }
 
     @media (max-width: 768px) {

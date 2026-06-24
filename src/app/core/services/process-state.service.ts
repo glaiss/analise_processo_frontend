@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
 import { StatusAtribuicao } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
-import { tap } from 'rxjs';
+import { tap, catchError, of, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -145,8 +145,17 @@ export class ProcessStateService {
   }
 
   alternarMonitoramento(numero: string) {
+    const previous = this.processes();
+    this.processes.update(list =>
+      list.map(p =>
+        p.numero === numero ? { ...p, monitorado: !p.monitorado } : p
+      )
+    );
     return this.http.post<void>(`${this.apiUrl}/${numero}/monitorar`, {}).pipe(
-      tap(() => this.loadProcesses())
+      catchError(() => {
+        this.processes.set(previous);
+        return of(void 0);
+      })
     );
   }
 

@@ -14,7 +14,7 @@
       </div>
       <div class="title-row">
         <div class="title-with-actions">
-          <h1 class="font-mono">{{ p.numero }}</h1>
+          <h1 class="font-mono copy-number" (click)="copyProcessNumber()" matTooltip="Copiar número do processo">{{ p.numero }}</h1>
           <button mat-icon-button (click)="toggleMonitoramento()" matTooltip="Alternar Monitoramento">
             <mat-icon [class.monitored]="p.monitorado">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
           </button>

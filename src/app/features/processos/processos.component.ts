@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, ActivatedRoute } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -53,6 +53,7 @@ import { ContentLoaderComponent } from '../../shared/components/content-loader/c
 export class ProcessosComponent implements OnInit {
   processState = inject(ProcessStateService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   
   searchQuery = signal<string>('');
   showAdvanced = signal(false);
@@ -121,7 +122,8 @@ export class ProcessosComponent implements OnInit {
     this.processState.setFilterAssunto(this.selectedAssunto());
   }
 
-  toggleMonitoramento(numero: string) {
+  toggleMonitoramento(numero: string, event: MouseEvent) {
+    event.stopPropagation();
     this.processState.alternarMonitoramento(numero).subscribe();
   }
   
@@ -135,6 +137,10 @@ export class ProcessosComponent implements OnInit {
 
   onRetry() {
     this.processState.loadProcesses();
+  }
+
+  openProcess(numero: string) {
+    this.router.navigate(['/processos', numero]);
   }
 
   clearFilters() {

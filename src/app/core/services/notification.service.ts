@@ -13,30 +13,29 @@ export class NotificationService {
     verticalPosition: 'bottom',
   };
 
-  success(message: string) {
+  private show(message: string, panelClass: string, duration: number = 5000) {
     setTimeout(() => {
       this.snackBar.open(message, 'Fechar', {
         ...this.defaultConfig,
-        panelClass: ['success-snackbar']
+        duration,
+        panelClass: [panelClass]
       });
     });
   }
 
-  error(message: string) {
-    setTimeout(() => {
-      this.snackBar.open(message, 'Fechar', {
-        ...this.defaultConfig,
-        panelClass: ['error-snackbar']
-      });
-    });
+  success(message: string, duration?: number) {
+    this.show(message, 'success-snackbar', duration);
   }
 
-  warn(message: string) {
-    setTimeout(() => {
-      this.snackBar.open(message, 'Fechar', {
-        ...this.defaultConfig,
-        panelClass: ['warn-snackbar']
-      });
-    });
+  error(message: string, duration?: number) {
+    this.show(message, 'error-snackbar', duration);
+  }
+
+  warn(message: string, duration?: number) {
+    this.show(message, 'warn-snackbar', duration);
+  }
+
+  info(message: string, duration?: number) {
+    this.show(message, 'info-snackbar', duration);
   }
 }

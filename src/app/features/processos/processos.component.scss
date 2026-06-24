@@ -232,17 +232,12 @@
       font-size: 0.6875rem;
     }
 
-    &.acoes-cell {
-      position: sticky;
-      right: 0;
-      background-color: #f8fafc;
-      z-index: 1;
-    }
   }
 
   .mat-mdc-row {
     height: 52px;
     transition: background-color 0.15s ease;
+    cursor: pointer;
 
     &:hover {
       background-color: #f8fafc;
@@ -267,18 +262,7 @@
       padding: 10px 8px;
       font-size: 0.8125rem;
     }
-
-    &.acoes-cell {
-      position: sticky;
-      right: 0;
-      background-color: white;
-      z-index: 1;
-    }
   }
-}
-
-.monitorado-row .acoes-cell {
-  background-color: #fffbeb !important;
 }
 
 .monitored {

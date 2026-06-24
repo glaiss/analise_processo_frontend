@@ -5,39 +5,42 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AtribuicaoProcessoResumoDTO, StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/index';
 import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-assigned-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule, MatSnackBarModule],
+  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss'
 })
 export class AssignedProcessCardComponent {
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Output() viewDetails = new EventEmitter<string>();
-  @Output() monitoramentoToggled = new EventEmitter<void>();
 
   private router = inject(Router);
   private processState = inject(ProcessStateService);
-  private snackBar = inject(MatSnackBar);
+  private notification = inject(NotificationService);
 
   toggleMonitoramento(event: Event) {
     event.stopPropagation();
-    this.processState.alternarMonitoramento(this.atribuicao.processoNumero).subscribe(() => {
-        this.monitoramentoToggled.emit();
+    const previous = this.atribuicao.monitorado;
+    this.atribuicao.monitorado = !this.atribuicao.monitorado;
+    this.processState.alternarMonitoramento(this.atribuicao.processoNumero).subscribe({
+      error: () => {
+        this.atribuicao.monitorado = previous;
+      }
     });
   }
 
   copyProcessNumber(event: Event) {
     event.stopPropagation();
     navigator.clipboard.writeText(this.atribuicao.processoNumero).then(() => {
-      this.snackBar.open('Número do processo copiado!', 'Fechar', { duration: 2000 });
+      this.notification.success('Número do processo copiado!', 2000);
     });
   }
 

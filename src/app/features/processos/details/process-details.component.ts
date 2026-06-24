@@ -18,8 +18,8 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo';
 import { SafePipe } from '../../../shared/pipes/safe.pipe';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
@@ -59,7 +59,7 @@ export class ProcessDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private processState = inject(ProcessStateService);
   private documentoService = inject(DocumentoService);
-  private snackBar = inject(MatSnackBar);
+  private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private location = inject(Location);
 
@@ -115,7 +115,7 @@ export class ProcessDetailsComponent implements OnInit {
       error: () => {
         this.previewUrl.set(null);
         this.carregandoPreview.set(false);
-        this.snackBar.open('Erro ao carregar pré-visualização', 'Fechar', { duration: 3000 });
+        this.notification.error('Erro ao carregar pré-visualização', 3000);
       }
     });
   }
@@ -151,21 +151,21 @@ export class ProcessDetailsComponent implements OnInit {
       if (result) {
         this.documentoService.deletar(this.numero()!, doc.id).subscribe({
           next: () => {
-            this.snackBar.open('Documento excluído com sucesso', 'Fechar', { duration: 3000 });
+            this.notification.success('Documento excluído com sucesso', 3000);
             if (this.documentoSelecionado()?.id === doc.id) {
               this.documentoSelecionado.set(null);
               this.previewUrl.set(null);
             }
             this.carregarDocumentos();
           },
-          error: () => this.snackBar.open('Erro ao excluir documento', 'Fechar', { duration: 3000 })
+          error: () => this.notification.error('Erro ao excluir documento', 3000)
         });
       }
     });
   }
 
   downloadTodosDocumentos() {
-    this.snackBar.open('Iniciando download de todos os documentos...', 'Fechar', { duration: 2000 });
+    this.notification.info('Iniciando download de todos os documentos...', 2000);
     this.documentos().content.forEach(doc => this.baixarDocumento(doc));
   }
 
@@ -184,10 +184,10 @@ export class ProcessDetailsComponent implements OnInit {
         const isContrato = result?.isContrato ?? false;
         this.documentoService.upload(this.numero()!, file, isContrato).subscribe({
           next: () => {
-            this.snackBar.open('Documento enviado com sucesso', 'Fechar', { duration: 3000 });
+            this.notification.success('Documento enviado com sucesso', 3000);
             this.carregarDocumentos();
           },
-          error: () => this.snackBar.open('Erro ao enviar documento', 'Fechar', { duration: 3000 })
+          error: () => this.notification.error('Erro ao enviar documento', 3000)
         });
       });
     }
@@ -271,10 +271,10 @@ export class ProcessDetailsComponent implements OnInit {
       if (result) {
         this.processState.discardProcess(this.numero()!).subscribe({
           next: () => {
-            this.snackBar.open('Processo descartado com sucesso', 'Fechar', { duration: 3000 });
+            this.notification.success('Processo descartado com sucesso', 3000);
             this.goBack();
           },
-          error: () => this.snackBar.open('Erro ao descartar processo', 'Fechar', { duration: 3000 })
+          error: () => this.notification.error('Erro ao descartar processo', 3000)
         });
       }
     });
@@ -282,6 +282,15 @@ export class ProcessDetailsComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  copyProcessNumber() {
+    const numero = this.processo()?.numero;
+    if (numero) {
+      navigator.clipboard.writeText(numero).then(() => {
+        this.notification.success('Número do processo copiado!', 2000);
+      });
+    }
   }
 
   getScoreColor(score: number): string {
