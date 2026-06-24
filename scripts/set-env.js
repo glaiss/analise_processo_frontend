@@ -1,10 +1,12 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 // Caminhos dos arquivos
 const devPath = path.resolve(__dirname, '../src/environments/environment.ts');
 const prodPath = path.resolve(__dirname, '../src/environments/environment.prod.ts');
 const envPath = path.resolve(__dirname, '../.env');
+const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../package.json'), 'utf8'));
 
 // Função simples para carregar .env se existir (útil para desenvolvimento local)
 if (fs.existsSync(envPath)) {
@@ -25,9 +27,13 @@ if (!process.env.API_URL) {
   console.log(`Configuring environments with API_URL: ${apiUrl}`);
 }
 
+// Version: package.json version (set via npm version patch|minor|major before each deploy)
+let version = pkg.version;
+
 const generateConfig = (isProd) => `export const environment = {
   production: ${isProd},
-  apiUrl: '${apiUrl}'
+  apiUrl: '${apiUrl}',
+  version: '${version}'
 };
 `;
 
@@ -40,4 +46,4 @@ if (!fs.existsSync(dir)) {
 fs.writeFileSync(devPath, generateConfig(false));
 fs.writeFileSync(prodPath, generateConfig(true));
 
-console.log('Environment files generated successfully.');
+console.log(`Environment files generated successfully. Version: ${version}`);
