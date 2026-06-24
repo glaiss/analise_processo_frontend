@@ -4,6 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AtribuicaoProcessoResumoDTO, StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/index';
 import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
@@ -12,7 +14,7 @@ import { ProcessStateService } from '../../../core/services/process-state.servic
 @Component({
   selector: 'app-assigned-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, MatDividerModule],
+  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule, MatSnackBarModule],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss'
 })
@@ -23,11 +25,19 @@ export class AssignedProcessCardComponent {
 
   private router = inject(Router);
   private processState = inject(ProcessStateService);
+  private snackBar = inject(MatSnackBar);
 
   toggleMonitoramento(event: Event) {
     event.stopPropagation();
     this.processState.alternarMonitoramento(this.atribuicao.processoNumero).subscribe(() => {
         this.monitoramentoToggled.emit();
+    });
+  }
+
+  copyProcessNumber(event: Event) {
+    event.stopPropagation();
+    navigator.clipboard.writeText(this.atribuicao.processoNumero).then(() => {
+      this.snackBar.open('Número do processo copiado!', 'Fechar', { duration: 2000 });
     });
   }
 
@@ -63,7 +73,8 @@ export class AssignedProcessCardComponent {
     }
   }
 
-  openDetails() {
+  openDetails(event: Event) {
+    event.stopPropagation();
     this.router.navigate(['/processos', this.atribuicao.processoNumero]);
   }
 }

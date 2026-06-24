@@ -2,14 +2,8 @@
   width: 100%;
   min-height: auto;
   margin: 0;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
   display: flex;
   flex-direction: column;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
 
   .card-content-grid {
     display: grid;
@@ -56,10 +50,19 @@
 
     mat-icon {
       color: var(--primary-navy);
+
+      &.monitored {
+        color: var(--accent-gold);
+      }
     }
 
     .process-number {
       color: var(--primary-navy);
+      cursor: copy;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
