@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,8 +36,15 @@ jobs:
           if [ -z "$API_URL" ]; then echo "ERROR: API_URL is empty"; else echo "API_URL is set"; fi
           if [ -z "${{ env.NETLIFY_SITE_ID }}" ]; then echo "ERROR: NETLIFY_SITE_ID is empty"; else echo "NETLIFY_SITE_ID is set"; fi
 
-      - name: Bump version
-        run: npm version patch --no-git-tag-version
+      - name: Bump version and push
+        run: |
+          OLD_VERSION=$(node -p "require('./package.json').version")
+          npm version patch --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git add package.json package-lock.json
+          git commit -m "chore: bump $OLD_VERSION → $NEW_VERSION [skip ci]"
+          git tag "v$NEW_VERSION"
+          git push origin "HEAD:${GITHUB_REF#refs/heads/}" --tags
 
       - name: Build Project
         run: npm run build
