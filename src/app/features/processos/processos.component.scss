@@ -49,6 +49,7 @@
     .search-field {
       flex: 1;
       min-width: 240px;
+      margin: 0;
 
       @media (max-width: 768px) {
         min-width: 0;
@@ -56,16 +57,21 @@
       }
     }
 
-    .advanced-toggle {
-      height: 40px;
+    .advanced-toggle,
+    .clear-filters-btn {
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
 
       .mat-icon {
         font-size: 18px;
         width: 18px;
         height: 18px;
       }
+    }
 
+    .advanced-toggle {
       &.active {
         background-color: #eff6ff;
         border-color: #93c5fd;
@@ -86,14 +92,9 @@
     }
 
     .clear-filters-btn {
-      height: 40px;
-      white-space: nowrap;
       color: #64748b;
 
       .mat-icon {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
         margin-right: 4px;
       }
     }
@@ -299,6 +300,12 @@
 .text-center { text-align: center; }
 .text-right { text-align: right; }
 .full-width { width: 100%; }
+
+.col-hide-sm {
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
 
 .risk-badge {
   display: inline-flex;
