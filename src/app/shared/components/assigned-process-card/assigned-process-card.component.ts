@@ -46,12 +46,13 @@ export class AssignedProcessCardComponent {
 
   get statusColor(): string {
     switch (this.atribuicao.status) {
-      case StatusAtribuicao.DISPONIVEL: return 'basic';
+      case StatusAtribuicao.NAO_DISPONIVEL: return 'basic';
+      case StatusAtribuicao.DISPONIVEL: return 'primary';
       case StatusAtribuicao.ATRIBUIDO: return 'accent';
-      case StatusAtribuicao.EM_CONVERSA: return 'accent';
-      case StatusAtribuicao.NEGOCIACAO: return 'accent';
-      case StatusAtribuicao.CONCLUIDO_SUCESSO: return 'success'; // Define 'success' color in styles.scss
-      case StatusAtribuicao.CONCLUIDO_RECUSADO: return 'warn';
+      case StatusAtribuicao.EM_CONTATO: return 'accent';
+      case StatusAtribuicao.EM_NEGOCIACAO: return 'accent';
+      case StatusAtribuicao.FECHADO_SUCESSO: return 'success';
+      case StatusAtribuicao.FECHADO_RECUSADO: return 'warn';
       default: return 'basic';
     }
   }

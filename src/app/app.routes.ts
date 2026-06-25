@@ -63,6 +63,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/monitoring/monitoring.component').then(m => m.MonitoringComponent)
   },
   {
+    path: 'admin/redirecionar',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/admin/redirecionar-processos/redirecionar-processos.component').then(m => m.RedirecionarProcessosComponent)
+  },
+  {
     path: 'usuarios',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/admin/user-management/user-management.component').then(m => m.UserManagementComponent)

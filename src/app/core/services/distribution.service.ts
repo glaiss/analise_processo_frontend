@@ -5,6 +5,13 @@ import { environment } from '../../../environments/environment';
 import { Page } from '../models/processo/pagination.model';
 import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-processo-resumo.model';
 
+export interface RedirecionarProcessoRequest {
+  tipo: 'PESSOA' | 'EQUIPE';
+  origemUsuarioId?: string;
+  usuarioId?: string;
+  equipeId?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,5 +35,9 @@ export class DistributionService {
 
   executarDistribuicaoPorEquipe(equipeId: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/${equipeId}/distribuir`, {});
+  }
+
+  redirecionarProcessos(request: RedirecionarProcessoRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/redirecionar`, request);
   }
 }

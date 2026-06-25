@@ -1,8 +1,9 @@
-import { StatusAtribuicao, ProcessoSituacao, TipologiaProcesso } from './enums.model';
+import { StatusAtribuicao, ProcessoSituacao, TipologiaProcesso, ResultadoAtendimento } from './enums.model';
 
 export interface AtribuicaoProcessoResumoDTO {
     id: string;
     status: StatusAtribuicao;
+    resultadoAtendimento: ResultadoAtendimento | null;
     statusPrazo: string;
     isVencendoPrazo: boolean;
 

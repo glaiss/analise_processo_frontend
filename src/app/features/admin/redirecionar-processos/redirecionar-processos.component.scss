@@ -1,0 +1,39 @@
+.page-container {
+  padding: 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.description {
+  color: var(--mat-sys-on-surface-variant);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: var(--mat-sys-primary);
+}
+
+.section-divider {
+  margin: 16px 0;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
