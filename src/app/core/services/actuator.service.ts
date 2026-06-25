@@ -37,6 +37,11 @@ export interface HeapMemory {
   usagePercent: number;
 }
 
+export interface AppInfo {
+  app?: { name?: string; version?: string };
+  build?: { version?: string; name?: string; group?: string; artifact?: string; time?: string };
+}
+
 export interface CpuInfo {
   system: number;
   process: number;
@@ -57,6 +62,10 @@ export class ActuatorService {
 
   getHealth(): Observable<Health> {
     return this.http.get<Health>(`${this.baseUrl}/health`);
+  }
+
+  getInfo(): Observable<AppInfo> {
+    return this.http.get<AppInfo>(`${this.baseUrl}/info`);
   }
 
   getMetric(name: string, tag?: string): Observable<Metric> {

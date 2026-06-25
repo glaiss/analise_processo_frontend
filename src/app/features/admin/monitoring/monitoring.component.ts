@@ -7,7 +7,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActuatorService, Health, Metric } from '../../../core/services/actuator.service';
+import { ActuatorService, AppInfo, Health, Metric } from '../../../core/services/actuator.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
 
@@ -46,6 +46,7 @@ interface GcPause {
 export class MonitoringComponent implements OnInit {
   private actuator = inject(ActuatorService);
 
+  appInfo = signal<AppInfo | null>(null);
   health = signal<Health | null>(null);
   heap = signal<MetricValue | null>(null);
   nonHeap = signal<MetricValue | null>(null);
@@ -86,6 +87,11 @@ export class MonitoringComponent implements OnInit {
   loadAll() {
     this.loading.set(true);
     this.error.set(null);
+
+    this.actuator.getInfo().subscribe({
+      next: info => this.appInfo.set(info),
+      error: () => {}
+    });
 
     this.actuator.getHealth().subscribe({
       next: h => {

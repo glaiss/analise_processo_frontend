@@ -42,6 +42,12 @@
                 <span class="value">{{ formatBytes(diskFree() ?? 0) }} / {{ formatBytes(diskTotal() ?? 0) }}</span>
               </div>
             }
+            @if (appInfo(); as info) {
+              <div class="health-row">
+                <span>{{ info.build?.artifact}} (backend)</span>
+                <span class="value">{{ info.build?.version || '-' }}</span>
+              </div>
+            }
             <div class="health-row">
               <span>Uptime</span>
               <span class="value">{{ formatUptime(uptime() ?? 0) }}</span>
