@@ -3,6 +3,22 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { UploadDocumentDialogComponent } from './upload-document-dialog.component';
 
+beforeAll(() => {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
+});
+
 describe('UploadDocumentDialogComponent', () => {
   let dialogRefSpy: any;
 
