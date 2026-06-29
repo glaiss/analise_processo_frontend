@@ -49,10 +49,9 @@ export class AssignedProcessCardComponent {
       case StatusAtribuicao.NAO_DISPONIVEL: return 'basic';
       case StatusAtribuicao.DISPONIVEL: return 'primary';
       case StatusAtribuicao.ATRIBUIDO: return 'accent';
-      case StatusAtribuicao.EM_CONTATO: return 'accent';
-      case StatusAtribuicao.EM_NEGOCIACAO: return 'accent';
-      case StatusAtribuicao.FECHADO_SUCESSO: return 'success';
-      case StatusAtribuicao.FECHADO_RECUSADO: return 'warn';
+      case StatusAtribuicao.EM_CONVERSA: return 'accent';
+      case StatusAtribuicao.CONCLUIDO_SUCESSO: return 'success';
+      case StatusAtribuicao.CONCLUIDO_RECUSADO: return 'warn';
       default: return 'basic';
     }
   }
@@ -70,9 +69,21 @@ export class AssignedProcessCardComponent {
 
   get situationColorClass(): string {
     switch (this.atribuicao.processoSituacao) {
-      case ProcessoSituacao.ATIVO: return 'situation-ativo';
-      case ProcessoSituacao.ARQUIVADO: return 'situation-arquivado';
-      case ProcessoSituacao.BAIXADO: return 'situation-baixado';
+      case ProcessoSituacao.AGUARDANDO_DISTRIBUICAO:
+      case ProcessoSituacao.PENDENTE_ENRIQUECIMENTO:
+        return 'situation-pending';
+      case ProcessoSituacao.EM_ENRIQUECIMENTO:
+        return 'situation-processing';
+      case ProcessoSituacao.ENRIQUECIDO:
+        return 'situation-ready';
+      case ProcessoSituacao.DESCARTADO_SCORE_BAIXO:
+        return 'situation-discarded';
+      case ProcessoSituacao.PROPOSTA_APRESENTADA:
+        return 'situation-proposal';
+      case ProcessoSituacao.FINALIZADO:
+        return 'situation-finished';
+      case ProcessoSituacao.ERRO_PROCESSAMENTO:
+        return 'situation-error';
       default: return '';
     }
   }

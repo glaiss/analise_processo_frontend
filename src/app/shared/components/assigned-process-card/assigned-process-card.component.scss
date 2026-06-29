@@ -121,14 +121,28 @@
   }
 
   /* Classes de situação do processo */
-  &.situation-ativo {
-    border-left: 5px solid var(--primary-navy);
-  }
-  &.situation-arquivado {
+  &.situation-pending {
     border-left: 5px solid var(--secondary-slate);
   }
-  &.situation-baixado {
-    border-left: 5px solid var(--green-500); /* Green for success-like */
+  &.situation-processing {
+    border-left: 5px solid var(--accent-gold);
+  }
+  &.situation-ready {
+    border-left: 5px solid var(--primary-navy);
+  }
+  &.situation-discarded {
+    border-left: 5px solid var(--text-secondary);
+    opacity: 0.7;
+  }
+  &.situation-proposal {
+    border-left: 5px solid var(--green-500);
+  }
+  &.situation-finished {
+    border-left: 5px solid var(--primary-navy);
+    opacity: 0.85;
+  }
+  &.situation-error {
+    border-left: 5px solid var(--urgency-red);
   }
 }
 
