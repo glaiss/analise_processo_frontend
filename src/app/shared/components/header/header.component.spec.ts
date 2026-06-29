@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Component } from '@angular/core';
 import { HeaderComponent } from './header.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -7,6 +8,9 @@ import { ThemeService } from '../../../core/services/theme.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of } from 'rxjs';
+
+@Component({ template: '', standalone: true })
+class StubComponent {}
 
 describe('HeaderComponent', () => {
   let authService: any;
@@ -20,7 +24,7 @@ describe('HeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent, NoopAnimationsModule],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'login', component: StubComponent }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
@@ -49,7 +53,7 @@ describe('HeaderComponent', () => {
     TestBed.configureTestingModule({
       imports: [HeaderComponent, NoopAnimationsModule],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'login', component: StubComponent }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },

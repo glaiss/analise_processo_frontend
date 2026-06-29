@@ -20,6 +20,7 @@ describe('InfiniteScrollComponent', () => {
 
   it('should create', () => {
     const fixture = TestBed.createComponent(InfiniteScrollComponent);
+    fixture.detectChanges();
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
@@ -57,6 +58,7 @@ describe('InfiniteScrollComponent', () => {
 
     const fixture = TestBed.createComponent(InfiniteScrollComponent);
     fixture.componentRef.setInput('isLoading', true);
+    fixture.detectChanges();
     vi.spyOn(fixture.componentInstance.scrolled, 'emit');
 
     mockObserver.callback!(entries, null as any);
@@ -68,6 +70,7 @@ describe('InfiniteScrollComponent', () => {
     const entries = [{ isIntersecting: false }] as IntersectionObserverEntry[];
 
     const fixture = TestBed.createComponent(InfiniteScrollComponent);
+    fixture.detectChanges();
     vi.spyOn(fixture.componentInstance.scrolled, 'emit');
 
     mockObserver.callback!(entries, null as any);

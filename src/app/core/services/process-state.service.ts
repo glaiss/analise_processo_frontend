@@ -96,7 +96,7 @@ export class ProcessStateService {
           this.loading.set(false);
         }
       })
-    ).subscribe();
+    ).subscribe({ error: () => {} });
   }
 
   loadNextPage() {

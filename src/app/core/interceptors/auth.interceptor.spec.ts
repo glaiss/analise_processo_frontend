@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AuthService } from '../services/auth.service';
+import { NotificationService } from '../services/notification.service';
 import { of } from 'rxjs';
 
 describe('authInterceptor', () => {
@@ -25,6 +26,7 @@ describe('authInterceptor', () => {
         provideHttpClientTesting(),
         AuthService,
         { provide: Router, useValue: router },
+        { provide: NotificationService, useValue: { error: vi.fn(), warn: vi.fn(), info: vi.fn(), success: vi.fn() } },
       ],
     });
 
