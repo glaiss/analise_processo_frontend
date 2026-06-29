@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { Component, inject, OnInit, signal, computed, PLATFORM_ID } from '@angular/core';
+import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -62,6 +62,7 @@ export class ProcessDetailsComponent implements OnInit {
   private notification = inject(NotificationService);
   private dialog = inject(MatDialog);
   private location = inject(Location);
+  private platformId = inject(PLATFORM_ID);
 
   numero = signal<string | null>(null);
   processo = signal<ProcessoDetalheDTO | null>(null);
@@ -83,11 +84,14 @@ export class ProcessDetailsComponent implements OnInit {
 
   carregarDocumentos() {
     if (this.numero()) {
-      this.documentoService.listar(this.numero()!).subscribe(docs => {
-        this.documentos.set(docs);
-        if (docs.content.length > 0 && !this.documentoSelecionado()) {
-          this.selecionarDocumento(docs.content[0]);
-        }
+      this.documentoService.listar(this.numero()!).subscribe({
+        next: (docs) => {
+          this.documentos.set(docs);
+          if (docs.content.length > 0 && !this.documentoSelecionado()) {
+            this.selecionarDocumento(docs.content[0]);
+          }
+        },
+        error: () => {}
       });
     }
   }
@@ -98,10 +102,9 @@ export class ProcessDetailsComponent implements OnInit {
   }
 
   private gerarPreview(doc: Documento) {
-    if (!this.numero()) return;
+    if (!this.numero() || !isPlatformBrowser(this.platformId)) return;
 
     this.carregandoPreview.set(true);
-    // Revogar URL anterior para evitar vazamento de memória
     if (this.previewUrl()) {
       window.URL.revokeObjectURL(this.previewUrl()!);
     }
@@ -121,18 +124,19 @@ export class ProcessDetailsComponent implements OnInit {
   }
 
   baixarDocumento(doc: Documento) {
-    if (this.numero()) {
-      this.documentoService.download(this.numero()!, doc.id).subscribe(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = doc.nomeArquivo;
-        a.click();
-        // Não revogamos aqui se for o mesmo do preview, 
-        // mas para download pontual é seguro revogar após o click se não for o atual
-        if (url !== this.previewUrl()) {
-          window.URL.revokeObjectURL(url);
-        }
+    if (this.numero() && isPlatformBrowser(this.platformId)) {
+      this.documentoService.download(this.numero()!, doc.id).subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = doc.nomeArquivo;
+          a.click();
+          if (url !== this.previewUrl()) {
+            window.URL.revokeObjectURL(url);
+          }
+        },
+        error: () => {}
       });
     }
   }
@@ -147,20 +151,23 @@ export class ProcessDetailsComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.documentoService.deletar(this.numero()!, doc.id).subscribe({
-          next: () => {
-            this.notification.success('Documento excluído com sucesso', 3000);
-            if (this.documentoSelecionado()?.id === doc.id) {
-              this.documentoSelecionado.set(null);
-              this.previewUrl.set(null);
-            }
-            this.carregarDocumentos();
-          },
-          error: () => this.notification.error('Erro ao excluir documento', 3000)
-        });
-      }
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result) {
+          this.documentoService.deletar(this.numero()!, doc.id).subscribe({
+            next: () => {
+              this.notification.success('Documento excluído com sucesso', 3000);
+              if (this.documentoSelecionado()?.id === doc.id) {
+                this.documentoSelecionado.set(null);
+                this.previewUrl.set(null);
+              }
+              this.carregarDocumentos();
+            },
+            error: () => this.notification.error('Erro ao excluir documento', 3000)
+          });
+        }
+      },
+      error: () => {}
     });
   }
 
@@ -180,15 +187,18 @@ export class ProcessDetailsComponent implements OnInit {
         disableClose: true
       });
 
-      dialogRef.afterClosed().subscribe(result => {
-        const isContrato = result?.isContrato ?? false;
-        this.documentoService.upload(this.numero()!, file, isContrato).subscribe({
-          next: () => {
-            this.notification.success('Documento enviado com sucesso', 3000);
-            this.carregarDocumentos();
-          },
-          error: () => this.notification.error('Erro ao enviar documento', 3000)
-        });
+      dialogRef.afterClosed().subscribe({
+        next: (result) => {
+          const isContrato = result?.isContrato ?? false;
+          this.documentoService.upload(this.numero()!, file, isContrato).subscribe({
+            next: () => {
+              this.notification.success('Documento enviado com sucesso', 3000);
+              this.carregarDocumentos();
+            },
+            error: () => this.notification.error('Erro ao enviar documento', 3000)
+          });
+        },
+        error: () => {}
       });
     }
   }
@@ -220,8 +230,11 @@ export class ProcessDetailsComponent implements OnInit {
 
   refreshDetails() {
     if (this.numero()) {
-      this.processState.getProcessoDetalhe(this.numero()!).subscribe(p => {
-        this.processo.set(p);
+      this.processState.getProcessoDetalhe(this.numero()!).subscribe({
+        next: (p) => {
+          this.processo.set(p);
+        },
+        error: () => {}
       });
     }
   }
@@ -240,16 +253,19 @@ export class ProcessDetailsComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.processState.deletarAnotacao(this.numero()!, anotacaoId).subscribe({
-          next: () => {
-            this.notification.success('Anotação excluída com sucesso', 3000);
-            this.refreshDetails();
-          },
-          error: () => this.notification.error('Erro ao excluir anotação', 3000)
-        });
-      }
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result) {
+          this.processState.deletarAnotacao(this.numero()!, anotacaoId).subscribe({
+            next: () => {
+              this.notification.success('Anotação excluída com sucesso', 3000);
+              this.refreshDetails();
+            },
+            error: () => this.notification.error('Erro ao excluir anotação', 3000)
+          });
+        }
+      },
+      error: () => {}
     });
   }
 
@@ -275,8 +291,11 @@ export class ProcessDetailsComponent implements OnInit {
 
   toggleMonitoramento() {
     if (!this.numero()) return;
-    this.processState.alternarMonitoramento(this.numero()!).subscribe(() => {
-      this.refreshDetails();
+    this.processState.alternarMonitoramento(this.numero()!).subscribe({
+      next: () => {
+        this.refreshDetails();
+      },
+      error: () => {}
     });
   }
 
@@ -290,16 +309,19 @@ export class ProcessDetailsComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.processState.discardProcess(this.numero()!).subscribe({
-          next: () => {
-            this.notification.success('Processo descartado com sucesso', 3000);
-            this.goBack();
-          },
-          error: () => this.notification.error('Erro ao descartar processo', 3000)
-        });
-      }
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (result) {
+          this.processState.discardProcess(this.numero()!).subscribe({
+            next: () => {
+              this.notification.success('Processo descartado com sucesso', 3000);
+              this.goBack();
+            },
+            error: () => this.notification.error('Erro ao descartar processo', 3000)
+          });
+        }
+      },
+      error: () => {}
     });
   }
 
