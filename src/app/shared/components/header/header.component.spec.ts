@@ -18,7 +18,10 @@ describe('HeaderComponent', () => {
   beforeEach(async () => {
     authService = {
       currentUser: vi.fn(() => ({ username: 'joao', nome: 'João Silva', authorities: [{ authority: 'ROLE_ADMIN' }] })),
+      isAuthenticated: vi.fn(() => true),
+      isImpersonating: vi.fn(() => false),
       logout: vi.fn(),
+      stopImpersonating: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -46,7 +49,10 @@ describe('HeaderComponent', () => {
   it('should get avatar letter from username when nome is absent', () => {
     authService = {
       currentUser: vi.fn(() => ({ username: 'maria', authorities: [] })),
+      isAuthenticated: vi.fn(() => true),
+      isImpersonating: vi.fn(() => false),
       logout: vi.fn(),
+      stopImpersonating: vi.fn(),
     };
 
     TestBed.resetTestingModule();

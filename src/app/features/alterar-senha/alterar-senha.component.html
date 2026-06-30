@@ -1,0 +1,48 @@
+<div class="alterar-senha-page">
+  <mat-card class="alterar-senha-card">
+    <mat-card-header>
+      <mat-card-title>Alterar Senha</mat-card-title>
+      <mat-card-subtitle>Defina uma nova senha para sua conta</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #form="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Senha Atual</mat-label>
+          <input matInput [type]="hideAtual() ? 'password' : 'text'" name="senhaAtual" [(ngModel)]="senhaAtual" required>
+          <button mat-icon-button matSuffix type="button" (click)="hideAtual.set(!hideAtual())" [matTooltip]="hideAtual() ? 'Mostrar senha' : 'Ocultar senha'">
+            <mat-icon>{{ hideAtual() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nova Senha</mat-label>
+          <input matInput [type]="hideNova() ? 'password' : 'text'" name="senhaNova" [(ngModel)]="senhaNova" required minlength="4">
+          <button mat-icon-button matSuffix type="button" (click)="hideNova.set(!hideNova())" [matTooltip]="hideNova() ? 'Mostrar senha' : 'Ocultar senha'">
+            <mat-icon>{{ hideNova() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Confirmar Nova Senha</mat-label>
+          <input matInput [type]="hideConfirmacao() ? 'password' : 'text'" name="senhaConfirmacao" [(ngModel)]="senhaConfirmacao" required>
+          <button mat-icon-button matSuffix type="button" (click)="hideConfirmacao.set(!hideConfirmacao())" [matTooltip]="hideConfirmacao() ? 'Mostrar senha' : 'Ocultar senha'">
+            <mat-icon>{{ hideConfirmacao() ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        @if (error()) {
+          <p class="error-text">{{ error() }}</p>
+        }
+
+        <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!form.form.valid || loading()">
+          @if (loading()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Alterar Senha
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

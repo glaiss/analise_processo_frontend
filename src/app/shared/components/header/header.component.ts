@@ -46,4 +46,8 @@ export class HeaderComponent {
       }
     });
   }
+
+  alterarSenha() {
+    this.router.navigate(['/alterar-senha']);
+  }
 }

@@ -145,4 +145,8 @@ export class AuthService {
       tap(() => this.clearLocalSession())
     );
   }
+
+  alterarSenha(senhaAtual: string, senhaNova: string) {
+    return this.http.put(`${this.apiUrl}/senha`, { senhaAtual, senhaNova });
+  }
 }
