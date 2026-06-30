@@ -1,3 +1,16 @@
+@if (auth.isImpersonating()) {
+  <div class="impersonation-banner">
+    <mat-icon>visibility</mat-icon>
+    <span>
+      Impersonando <strong>{{ auth.currentUser()?.username }}</strong>
+      (admin: {{ auth.impersonatingAdmin() }})
+    </span>
+    <button mat-raised-button color="warn" (click)="stopImpersonating()">
+      <mat-icon>exit_to_app</mat-icon> Sair da impersonação
+    </button>
+  </div>
+}
+
 <mat-toolbar color="primary" class="app-toolbar">
   <button mat-icon-button (click)="toggleSidenav.emit()">
     <mat-icon>menu</mat-icon>

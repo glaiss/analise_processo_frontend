@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -12,7 +13,7 @@ import { ThemeService } from '../../../core/services/theme.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule],
+  imports: [CommonModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, MatSnackBarModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -35,6 +36,14 @@ export class HeaderComponent {
         this.router.navigate(['/login']);
       },
       error: () => {}
+    });
+  }
+
+  stopImpersonating() {
+    this.auth.stopImpersonating().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      }
     });
   }
 }

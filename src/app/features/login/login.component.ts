@@ -44,7 +44,9 @@ export class LoginComponent {
     this.error.set(null);
     this.auth.login(this.credentials).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        this.auth.checkImpersonation().subscribe(() => {
+          this.router.navigate(['/dashboard']);
+        });
       },
       error: (err) => {
         if (err.status === 0) {

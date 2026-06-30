@@ -29,12 +29,19 @@ export class App implements OnInit {
   @ViewChild('sidenav') sidenav!: MatSidenav;
 
   ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.auth.checkSession().subscribe(() => {
+        this.auth.checkImpersonation().subscribe();
+      });
+    }
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe({
       next: (event: any) => {
         this.showMenu = !event.url.includes('/login');
         if (isPlatformBrowser(this.platformId)) {
+          this.auth.checkImpersonation().subscribe();
           window.scrollTo(0, 0);
         }
       },
