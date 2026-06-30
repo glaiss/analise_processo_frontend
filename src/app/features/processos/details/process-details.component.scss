@@ -548,6 +548,15 @@
 }
 
 .movimentacoes-list {
+  .mat-mdc-list-item {
+    height: auto !important;
+    padding: 8px 0;
+
+    .mat-mdc-list-item-meta {
+      align-self: flex-start;
+    }
+  }
+
   .mov-type {
     font-weight: 600;
     color: var(--text-primary);
@@ -560,17 +569,6 @@
     font-size: 0.8125rem;
     color: var(--text-tertiary);
     white-space: nowrap;
-  }
-
-  @media (max-width: 768px) {
-    .mat-mdc-list-item {
-      height: auto !important;
-      padding: 8px 0;
-
-      .mat-mdc-list-item-meta {
-        align-self: flex-start;
-      }
-    }
   }
 }
 
