@@ -1,8 +1,13 @@
-import { Component, inject, OnInit, Input, signal, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, inject, OnInit, Input, signal, computed, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatBadgeModule } from '@angular/material/badge';
 import { DistributionService } from '../../../core/services/distribution.service';
+import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { InfiniteScrollComponent } from '../infinite-scroll/infinite-scroll.component';
 import { AssignedProcessCardComponent } from '../assigned-process-card/assigned-process-card.component';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
@@ -12,7 +17,7 @@ import { EmptyStateComponent } from '../empty-state/empty-state.component';
 @Component({
   selector: 'app-assigned-processes-list',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatProgressSpinnerModule, InfiniteScrollComponent, AssignedProcessCardComponent, LoadingOverlayComponent, EmptyStateComponent],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatBadgeModule, MatProgressSpinnerModule, InfiniteScrollComponent, AssignedProcessCardComponent, LoadingOverlayComponent, EmptyStateComponent],
   templateUrl: './assigned-processes-list.component.html',
   styleUrl: './assigned-processes-list.component.scss'
 })
@@ -21,12 +26,20 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
   @Input() title: string = 'Processos Atribuídos';
 
   private distService = inject(DistributionService);
+  private enriquecimentoService = inject(EnriquecimentoService);
+  private notification = inject(NotificationService);
+
   atribuicoes: AtribuicaoProcessoResumoDTO[] = [];
   isLoading = signal(false);
   currentPage = 0;
   isLastPage = false;
   totalElements = 0;
-  
+
+  selectedNumeros = signal<Set<string>>(new Set());
+  reprocessando = signal(false);
+
+  selectedCount = computed(() => this.selectedNumeros().size);
+
   ngOnInit() {
     this.title = this.mode === 'meus' ? 'Meus Processos' : 'Processos da Equipe';
     this.loadProcesses();
@@ -43,6 +56,7 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
     this.currentPage = 0;
     this.isLastPage = false;
     this.totalElements = 0;
+    this.selectedNumeros.set(new Set());
     this.loadProcesses();
   }
 
@@ -74,5 +88,41 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
       this.currentPage++;
       this.loadProcesses();
     }
+  }
+
+  toggleSelection(numero: string, selected: boolean) {
+    this.selectedNumeros.update(set => {
+      const newSet = new Set(set);
+      if (selected) {
+        newSet.add(numero);
+      } else {
+        newSet.delete(numero);
+      }
+      return newSet;
+    });
+  }
+
+  reprocessarSelecionados() {
+    const numeros = Array.from(this.selectedNumeros());
+    if (numeros.length === 0) return;
+
+    this.reprocessando.set(true);
+    this.enriquecimentoService.reprocessarPorNumeros(numeros).subscribe({
+      next: (response) => {
+        const successes = response.resultados.filter(r => r.sucesso).length;
+        const failures = response.resultados.filter(r => !r.sucesso).length;
+        if (failures === 0) {
+          this.notification.success(`${successes} processo${successes > 1 ? 's' : ''} enviado${successes > 1 ? 's' : ''} para scraping`, 5000);
+        } else {
+          this.notification.warn(`${successes} enviado${successes > 1 ? 's' : ''}, ${failures} com erro`, 8000);
+        }
+        this.selectedNumeros.set(new Set());
+        this.reprocessando.set(false);
+      },
+      error: () => {
+        this.notification.error('Erro ao enviar processos para scraping', 5000);
+        this.reprocessando.set(false);
+      }
+    });
   }
 }

@@ -6,6 +6,17 @@
     }
   </div>
 
+  @if (selectedCount() > 0) {
+    <button class="fab-reprocess" mat-fab extended color="primary" [disabled]="reprocessando()" (click)="reprocessarSelecionados()" [matBadge]="reprocessando() ? 0 : selectedCount()" matBadgeColor="accent">
+      @if (reprocessando()) {
+        <mat-spinner diameter="20"></mat-spinner>
+      } @else {
+        <mat-icon>refresh</mat-icon>
+      }
+      Reprocessar
+    </button>
+  }
+
   <app-loading-overlay [isLoading]="isLoading() && atribuicoes.length === 0" message="Carregando {{ title.toLowerCase() }}..."/>
 
   @if (atribuicoes.length === 0 && !isLoading()) {
@@ -16,7 +27,11 @@
     <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="isLoading()">
       @for (atribuicao of atribuicoes; track atribuicao.id) {
         <div class="assigned-process-list-item">
-          <app-assigned-process-card [atribuicao]="atribuicao"></app-assigned-process-card>
+          <app-assigned-process-card
+            [atribuicao]="atribuicao"
+            [selected]="selectedNumeros().has(atribuicao.processoNumero)"
+            (selectedChange)="toggleSelection(atribuicao.processoNumero, $event)"
+          ></app-assigned-process-card>
         </div>
       }
       @if (isLoading()) {

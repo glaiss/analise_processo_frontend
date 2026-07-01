@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,13 +15,21 @@ import { NotificationService } from '../../../core/services/notification.service
 @Component({
   selector: 'app-assigned-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule],
+  imports: [CommonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss'
 })
 export class AssignedProcessCardComponent {
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
+  @Input() selected: boolean = false;
+  @Output() selectedChange = new EventEmitter<boolean>();
   @Output() viewDetails = new EventEmitter<string>();
+
+  toggleSelection(event: Event) {
+    event.stopPropagation();
+    this.selected = !this.selected;
+    this.selectedChange.emit(this.selected);
+  }
 
   private router = inject(Router);
   private processState = inject(ProcessStateService);

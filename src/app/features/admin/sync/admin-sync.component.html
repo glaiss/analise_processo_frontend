@@ -1,0 +1,112 @@
+<div class="sync-container">
+  <app-page-header title="Sincronização" subtitle="Gerenciar sincronização de dados do sistema"/>
+
+  <div class="sync-grid">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>sync</mat-icon>
+        <mat-card-title>Movimentações</mat-card-title>
+        <mat-card-subtitle>Sincronizar tipos de movimentação</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="syncMovimentos()" [disabled]="loadingMovimentos()">
+          @if (loadingMovimentos()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Sincronizar
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>category</mat-icon>
+        <mat-card-title>Classes Judiciais</mat-card-title>
+        <mat-card-subtitle>Sincronizar classes judiciais</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="syncClasses()" [disabled]="loadingClasses()">
+          @if (loadingClasses()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Sincronizar
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>gavel</mat-icon>
+        <mat-card-title>Assuntos Judiciais</mat-card-title>
+        <mat-card-subtitle>Sincronizar assuntos judiciais</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="syncAssuntos()" [disabled]="loadingAssuntos()">
+          @if (loadingAssuntos()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Sincronizar
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card-full">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>sync_alt</mat-icon>
+        <mat-card-title>Sincronizar Tudo</mat-card-title>
+        <mat-card-subtitle>Executar todas as sincronizações de uma vez</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-actions>
+        <button mat-raised-button color="warn" (click)="syncTudo()" [disabled]="loadingTudo()">
+          @if (loadingTudo()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Sincronizar Todos
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="card-full">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>cloud_download</mat-icon>
+        <mat-card-title>Ingestão de Processos</mat-card-title>
+        <mat-card-subtitle>Sincronizar processos de um tribunal</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="ingestao-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Tribunal</mat-label>
+            <mat-select [(ngModel)]="ingestaoForm.tribunal">
+              @for (t of tribunais; track t) {
+                <mat-option [value]="t">{{ t }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Total</mat-label>
+            <input matInput type="number" [(ngModel)]="ingestaoForm.total">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Lote</mat-label>
+            <input matInput type="number" [(ngModel)]="ingestaoForm.size">
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="syncIngestao()" [disabled]="loadingIngestao()">
+          @if (loadingIngestao()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            Iniciar Ingestão
+          }
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

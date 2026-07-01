@@ -1,6 +1,7 @@
-<mat-card class="assigned-process-card" [ngClass]="situationColorClass">
+<mat-card class="assigned-process-card" [ngClass]="[situationColorClass, selected ? 'selected' : '']">
   <mat-card-header>
     <mat-card-title>
+      <mat-checkbox [checked]="selected" (click)="toggleSelection($event)" matTooltip="Selecionar para reprocessar"></mat-checkbox>
       <mat-icon [class.monitored]="atribuicao.monitorado" (click)="toggleMonitoramento($event)" matTooltip="Alternar Monitoramento">
         {{ atribuicao.monitorado ? 'star' : 'star_border' }}
       </mat-icon>
