@@ -21,6 +21,13 @@
           <button mat-icon-button (click)="onDiscard()" matTooltip="Descartar Processo">
             <mat-icon color="warn">delete_forever</mat-icon>
           </button>
+          <button mat-icon-button (click)="reprocessar()" [disabled]="reprocessando()" matTooltip="Reprocessar Processo">
+            @if (reprocessando()) {
+              <mat-spinner diameter="20"></mat-spinner>
+            } @else {
+              <mat-icon>refresh</mat-icon>
+            }
+          </button>
         </div>
         <div class="status-chips">
           <mat-chip-set>

@@ -16,7 +16,7 @@
 
   .actions-section {
     display: flex;
-    justify-content: flex-end; // Align to the right
+    justify-content: flex-end;
   }
 
   h1 {
@@ -25,15 +25,93 @@
   }
 }
 
+.filters-bar {
+  margin-bottom: 24px;
+}
+
+.filters-main-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .search-field {
+    flex: 1;
+    min-width: 280px;
+  }
+}
+
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .toggle-arrow {
+    transition: transform 0.2s;
+  }
+
+  &.active {
+    border-color: var(--mat-sys-primary);
+    color: var(--mat-sys-primary);
+  }
+}
+
+.clear-filters-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.filters-extra {
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--mat-sys-surface-container-low);
+  border-radius: 8px;
+}
+
+.filters-extra-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .filter-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .assunto-field {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .nivel-filter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .filter-label {
+      font-size: 0.875rem;
+      color: var(--mat-sys-on-surface-variant);
+      white-space: nowrap;
+    }
+  }
+}
+
 .groups-container {
   display: flex;
   flex-direction: column;
-  gap: 64px; // Increased gap between groups
+  gap: 64px;
 }
 
 .group-section {
   .group-header {
-    margin-bottom: 24px; // Added space below group title
+    margin-bottom: 24px;
     padding-bottom: 12px;
   }
 }
@@ -41,7 +119,7 @@
 .process-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 32px; // Increased gap between cards
+  gap: 32px;
 }
 
 .loading-overlay {

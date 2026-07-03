@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
+import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -63,6 +64,7 @@ export class ProcessDetailsComponent implements OnInit {
   private dialog = inject(MatDialog);
   private location = inject(Location);
   private platformId = inject(PLATFORM_ID);
+  private enriquecimentoService = inject(EnriquecimentoService);
 
   numero = signal<string | null>(null);
   processo = signal<ProcessoDetalheDTO | null>(null);
@@ -72,6 +74,7 @@ export class ProcessDetailsComponent implements OnInit {
   carregandoPreview = signal<boolean>(false);
   novaAnotacao = signal<string>('');
   enviandoAnotacao = signal<boolean>(false);
+  reprocessando = signal<boolean>(false);
 
   ngOnInit() {
     const num = this.route.snapshot.paramMap.get('numero');
@@ -327,6 +330,28 @@ export class ProcessDetailsComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  reprocessar() {
+    const numero = this.numero();
+    if (!numero) return;
+
+    this.reprocessando.set(true);
+    this.enriquecimentoService.reprocessarPorNumeros([numero]).subscribe({
+      next: (response) => {
+        const result = response.resultados[0];
+        if (result?.sucesso) {
+          this.notification.success(`Processo enviado para scraping`, 5000);
+        } else {
+          this.notification.warn(`Processo enviado, mas pode haver falhas`, 5000);
+        }
+        this.reprocessando.set(false);
+      },
+      error: () => {
+        this.notification.error('Erro ao enviar processo para scraping', 5000);
+        this.reprocessando.set(false);
+      }
+    });
   }
 
   copyProcessNumber() {

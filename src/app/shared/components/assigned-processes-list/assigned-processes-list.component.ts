@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatBadgeModule } from '@angular/material/badge';
-import { DistributionService } from '../../../core/services/distribution.service';
+import { DistributionService, ProcessoFilterParams } from '../../../core/services/distribution.service';
 import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { InfiniteScrollComponent } from '../infinite-scroll/infinite-scroll.component';
@@ -24,6 +24,7 @@ import { EmptyStateComponent } from '../empty-state/empty-state.component';
 export class AssignedProcessesListComponent implements OnInit, OnChanges {
   @Input({ required: true }) mode!: 'meus' | 'equipe';
   @Input() title: string = 'Processos Atribuídos';
+  @Input() filter?: ProcessoFilterParams;
 
   private distService = inject(DistributionService);
   private enriquecimentoService = inject(EnriquecimentoService);
@@ -49,6 +50,9 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
     if (changes['mode'] && !changes['mode'].firstChange) {
       this.resetList();
     }
+    if (changes['filter'] && !changes['filter'].firstChange) {
+      this.resetList();
+    }
   }
 
   resetList() {
@@ -63,10 +67,10 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
   loadProcesses() {
     if (this.isLoading() || this.isLastPage) return;
     this.isLoading.set(true);
-    
-    const request = this.mode === 'meus' 
-      ? this.distService.getMeusProcessos(this.currentPage)
-      : this.distService.getProcessosEquipe(this.currentPage);
+
+    const request = this.mode === 'meus'
+      ? this.distService.getMeusProcessos(this.currentPage, 20, this.filter)
+      : this.distService.getProcessosEquipe(this.currentPage, 20, this.filter);
 
     request.subscribe({
       next: (page) => {
