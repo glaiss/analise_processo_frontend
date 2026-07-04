@@ -1,0 +1,73 @@
+<div class="filters-bar">
+  <div class="filters-main-row">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar por n&uacute;mero do processo</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="0000000-00.0000.0.00.0000">
+      <button mat-icon-button matSuffix (click)="onSearch()" matTooltip="Pesquisar">
+        <mat-icon>search</mat-icon>
+      </button>
+      <button mat-icon-button matSuffix (click)="toggleAdvanced()" matTooltip="Filtros Avan&ccedil;ados" [class.active]="showAdvanced()">
+        <mat-icon [class.active-icon]="showAdvanced()">tune</mat-icon>
+      </button>
+      @if (searchQuery()) {
+        <button mat-icon-button matSuffix (click)="searchQuery.set(''); onSearch()" matTooltip="Limpar busca">
+          <mat-icon color="warn">close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+
+    @if (hasActiveFilters()) {
+      <button mat-icon-button (click)="onClear()" class="clear-filters-btn" matTooltip="Limpar filtros">
+        <mat-icon color="warn">filter_alt_off</mat-icon>
+      </button>
+    }
+  </div>
+
+  @if (showAdvanced()) {
+    <div class="filters-extra">
+      <div class="filters-extra-row">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Status</mat-label>
+          <mat-select (selectionChange)="onStatusChange($event.value)" multiple>
+            @for (s of statusOptions; track s) {
+              <mat-option [value]="s">{{ s }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Situa&ccedil;&atilde;o</mat-label>
+          <mat-select (selectionChange)="onSituacaoChange($event.value)" multiple>
+            @for (sit of situacaoOptions; track sit) {
+              <mat-option [value]="sit">{{ sit }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field assunto-field">
+          <mat-label>Assunto</mat-label>
+          <input matInput [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()" placeholder="Ex: tribut&aacute;rio, c&iacute;vel...">
+          <button mat-icon-button matSuffix (click)="onAssuntoSearch()" matTooltip="Filtrar">
+            <mat-icon>search</mat-icon>
+          </button>
+          @if (selectedAssunto()) {
+            <button mat-icon-button matSuffix (click)="selectedAssunto.set(''); onAssuntoSearch()" matTooltip="Limpar">
+              <mat-icon color="warn">close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </div>
+
+      <div class="filters-extra-row">
+        <div class="nivel-filter">
+          <span class="filter-label">N&iacute;vel de Risco:</span>
+          <mat-chip-listbox (change)="onChipNivelChange($event)" [multiple]="true">
+            <mat-chip-option value="ALTO" class="risk-chip risk-alto">Alto</mat-chip-option>
+            <mat-chip-option value="INTERMEDIARIO_ALTO" class="risk-chip risk-intermediario">Int. Alto</mat-chip-option>
+            <mat-chip-option value="MEDIO" class="risk-chip risk-medio">M&eacute;dio</mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+    </div>
+  }
+</div>

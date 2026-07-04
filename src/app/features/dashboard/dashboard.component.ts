@@ -1,17 +1,10 @@
 import { Component, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule, MatChipListboxChange } from '@angular/material/chips';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { AssignedProcessesListComponent } from '../../shared/components/assigned-processes-list/assigned-processes-list.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { StatusAtribuicao, ProcessoSituacao } from '../../core/models/processo/enums.model';
+import { FilterBarComponent } from '../../shared/components/filter-bar/filter-bar.component';
 import { ProcessoFilterParams } from '../../core/services/distribution.service';
 
 @Component({
@@ -19,34 +12,23 @@ import { ProcessoFilterParams } from '../../core/services/distribution.service';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
     MatButtonToggleModule,
     MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatTooltipModule,
     AssignedProcessesListComponent,
-    PageHeaderComponent
+    PageHeaderComponent,
+    FilterBarComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   viewMode = signal<'meus' | 'equipe'>('meus');
 
   searchQuery = signal<string>('');
-  showAdvanced = signal(false);
-
-  statusOptions = Object.values(StatusAtribuicao);
   selectedNiveis = signal<string[]>([]);
-  selectedStatus = signal<StatusAtribuicao[]>([]);
+  selectedStatus = signal<string[]>([]);
   selectedSituacao = signal<string[]>([]);
   selectedAssunto = signal<string>('');
-
-  situacaoOptions = Object.values(ProcessoSituacao);
 
   hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
@@ -61,9 +43,9 @@ export class DashboardComponent {
     return {
       numero: this.searchQuery() || undefined,
       niveis: this.selectedNiveis().length > 0 ? this.selectedNiveis() : undefined,
-      status: this.selectedStatus().length > 0 ? this.selectedStatus() : undefined,
+      status: this.selectedStatus().length > 0 ? this.selectedStatus() as any : undefined,
       situacao: this.selectedSituacao().length > 0 ? this.selectedSituacao() : undefined,
-      assunto: this.selectedAssunto() || undefined
+      assunto: this.selectedAssunto() || undefined,
     };
   });
 
@@ -71,35 +53,21 @@ export class DashboardComponent {
     this.viewMode.set(event.value);
   }
 
-  onSearch() {
-    this.filterParams();
+  onFilterChange(filters: {
+    searchQuery: string;
+    selectedNiveis: string[];
+    selectedStatus: any[];
+    selectedSituacao: string[];
+    selectedAssunto: string;
+  }) {
+    this.searchQuery.set(filters.searchQuery);
+    this.selectedNiveis.set(filters.selectedNiveis);
+    this.selectedStatus.set(filters.selectedStatus);
+    this.selectedSituacao.set(filters.selectedSituacao);
+    this.selectedAssunto.set(filters.selectedAssunto);
   }
 
-  onNivelChange(values: string[]) {
-    this.selectedNiveis.set(values);
-  }
-
-  onChipNivelChange(event: MatChipListboxChange) {
-    this.onNivelChange(event.value as string[]);
-  }
-
-  onStatusChange(values: StatusAtribuicao[]) {
-    this.selectedStatus.set(values);
-  }
-
-  onSituacaoChange(values: string[]) {
-    this.selectedSituacao.set(values);
-  }
-
-  onAssuntoSearch() {
-    this.selectedAssunto.set(this.selectedAssunto());
-  }
-
-  toggleAdvanced() {
-    this.showAdvanced.update(v => !v);
-  }
-
-  clearFilters() {
+  onClearFilters() {
     this.searchQuery.set('');
     this.selectedNiveis.set([]);
     this.selectedStatus.set([]);

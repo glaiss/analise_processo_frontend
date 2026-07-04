@@ -1,89 +1,21 @@
 <div class="dashboard-container">
-  <app-page-header title="Análise de Processos" subtitle="Monitoramento de Score e Prazos">
+  <app-page-header title="Sherlock Laws" subtitle="Monitoramento de Score e Prazos">
     <mat-button-toggle-group (change)="onViewModeChange($event)" [value]="viewMode()">
       <mat-button-toggle value="meus">Meus Processos</mat-button-toggle>
       <mat-button-toggle value="equipe">Processos da Equipe</mat-button-toggle>
     </mat-button-toggle-group>
   </app-page-header>
 
-  <!-- Filters Bar -->
-  <div class="filters-bar">
-    <div class="filters-main-row">
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Buscar por número do processo</mat-label>
-        <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="0000000-00.0000.0.00.0000">
-        <button mat-icon-button matSuffix (click)="onSearch()" matTooltip="Pesquisar">
-          <mat-icon>search</mat-icon>
-        </button>
-        @if (searchQuery()) {
-          <button mat-icon-button matSuffix (click)="searchQuery.set(''); onSearch()" matTooltip="Limpar busca">
-            <mat-icon color="warn">close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
+  <app-filter-bar
+    [(searchQuery)]="searchQuery"
+    [(selectedNiveis)]="selectedNiveis"
+    [(selectedStatus)]="selectedStatus"
+    [(selectedSituacao)]="selectedSituacao"
+    [(selectedAssunto)]="selectedAssunto"
+    [hasActiveFilters]="hasActiveFilters()"
+    (search)="onFilterChange({ searchQuery: searchQuery(), selectedNiveis: selectedNiveis(), selectedStatus: selectedStatus(), selectedSituacao: selectedSituacao(), selectedAssunto: selectedAssunto() })"
+    (clearFilters)="onClearFilters()"
+  />
 
-      <button mat-stroked-button (click)="toggleAdvanced()" class="advanced-toggle" [class.active]="showAdvanced()">
-        <mat-icon>tune</mat-icon>
-        <span class="toggle-label">Filtros Avançados</span>
-        <mat-icon class="toggle-arrow">{{ showAdvanced() ? 'expand_less' : 'expand_more' }}</mat-icon>
-      </button>
-
-      @if (hasActiveFilters()) {
-        <button mat-stroked-button (click)="clearFilters()" class="clear-filters-btn">
-          <mat-icon color="warn">filter_alt_off</mat-icon>
-          Limpar
-        </button>
-      }
-    </div>
-
-    @if (showAdvanced()) {
-      <div class="filters-extra">
-        <div class="filters-extra-row">
-          <mat-form-field appearance="outline" class="filter-field">
-            <mat-label>Status</mat-label>
-            <mat-select (selectionChange)="onStatusChange($event.value)" multiple>
-              @for (s of statusOptions; track s) {
-                <mat-option [value]="s">{{ s }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="filter-field">
-            <mat-label>Situação</mat-label>
-            <mat-select (selectionChange)="onSituacaoChange($event.value)" multiple>
-              @for (sit of situacaoOptions; track sit) {
-                <mat-option [value]="sit">{{ sit }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="filter-field assunto-field">
-            <mat-label>Assunto</mat-label>
-            <input matInput [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()" placeholder="Ex: tributário, cível...">
-            <button mat-icon-button matSuffix (click)="onAssuntoSearch()" matTooltip="Filtrar">
-              <mat-icon>search</mat-icon>
-            </button>
-            @if (selectedAssunto()) {
-              <button mat-icon-button matSuffix (click)="selectedAssunto.set(''); onAssuntoSearch()" matTooltip="Limpar">
-                <mat-icon color="warn">close</mat-icon>
-              </button>
-            }
-          </mat-form-field>
-        </div>
-
-        <div class="filters-extra-row">
-          <div class="nivel-filter">
-            <span class="filter-label">Nível de Risco:</span>
-            <mat-chip-listbox (change)="onChipNivelChange($event)" [multiple]="true">
-              <mat-chip-option value="ALTO" class="risk-chip risk-alto">Alto</mat-chip-option>
-              <mat-chip-option value="INTERMEDIARIO_ALTO" class="risk-chip risk-intermediario">Int. Alto</mat-chip-option>
-              <mat-chip-option value="MEDIO" class="risk-chip risk-medio">Médio</mat-chip-option>
-            </mat-chip-listbox>
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-
-  <app-assigned-processes-list [mode]="viewMode()" [filter]="filterParams()"></app-assigned-processes-list>
+  <app-assigned-processes-list [mode]="viewMode()" [filter]="filterParams()" />
 </div>

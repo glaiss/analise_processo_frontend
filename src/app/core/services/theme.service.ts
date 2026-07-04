@@ -23,7 +23,7 @@ export class ThemeService {
   }
 
   private loadPreference(): boolean {
-    if (!isPlatformBrowser(this.platformId)) return false;
+    if (!isPlatformBrowser(this.platformId)) return true;
     const stored = localStorage.getItem(this.STORAGE_KEY);
     if (stored) return stored === 'dark';
     return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;

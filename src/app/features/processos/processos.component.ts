@@ -5,19 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatChipsModule, MatChipListboxChange } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { ProcessStateService } from '../../core/services/process-state.service';
 import { InfiniteScrollComponent } from '../../shared/components/infinite-scroll/infinite-scroll.component';
-import { StatusAtribuicao, ProcessoSituacao } from '../../core/models/processo/enums.model';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
+import { FilterBarComponent } from '../../shared/components/filter-bar/filter-bar.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { ContentLoaderComponent } from '../../shared/components/content-loader/content-loader.component';
@@ -32,39 +28,31 @@ import { ContentLoaderComponent } from '../../shared/components/content-loader/c
     MatCardModule,
     MatTableModule,
     MatButtonToggleModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    MatChipsModule,
     MatBadgeModule,
     InfiniteScrollComponent,
     PageHeaderComponent,
+    FilterBarComponent,
     EmptyStateComponent,
     ErrorStateComponent,
-    ContentLoaderComponent
+    ContentLoaderComponent,
   ],
   templateUrl: './processos.component.html',
-  styleUrl: './processos.component.scss'
+  styleUrl: './processos.component.scss',
 })
 export class ProcessosComponent implements OnInit {
   processState = inject(ProcessStateService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
-  
-  searchQuery = signal<string>('');
-  showAdvanced = signal(false);
 
-  statusOptions = Object.values(StatusAtribuicao);
+  searchQuery = signal<string>('');
   selectedNiveis = signal<string[]>([]);
-  selectedStatus = signal<StatusAtribuicao[]>([]);
+  selectedStatus = signal<string[]>([]);
   selectedSituacao = signal<string[]>([]);
   selectedAssunto = signal<string>('');
-
-  situacaoOptions = Object.values(ProcessoSituacao);
 
   hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
@@ -76,16 +64,16 @@ export class ProcessosComponent implements OnInit {
 
   totalProcessos = computed(() => this.processState.totalElementCount());
 
-  title = computed(() => 
-    this.processState.currentMode() === 'monitorados' 
-      ? 'Processos Monitorados' 
+  title = computed(() =>
+    this.processState.currentMode() === 'monitorados'
+      ? 'Processos Monitorados'
       : 'Processos'
   );
 
-  subtitle = computed(() => 
+  subtitle = computed(() =>
     this.processState.currentMode() === 'monitorados'
       ? 'Lista de processos que você está acompanhando'
-      : 'Gerenciamento e análise de processos judiciais'
+      : 'Sherlock Laws - Gerenciamento e análise de processos judiciais'
   );
 
   ngOnInit() {
@@ -95,44 +83,46 @@ export class ProcessosComponent implements OnInit {
     });
   }
 
-  onSearch() {
-    this.processState.setSearchQuery(this.searchQuery());
+  onFilterChange(filters: {
+    searchQuery: string;
+    selectedNiveis: string[];
+    selectedStatus: any[];
+    selectedSituacao: string[];
+    selectedAssunto: string;
+  }) {
+    this.searchQuery.set(filters.searchQuery);
+    this.selectedNiveis.set(filters.selectedNiveis);
+    this.selectedStatus.set(filters.selectedStatus);
+    this.selectedSituacao.set(filters.selectedSituacao);
+    this.selectedAssunto.set(filters.selectedAssunto);
+    this.processState.setSearchQuery(filters.searchQuery);
+    this.processState.setFilterNivel(filters.selectedNiveis);
+    this.processState.setFilterStatus(filters.selectedStatus);
+    this.processState.setFilterSituacao(filters.selectedSituacao);
+    this.processState.setFilterAssunto(filters.selectedAssunto);
   }
 
-  onNivelChange(values: string[]) {
-    this.selectedNiveis.set(values);
-    this.processState.setFilterNivel(values);
-  }
-
-  onChipNivelChange(event: MatChipListboxChange) {
-    this.onNivelChange(event.value as string[]);
-  }
-
-  onStatusChange(values: StatusAtribuicao[]) {
-    this.selectedStatus.set(values);
-    this.processState.setFilterStatus(values);
-  }
-
-  onSituacaoChange(values: string[]) {
-    this.selectedSituacao.set(values);
-    this.processState.setFilterSituacao(values);
-  }
-
-  onAssuntoSearch() {
-    this.processState.setFilterAssunto(this.selectedAssunto());
+  onClearFilters() {
+    this.searchQuery.set('');
+    this.selectedNiveis.set([]);
+    this.selectedStatus.set([]);
+    this.selectedSituacao.set([]);
+    this.selectedAssunto.set('');
+    this.processState.setSearchQuery('');
+    this.processState.setFilterNivel([]);
+    this.processState.setFilterStatus([]);
+    this.processState.setFilterSituacao([]);
+    this.processState.setFilterAssunto('');
+    this.processState.loadProcesses();
   }
 
   toggleMonitoramento(numero: string, event: MouseEvent) {
     event.stopPropagation();
     this.processState.alternarMonitoramento(numero).subscribe();
   }
-  
+
   onScroll() {
     this.processState.loadNextPage();
-  }
-
-  toggleAdvanced() {
-    this.showAdvanced.update(v => !v);
   }
 
   onRetry() {
@@ -141,20 +131,6 @@ export class ProcessosComponent implements OnInit {
 
   openProcess(numero: string) {
     this.router.navigate(['/processos', numero]);
-  }
-
-  clearFilters() {
-    this.searchQuery.set('');
-    this.selectedNiveis.set([]);
-    this.selectedStatus.set([]);
-    this.selectedSituacao.set([]);
-    this.selectedAssunto.set('');
-    this.processState.setFilterNivel([]);
-    this.processState.setFilterStatus([]);
-    this.processState.setFilterSituacao([]);
-    this.processState.setFilterAssunto('');
-    this.processState.setSearchQuery('');
-    this.processState.loadProcesses();
   }
 
   getScoreColor(score: number): string {
