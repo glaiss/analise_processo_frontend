@@ -73,7 +73,7 @@ describe('AssignedProcessesListComponent', () => {
       fixture.componentRef.setInput('mode', 'meus');
       fixture.detectChanges();
 
-      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0);
+      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0, 20, undefined);
       expect(fixture.componentInstance.atribuicoes.length).toBe(1);
       expect(fixture.componentInstance.totalElements).toBe(1);
     });
@@ -98,7 +98,7 @@ describe('AssignedProcessesListComponent', () => {
       fixture.componentRef.setInput('mode', 'equipe');
       fixture.detectChanges();
 
-      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0);
+      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0, 20, undefined);
     });
   });
 
@@ -130,6 +130,6 @@ describe('AssignedProcessesListComponent', () => {
 
     fixture.componentInstance.onScroll();
 
-    expect(distService.getMeusProcessos).toHaveBeenCalledWith(1);
+    expect(distService.getMeusProcessos).toHaveBeenCalledWith(1, 20, undefined);
   });
 });
