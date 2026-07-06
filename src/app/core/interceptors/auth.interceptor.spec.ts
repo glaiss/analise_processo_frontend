@@ -103,6 +103,30 @@ describe('authInterceptor', () => {
     }, { status: 500, statusText: 'Server Error' });
   });
 
+  it('should handle 500 without ProblemDetail body', () => {
+    const notification = TestBed.inject(NotificationService);
+    http.get('/api/test').subscribe({
+      error: () => {}
+    });
+
+    const req = httpMock.expectOne('/api/test');
+    req.flush('Internal error', { status: 500, statusText: 'Server Error' });
+
+    expect(notification.error).toHaveBeenCalledWith('Sistema indisponível. Por favor, tente novamente mais tarde.');
+  });
+
+  it('should handle non-matching status codes', () => {
+    const notification = TestBed.inject(NotificationService);
+    http.get('/api/test').subscribe({
+      error: () => {}
+    });
+
+    const req = httpMock.expectOne('/api/test');
+    req.flush('Redirect', { status: 300, statusText: 'Multiple Choices' });
+
+    expect(notification.error).toHaveBeenCalledWith('Sistema: Http failure response for /api/test: 300 Multiple Choices');
+  });
+
   it('should pass through for logout requests', () => {
     http.post('/api/usuarios/logout', {}).subscribe();
     const req = httpMock.expectOne('/api/usuarios/logout');

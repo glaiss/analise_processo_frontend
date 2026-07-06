@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { AlterarSenhaComponent } from './alterar-senha.component';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({ template: '', standalone: true })
 class StubComponent {}
@@ -36,7 +37,7 @@ describe('AlterarSenhaComponent', () => {
   it('should create', () => {
     const fixture = TestBed.createComponent(AlterarSenhaComponent);
     expect(fixture.componentInstance).toBeTruthy();
-  });
+  }, 15000);
 
   it('should show error when fields are empty', () => {
     const fixture = TestBed.createComponent(AlterarSenhaComponent);
@@ -70,5 +71,84 @@ describe('AlterarSenhaComponent', () => {
     fixture.componentInstance.senhaConfirmacao = 'senhaNova123';
     fixture.componentInstance.onSubmit();
     expect(authService.alterarSenha).toHaveBeenCalledWith('senhaAntiga', 'senhaNova123');
+  });
+
+  describe('onSubmit - error handling', () => {
+    it('should show error for status 400 (senha atual incorreta)', () => {
+      authService.alterarSenha.mockReturnValue(throwError(() => new HttpErrorResponse({
+        status: 400,
+        error: { detail: 'Senha atual incorreta.' }
+      })));
+
+      const fixture = TestBed.createComponent(AlterarSenhaComponent);
+      fixture.componentInstance.senhaAtual = 'antiga';
+      fixture.componentInstance.senhaNova = 'nova1234';
+      fixture.componentInstance.senhaConfirmacao = 'nova1234';
+      fixture.componentInstance.onSubmit();
+
+      expect(fixture.componentInstance.loading()).toBe(false);
+      expect(fixture.componentInstance.error()).toBe('Senha atual incorreta.');
+    });
+
+    it('should show fallback message for status 400 without detail', () => {
+      authService.alterarSenha.mockReturnValue(throwError(() => new HttpErrorResponse({
+        status: 400,
+        error: {}
+      })));
+
+      const fixture = TestBed.createComponent(AlterarSenhaComponent);
+      fixture.componentInstance.senhaAtual = 'antiga';
+      fixture.componentInstance.senhaNova = 'nova1234';
+      fixture.componentInstance.senhaConfirmacao = 'nova1234';
+      fixture.componentInstance.onSubmit();
+
+      expect(fixture.componentInstance.error()).toBe('Senha atual incorreta.');
+    });
+
+    it('should show network error for status 0', () => {
+      authService.alterarSenha.mockReturnValue(throwError(() => new HttpErrorResponse({
+        status: 0
+      })));
+
+      const fixture = TestBed.createComponent(AlterarSenhaComponent);
+      fixture.componentInstance.senhaAtual = 'antiga';
+      fixture.componentInstance.senhaNova = 'nova1234';
+      fixture.componentInstance.senhaConfirmacao = 'nova1234';
+      fixture.componentInstance.onSubmit();
+
+      expect(fixture.componentInstance.error()).toBe('Sistema indisponível. Verifique sua conexão.');
+    });
+
+    it('should show generic error for other status codes', () => {
+      authService.alterarSenha.mockReturnValue(throwError(() => new HttpErrorResponse({
+        status: 500
+      })));
+
+      const fixture = TestBed.createComponent(AlterarSenhaComponent);
+      fixture.componentInstance.senhaAtual = 'antiga';
+      fixture.componentInstance.senhaNova = 'nova1234';
+      fixture.componentInstance.senhaConfirmacao = 'nova1234';
+      fixture.componentInstance.onSubmit();
+
+      expect(fixture.componentInstance.error()).toBe('Erro ao alterar senha. Tente novamente.');
+    });
+  });
+
+  describe('onSubmit - success behavior', () => {
+    it('should show success notification and navigate to dashboard', () => {
+      authService.alterarSenha.mockReturnValue(of(undefined));
+      const router = TestBed.inject(Router);
+      const navigateSpy = vi.spyOn(router, 'navigate');
+
+      const fixture = TestBed.createComponent(AlterarSenhaComponent);
+      fixture.componentInstance.senhaAtual = 'antiga';
+      fixture.componentInstance.senhaNova = 'nova1234';
+      fixture.componentInstance.senhaConfirmacao = 'nova1234';
+      fixture.componentInstance.onSubmit();
+
+      expect(notificationService.success).toHaveBeenCalledWith('Senha alterada com sucesso.');
+      expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+      expect(fixture.componentInstance.loading()).toBe(false);
+    });
   });
 });

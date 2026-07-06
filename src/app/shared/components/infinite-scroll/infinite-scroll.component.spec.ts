@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { InfiniteScrollComponent } from './infinite-scroll.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -7,11 +7,16 @@ describe('InfiniteScrollComponent', () => {
 
   beforeEach(async () => {
     mockObserver = { observe: vi.fn(), disconnect: vi.fn() };
-    (window as any).IntersectionObserver = class {
+    const MockIntersectionObserver = class {
       constructor(callback: any) { mockObserver.callback = callback; }
       observe(...args: any[]) { return mockObserver.observe(...args); }
       disconnect(...args: any[]) { return mockObserver.disconnect(...args); }
     };
+    Object.defineProperty(window, 'IntersectionObserver', {
+      writable: true,
+      configurable: true,
+      value: MockIntersectionObserver,
+    });
 
     await TestBed.configureTestingModule({
       imports: [InfiniteScrollComponent, NoopAnimationsModule],

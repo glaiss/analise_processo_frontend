@@ -2,12 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { HeaderComponent } from './header.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 @Component({ template: '', standalone: true })
 class StubComponent {}
@@ -27,7 +27,7 @@ describe('HeaderComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HeaderComponent, NoopAnimationsModule],
       providers: [
-        provideRouter([{ path: 'login', component: StubComponent }]),
+        provideRouter([{ path: 'login', component: StubComponent }, { path: 'alterar-senha', component: StubComponent }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
@@ -59,7 +59,7 @@ describe('HeaderComponent', () => {
     TestBed.configureTestingModule({
       imports: [HeaderComponent, NoopAnimationsModule],
       providers: [
-        provideRouter([{ path: 'login', component: StubComponent }]),
+        provideRouter([{ path: 'login', component: StubComponent }, { path: 'alterar-senha', component: StubComponent }]),
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
@@ -69,6 +69,31 @@ describe('HeaderComponent', () => {
 
     const fixture = TestBed.createComponent(HeaderComponent);
     expect(fixture.componentInstance.avatarLetter).toBe('M');
+  });
+
+  it('should return empty avatar letter when both nome and username are empty', () => {
+    authService = {
+      currentUser: vi.fn(() => ({ username: '', authorities: [] })),
+      isAuthenticated: vi.fn(() => true),
+      isImpersonating: vi.fn(() => false),
+      logout: vi.fn(),
+      stopImpersonating: vi.fn(),
+    };
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [HeaderComponent, NoopAnimationsModule],
+      providers: [
+        provideRouter([{ path: 'login', component: StubComponent }, { path: 'alterar-senha', component: StubComponent }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AuthService, useValue: authService },
+        ThemeService,
+      ],
+    });
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    expect(fixture.componentInstance.avatarLetter).toBe('');
   });
 
   it('should emit toggleSidenav on menu button click', () => {
@@ -91,5 +116,49 @@ describe('HeaderComponent', () => {
 
     fixture.componentInstance.logout();
     expect(authService.logout).toHaveBeenCalled();
+  });
+
+  it('should navigate to login on logout success', () => {
+    authService.logout.mockReturnValue(of(null));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.logout();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should handle logout error gracefully', () => {
+    authService.logout.mockReturnValue(throwError(() => new Error('Falha')));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.logout();
+
+    expect(navigateSpy).not.toHaveBeenCalled();
+  });
+
+  it('should call stopImpersonating and navigate to login', () => {
+    authService.stopImpersonating.mockReturnValue(of(null));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.stopImpersonating();
+
+    expect(authService.stopImpersonating).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('should navigate to alterar-senha on alterarSenha', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.alterarSenha();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/alterar-senha']);
   });
 });

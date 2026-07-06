@@ -257,7 +257,29 @@ describe('ProcessStateService', () => {
     });
   });
 
-  describe('setGroupBy', () => {
+  describe('setters', () => {
+  it('should set processes', () => {
+    const p = createMockProcesso({ numero: '1' });
+    service.setProcesses([p]);
+    expect(service.allProcesses()).toEqual([p]);
+  });
+
+  it('should set loading', () => {
+    service.setLoading(true);
+    expect(service.isLoading()).toBe(true);
+    service.setLoading(false);
+    expect(service.isLoading()).toBe(false);
+  });
+
+  it('should set error', () => {
+    service.setError('Erro teste');
+    expect(service.errorMessage()).toBe('Erro teste');
+    service.setError(null);
+    expect(service.errorMessage()).toBeNull();
+  });
+});
+
+describe('setGroupBy', () => {
     it('should change group key', () => {
       service.setGroupBy('usuarioResponsavel');
       expect(service.groupedProcesses).toBeDefined();

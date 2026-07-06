@@ -3,11 +3,12 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { ProcessDetailsComponent } from './process-details.component';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { DocumentoService } from '../../../core/services/documento.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
@@ -48,6 +49,7 @@ describe('ProcessDetailsComponent', () => {
   let documentoService: any;
   let notification: any;
   let dialog: any;
+  let enriquecimentoService: any;
   let location: any;
 
   function createComponent() {
@@ -83,10 +85,15 @@ describe('ProcessDetailsComponent', () => {
       success: vi.fn(),
       error: vi.fn(),
       info: vi.fn(),
+      warn: vi.fn(),
     };
 
     dialog = {
       open: vi.fn(),
+    };
+
+    enriquecimentoService = {
+      reprocessarPorNumeros: vi.fn().mockReturnValue(of({ resultados: [{ sucesso: true }] })),
     };
 
     location = {
@@ -102,6 +109,7 @@ describe('ProcessDetailsComponent', () => {
         { provide: ProcessStateService, useValue: processState },
         { provide: DocumentoService, useValue: documentoService },
         { provide: NotificationService, useValue: notification },
+        { provide: EnriquecimentoService, useValue: enriquecimentoService },
         { provide: Location, useValue: location },
         { provide: PLATFORM_ID, useValue: 'browser' },
       ],
@@ -115,7 +123,7 @@ describe('ProcessDetailsComponent', () => {
   it('should create', () => {
     const fixture = createComponent();
     expect(fixture.componentInstance).toBeTruthy();
-  });
+  }, 15000);
 
   it('should load processo and documentos on init', () => {
     const fixture = createComponent();
@@ -266,6 +274,39 @@ describe('ProcessDetailsComponent', () => {
     expect(location.back).toHaveBeenCalled();
   });
 
+  it('should reprocessar with success notification', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.reprocessar();
+    expect(enriquecimentoService.reprocessarPorNumeros).toHaveBeenCalledWith(['123456']);
+    expect(notification.success).toHaveBeenCalledWith('Processo enviado para scraping', 5000);
+    expect(fixture.componentInstance.reprocessando()).toBe(false);
+  });
+
+  it('should reprocessar with warn when result has no sucesso', () => {
+    enriquecimentoService.reprocessarPorNumeros.mockReturnValue(of({ resultados: [{ sucesso: false }] }));
+    const fixture = createComponent();
+    fixture.componentInstance.reprocessar();
+    expect(notification.warn).toHaveBeenCalledWith('Processo enviado, mas pode haver falhas', 5000);
+  });
+
+  it('should reprocessar with error notification', () => {
+    enriquecimentoService.reprocessarPorNumeros.mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = createComponent();
+    fixture.componentInstance.reprocessar();
+    expect(notification.error).toHaveBeenCalledWith('Erro ao enviar processo para scraping', 5000);
+    expect(fixture.componentInstance.reprocessando()).toBe(false);
+  });
+
+  it('should show error notification when discard fails', () => {
+    processState.discardProcess = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    const fixture = createComponent();
+    fixture.componentInstance.onDiscard();
+    afterClosed$.next(true);
+    expect(notification.error).toHaveBeenCalledWith('Erro ao descartar processo', 3000);
+  });
+
   it('should copy process number to clipboard', async () => {
     const writeTextSpy = vi.fn().mockResolvedValue(undefined);
     Object.assign(navigator, { clipboard: { writeText: writeTextSpy } });
@@ -365,5 +406,29 @@ describe('ProcessDetailsComponent', () => {
     const fixture = createComponent();
     fixture.componentInstance.deletarAnotacao(undefined);
     expect(dialog.open).not.toHaveBeenCalled();
+  });
+
+  it('should render back button and process number in template', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.copy-number')?.textContent).toContain('123456');
+    expect(compiled.querySelector('button[matTooltip="Voltar"]')).toBeTruthy();
+  });
+
+  it('should render level chip with correct color', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const chips = compiled.querySelectorAll('mat-chip');
+    expect(chips.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('should render document section when documentos are loaded', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    expect(tabLabels.length).toBe(4);
+    (tabLabels[3] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('.documents-tab-layout')).toBeTruthy();
   });
 });

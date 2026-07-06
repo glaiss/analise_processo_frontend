@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { PLATFORM_ID } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
 import { AuthService, User } from './auth.service';
@@ -193,7 +194,24 @@ describe('AuthService', () => {
     });
   });
 
-  describe('clearLocalSession', () => {
+  describe('getFromSession (SSR)', () => {
+  it('should return null when not in browser', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        AuthService,
+        { provide: PLATFORM_ID, useValue: 'server' },
+      ],
+    });
+    const svc = TestBed.inject(AuthService);
+    const user = (svc as any).getFromSession('auth_user');
+    expect(user).toBeNull();
+  });
+});
+
+describe('clearLocalSession', () => {
     it('should clear user signal and remove from storage', () => {
       sessionStorage.setItem(USER_KEY, JSON.stringify(createMockUser()));
       localStorage.setItem('XSRF-TOKEN', 'token123');
@@ -203,6 +221,66 @@ describe('AuthService', () => {
       expect(service.currentUser()).toBeNull();
       expect(sessionStorage.getItem(USER_KEY)).toBeNull();
       expect(localStorage.getItem('XSRF-TOKEN')).toBeNull();
+    });
+  });
+
+  describe('checkImpersonation', () => {
+    it('should set origin when result has origin', () => {
+      service.checkImpersonation().subscribe();
+
+      const req = httpMock.expectOne(`${API_URL}/impersonating-origin`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ origin: 'admin_user' });
+
+      expect(service.isImpersonating()).toBe(true);
+      expect(service.impersonatingAdmin()).toBe('admin_user');
+    });
+
+    it('should clear origin when result has no origin', () => {
+      service.checkImpersonation().subscribe();
+
+      httpMock.expectOne(`${API_URL}/impersonating-origin`).flush({ origin: null });
+
+      expect(service.isImpersonating()).toBe(false);
+      expect(service.impersonatingAdmin()).toBeNull();
+    });
+
+    it('should gracefully handle error on checkImpersonation', () => {
+      service.checkImpersonation().subscribe({
+        next: (result) => {
+          expect(result).toBeNull();
+        }
+      });
+
+      httpMock.expectOne(`${API_URL}/impersonating-origin`).error(new ProgressEvent('error'));
+      expect(service.isImpersonating()).toBe(false);
+    });
+  });
+
+  describe('stopImpersonating', () => {
+    it('should POST stop-impersonating and clear session', () => {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(createMockUser()));
+      sessionStorage.setItem('impersonating_origin', 'admin_user');
+
+      service.stopImpersonating().subscribe(() => {
+        expect(service.currentUser()).toBeNull();
+        expect(service.isImpersonating()).toBe(false);
+      });
+
+      const req = httpMock.expectOne(`${API_URL}/stop-impersonating`);
+      expect(req.request.method).toBe('POST');
+      req.flush(null);
+    });
+  });
+
+  describe('alterarSenha', () => {
+    it('should PUT new password', () => {
+      service.alterarSenha('senhaAtual', 'senhaNova').subscribe();
+
+      const req = httpMock.expectOne(`${API_URL}/senha`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ senhaAtual: 'senhaAtual', senhaNova: 'senhaNova' });
+      req.flush(null);
     });
   });
 });

@@ -9,7 +9,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
 import { StatusAtribuicao, ProcessoSituacao, TipologiaProcesso, ResultadoAtendimento } from '../../../core/models/processo/enums.model';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): AtribuicaoProcessoResumoDTO {
   return {
@@ -84,10 +84,10 @@ describe('AssignedProcessCardComponent', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
       const atribuicao = createAtribuicao({ monitorado: false });
       fixture.componentRef.setInput('atribuicao', atribuicao);
-      processState.alternarMonitoramento.mockReturnValue(of(void 0));
+      processState.alternarMonitoramento.mockReturnValue(throwError(() => new Error('Falha')));
 
       fixture.componentInstance.toggleMonitoramento(new MouseEvent('click'));
-      expect(atribuicao.monitorado).toBe(true);
+      expect(atribuicao.monitorado).toBe(false);
     });
   });
 
@@ -164,6 +164,71 @@ describe('AssignedProcessCardComponent', () => {
         fixture.componentRef.setInput('atribuicao', createAtribuicao({ status }));
         expect(fixture.componentInstance.statusColor).toBe(expected);
       });
+    });
+
+    it('should return basic for unknown status', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({
+        status: 'UNKNOWN' as any,
+      }));
+      expect(fixture.componentInstance.statusColor).toBe('basic');
+    });
+  });
+
+  describe('toggleSelection', () => {
+    it('should toggle selected from false to true and emit', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao());
+      fixture.componentRef.setInput('selected', false);
+
+      const emitSpy = vi.spyOn(fixture.componentInstance.selectedChange, 'emit');
+      fixture.componentInstance.toggleSelection(new MouseEvent('click'));
+
+      expect(fixture.componentInstance.selected).toBe(true);
+      expect(emitSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('should toggle selected from true to false and emit', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao());
+      fixture.componentRef.setInput('selected', true);
+
+      const emitSpy = vi.spyOn(fixture.componentInstance.selectedChange, 'emit');
+      fixture.componentInstance.toggleSelection(new MouseEvent('click'));
+
+      expect(fixture.componentInstance.selected).toBe(false);
+      expect(emitSpy).toHaveBeenCalledWith(false);
+    });
+  });
+
+  describe('situationColorClass', () => {
+    const situationCases: [string, string][] = [
+      ['AGUARDANDO_DISTRIBUICAO', 'situation-pending'],
+      ['PENDENTE_ENRIQUECIMENTO', 'situation-pending'],
+      ['EM_ENRIQUECIMENTO', 'situation-processing'],
+      ['ENRIQUECIDO', 'situation-ready'],
+      ['DESCARTADO_SCORE_BAIXO', 'situation-discarded'],
+      ['PROPOSTA_APRESENTADA', 'situation-proposal'],
+      ['FINALIZADO', 'situation-finished'],
+      ['ERRO_PROCESSAMENTO', 'situation-error'],
+    ];
+
+    situationCases.forEach(([situacao, expectedClass]) => {
+      it(`should return ${expectedClass} for ${situacao}`, () => {
+        const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+        fixture.componentRef.setInput('atribuicao', createAtribuicao({
+          processoSituacao: situacao as any,
+        }));
+        expect(fixture.componentInstance.situationColorClass).toBe(expectedClass);
+      });
+    });
+
+    it('should return empty string for unknown situation', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({
+        processoSituacao: 'UNKNOWN' as any,
+      }));
+      expect(fixture.componentInstance.situationColorClass).toBe('');
     });
   });
 });

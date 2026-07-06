@@ -101,4 +101,73 @@ describe('NotificationService', () => {
       });
     });
   });
+
+  it('should include default horizontal and vertical position in config', () => {
+    const spy = vi.spyOn(snackBar, 'open');
+    service.success('Teste');
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith('Teste', 'Fechar', expect.objectContaining({
+          horizontalPosition: 'right',
+          verticalPosition: 'bottom',
+        }));
+        resolve();
+      });
+    });
+  });
+
+  it('should show error snackbar with custom duration', () => {
+    const spy = vi.spyOn(snackBar, 'open');
+    service.error('Erro customizado!', 10000);
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith('Erro customizado!', 'Fechar', expect.objectContaining({
+          duration: 10000,
+          panelClass: ['error-snackbar']
+        }));
+        resolve();
+      });
+    });
+  });
+
+  it('should show info snackbar with custom duration', () => {
+    const spy = vi.spyOn(snackBar, 'open');
+    service.info('Informativo customizado!', 3000);
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith('Informativo customizado!', 'Fechar', expect.objectContaining({
+          duration: 3000,
+          panelClass: ['info-snackbar']
+        }));
+        resolve();
+      });
+    });
+  });
+
+  it('should show warn snackbar with custom duration', () => {
+    const spy = vi.spyOn(snackBar, 'open');
+    service.warn('Aviso customizado!', 7000);
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith('Aviso customizado!', 'Fechar', expect.objectContaining({
+          duration: 7000,
+          panelClass: ['warn-snackbar']
+        }));
+        resolve();
+      });
+    });
+  });
+
+  it('should use default duration of 5000 when not provided', () => {
+    const spy = vi.spyOn(snackBar, 'open');
+    service.success('Default duration');
+    return new Promise<void>(resolve => {
+      setTimeout(() => {
+        expect(spy).toHaveBeenCalledWith('Default duration', 'Fechar', expect.objectContaining({
+          duration: 5000
+        }));
+        resolve();
+      });
+    });
+  });
 });
