@@ -12,11 +12,7 @@ describe('InfiniteScrollComponent', () => {
       observe(...args: any[]) { return mockObserver.observe(...args); }
       disconnect(...args: any[]) { return mockObserver.disconnect(...args); }
     };
-    Object.defineProperty(window, 'IntersectionObserver', {
-      writable: true,
-      configurable: true,
-      value: MockIntersectionObserver,
-    });
+    vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
 
     await TestBed.configureTestingModule({
       imports: [InfiniteScrollComponent, NoopAnimationsModule],
