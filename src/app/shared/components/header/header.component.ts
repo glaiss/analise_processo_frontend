@@ -6,14 +6,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { ImpersonateDialogComponent } from '../../../shared/components/impersonate-dialog/impersonate-dialog.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, MatSnackBarModule],
+  imports: [CommonModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, MatSnackBarModule, MatDialogModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -21,6 +24,8 @@ export class HeaderComponent {
   auth = inject(AuthService);
   theme = inject(ThemeService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private notification = inject(NotificationService);
 
   @Output() toggleSidenav = new EventEmitter<void>();
 
@@ -39,10 +44,31 @@ export class HeaderComponent {
     });
   }
 
+  openImpersonateDialog() {
+    const dialogRef = this.dialog.open(ImpersonateDialogComponent, {
+      width: '450px'
+    });
+
+    dialogRef.afterClosed().subscribe(targetEmail => {
+      if (!targetEmail) return;
+
+      this.auth.impersonate(targetEmail).subscribe({
+        next: () => {
+          this.notification.success(`Você entrou como ${targetEmail}`);
+          this.router.navigate(['/dashboard']);
+        },
+        error: () => {
+          this.notification.error('Erro ao entrar como usuário. Verifique o e-mail.');
+        }
+      });
+    });
+  }
+
   stopImpersonating() {
     this.auth.stopImpersonating().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.notification.success('Voltou para seu usuário administrador');
+        this.router.navigate(['/dashboard']);
       }
     });
   }

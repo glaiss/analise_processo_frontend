@@ -140,9 +140,26 @@ export class AuthService {
     );
   }
 
+  impersonate(targetEmail: string) {
+    return this.http.post<User>(`${this.apiUrl}/impersonate`, { targetEmail }).pipe(
+      tap(user => {
+        this.saveSession(user);
+        this.checkImpersonation().subscribe();
+      })
+    );
+  }
+
   stopImpersonating() {
-    return this.http.post(`${this.apiUrl}/stop-impersonating`, {}).pipe(
-      tap(() => this.clearLocalSession())
+    return this.http.post<User>(`${this.apiUrl}/stop-impersonating`, {}).pipe(
+      tap(user => {
+        if (user) {
+          this.saveSession(user);
+          this.impersonatingOrigin.set(null);
+          this.setInSession(this.IMPERSONATION_KEY, null);
+        } else {
+          this.clearLocalSession();
+        }
+      })
     );
   }
 
