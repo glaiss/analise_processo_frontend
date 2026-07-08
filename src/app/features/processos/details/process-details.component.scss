@@ -134,6 +134,111 @@
   }
 }
 
+.flow-stepper {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  padding: 4px 0;
+  width: 100%;
+
+  .flow-connector {
+    flex: 1;
+    height: 2px;
+    background-color: var(--border-strong);
+    transition: background-color 0.3s;
+    min-width: 16px;
+
+    &.active {
+      background-color: var(--emerald-500);
+    }
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+
+    .flow-step-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-strong);
+      transition: all 0.3s;
+
+      &.clickable {
+        cursor: pointer;
+        border-color: var(--primary-blue);
+        background-color: var(--bg-hover);
+
+        &:hover {
+          border-color: var(--blue-700);
+          background-color: var(--bg-blue-50);
+        }
+      }
+
+      .step-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+
+        &.completed-icon { color: var(--emerald-500); }
+        &.current-icon { color: var(--primary-blue); }
+        &.recusado-icon { color: var(--red-500); }
+        &.future-icon { color: var(--text-tertiary); }
+      }
+    }
+
+    &.completed .flow-step-indicator {
+      border-color: var(--emerald-500);
+      background-color: var(--bg-green-50);
+    }
+
+    &.current .flow-step-indicator {
+      border-color: var(--primary-blue);
+      background-color: var(--bg-blue-50);
+    }
+
+    &.current.negative .flow-step-indicator {
+      border-color: var(--red-500);
+      background-color: var(--bg-red-50);
+    }
+
+    .flow-step-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1px;
+      margin-top: 4px;
+      text-align: center;
+
+      .step-name {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .step-action {
+        font-size: 0.6rem;
+        line-height: 1;
+        min-height: 20px;
+        padding: 0 4px;
+      }
+    }
+
+    &.completed .step-name { color: var(--emerald-500); }
+    &.current .step-name { color: var(--primary-blue); }
+    &.current.negative .step-name { color: var(--red-500); }
+  }
+}
+
 .info-summary-bar {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

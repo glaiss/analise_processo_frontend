@@ -19,6 +19,7 @@ import { ProcessStateService } from '../../../core/services/process-state.servic
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
+import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo';
@@ -397,5 +398,70 @@ export class ProcessDetailsComponent implements OnInit {
       default:
         return undefined;
     }
+  }
+
+  // Flow stepper
+  readonly FLOW_STEPS = [
+    { status: StatusAtribuicao.ATRIBUIDO, label: 'Atribuído', icon: 'assignment_ind' },
+    { status: StatusAtribuicao.EM_CONVERSA, label: 'Em Conversa', icon: 'phone_in_talk' },
+    { status: StatusAtribuicao.EM_NEGOCIACAO, label: 'Em Negociação', icon: 'handshake' },
+    { status: StatusAtribuicao.CONCLUIDO_SUCESSO, label: 'Positivo', icon: 'check_circle' },
+    { status: StatusAtribuicao.CONCLUIDO_RECUSADO, label: 'Negativo', icon: 'cancel' },
+  ];
+
+  getCurrentStepIndex(): number {
+    const current = this.processo()?.statusAtribuicao;
+    if (!current) return -1;
+    return this.FLOW_STEPS.findIndex(s => s.status === current);
+  }
+
+  isStepCompleted(index: number): boolean {
+    const currentIdx = this.getCurrentStepIndex();
+    if (currentIdx < 0) return false;
+    if (currentIdx === 4) return false;
+    if (currentIdx === 3 && index === 4) return false;
+    return index <= currentIdx;
+  }
+
+  isStepCurrent(index: number): boolean {
+    return index === this.getCurrentStepIndex();
+  }
+
+  isConnectorActive(beforeIdx: number): boolean {
+    if (!this.isStepCompleted(beforeIdx)) return false;
+    if (beforeIdx === 3) return false;
+    return true;
+  }
+
+  isStepAvailable(index: number): boolean {
+    const current = this.processo()?.statusAtribuicao;
+    if (!current) return false;
+    const currentIdx = this.getCurrentStepIndex();
+    if (currentIdx < 0) return false;
+    if (currentIdx === 0 && index === 1) return true;
+    if (currentIdx === 1 && index === 2) return true;
+    if (currentIdx === 2 && (index === 3 || index === 4)) return true;
+    if (currentIdx === 4 && index === 3) return true;
+    return false;
+  }
+
+  isTerminalStatus(): boolean {
+    const s = this.processo()?.statusAtribuicao;
+    return s === StatusAtribuicao.CONCLUIDO_SUCESSO || s === StatusAtribuicao.CONCLUIDO_RECUSADO;
+  }
+
+  avancarStatus(stepIndex: number) {
+    const numero = this.numero();
+    const step = this.FLOW_STEPS[stepIndex];
+    if (!numero || !step) return;
+
+    this.processState.atualizarStatus(numero, step.status).subscribe({
+      next: () => {
+        this.refreshDetails();
+      },
+      error: () => {
+        this.notification.error('Erro ao atualizar status do processo');
+      }
+    });
   }
 }

@@ -45,6 +45,38 @@
         <mat-icon>chevron_right</mat-icon>
         <span>{{ p.assuntoJudicial || 'assunto não tem nome' }}</span>
       </div>
+
+      <!-- Flow Stepper -->
+      <div class="flow-stepper">
+        @for (step of FLOW_STEPS; track step.status; let i = $index) {
+          @if (i > 0) {
+            <div class="flow-connector" [class.active]="isConnectorActive(i - 1)"></div>
+          }
+          <div class="flow-step" [class.completed]="isStepCompleted(i)" [class.current]="isStepCurrent(i)" [class.negative]="isStepCurrent(i) && i === 4">
+            <div class="flow-step-indicator" [class.clickable]="isStepAvailable(i)" (click)="isStepAvailable(i) && avancarStatus(i)">
+              @if (isStepCompleted(i)) {
+                <mat-icon class="step-icon completed-icon">check_circle</mat-icon>
+              } @else if (isStepCurrent(i)) {
+                @if (i === 4) {
+                  <mat-icon class="step-icon recusado-icon">cancel</mat-icon>
+                } @else {
+                  <mat-icon class="step-icon current-icon">radio_button_checked</mat-icon>
+                }
+              } @else {
+                <mat-icon class="step-icon future-icon">{{ step.icon }}</mat-icon>
+              }
+            </div>
+            <div class="flow-step-label">
+              <span class="step-name">{{ step.label }}</span>
+              @if (isStepAvailable(i)) {
+                <button mat-button [color]="i === 4 ? 'warn' : 'primary'" class="step-action" (click)="avancarStatus(i)">
+                  {{ i === 4 ? 'Recusar' : 'Avançar' }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
     </header>
 
     <div class="main-content">

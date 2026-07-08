@@ -204,4 +204,10 @@ export class ProcessStateService {
   discardProcess(numero: string) {
     return this.http.delete<void>(`${this.apiUrl}/${numero}/descartar`);
   }
+
+  atualizarStatus(numero: string, novoStatus: StatusAtribuicao) {
+    return this.http.patch<void>(`${this.apiUrl}/${numero}/status`, null, {
+      params: new HttpParams().set('novoStatus', novoStatus)
+    });
+  }
 }
