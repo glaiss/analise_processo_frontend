@@ -1,0 +1,93 @@
+<div class="cache-container">
+  <app-page-header
+    title="Monitor de Cache"
+    subtitle="Visualização das chaves e estatísticas de acerto dos caches em memória (Caffeine)"
+    [backButton]="true"
+    backRouterLink="/admin"
+  />
+
+  <div class="toolbar">
+    <button mat-raised-button color="primary" (click)="carregar()" [disabled]="loading()">
+      <mat-icon>refresh</mat-icon>
+      Atualizar
+    </button>
+    <span class="total">Total de entradas: <strong>{{ totalEntradas() }}</strong></span>
+    @if (ultimaAtualizacao()) {
+      <span class="atualizado">Atualizado em: {{ ultimaAtualizacao() | date:'HH:mm:ss' }}</span>
+    }
+    <span class="auto-refresh">Auto-refresh a cada 10s</span>
+  </div>
+
+  @if (error()) {
+    <mat-card class="erro-card">
+      <mat-icon color="warn">error_outline</mat-icon>
+      <span>{{ error() }}</span>
+    </mat-card>
+  }
+
+  <app-loading-overlay [isLoading]="loading()" message="Carregando caches..." />
+
+  <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="loading()">
+    <div class="cache-grid">
+      @for (cache of cachesVisiveisLista(); track trackByNome($index, cache)) {
+        <mat-card class="cache-card">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>storage</mat-icon>
+            <mat-card-title>{{ cache.nome }}</mat-card-title>
+            <mat-card-subtitle>
+              {{ cache.size }} entrada(s)
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="stats-row">
+              <div class="stat" [matTooltip]="'Taxa de acerto (hit / (hit + miss))'">
+                <span class="stat-label">Hit Rate</span>
+                <span class="stat-value" [class.hit-good]="cache.estatisticas.hitRate >= 0.7"
+                      [class.hit-medium]="cache.estatisticas.hitRate >= 0.3 && cache.estatisticas.hitRate < 0.7"
+                      [class.hit-low]="cache.estatisticas.hitRate < 0.3">
+                  {{ formatPercent(cache.estatisticas.hitRate) }}
+                </span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Hits</span>
+                <span class="stat-value">{{ cache.estatisticas.hitCount }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Misses</span>
+                <span class="stat-value">{{ cache.estatisticas.missCount }}</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Evições</span>
+                <span class="stat-value">{{ cache.estatisticas.evictionCount }}</span>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="chaves-header">
+              <mat-icon>key</mat-icon>
+              <span>Chaves ({{ cache.chaves.length }})</span>
+            </div>
+
+            @if (cache.chaves.length === 0) {
+              <p class="sem-chaves">Nenhuma chave no momento.</p>
+            } @else {
+              <div class="chaves-list">
+                @for (chave of cache.chaves; track chave) {
+                  <mat-chip class="chave-chip" [matTooltip]="chave">{{ chave }}</mat-chip>
+                }
+              </div>
+            }
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+
+    @if (temMais()) {
+      <p class="mais-resultados">
+        Mostrando {{ cachesVisiveis() }} de {{ todosCaches().length }} caches — role para ver mais
+      </p>
+    }
+  </app-infinite-scroll>
+</div>
