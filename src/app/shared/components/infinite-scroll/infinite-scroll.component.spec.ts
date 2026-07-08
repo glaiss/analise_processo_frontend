@@ -12,13 +12,7 @@ describe('InfiniteScrollComponent', () => {
       observe(...args: any[]) { return mockObserver.observe(...args); }
       disconnect(...args: any[]) { return mockObserver.disconnect(...args); }
     };
-    const orig = globalThis.IntersectionObserver;
-    Object.defineProperty(globalThis, 'IntersectionObserver', {
-      value: MockIntersectionObserver,
-      configurable: true,
-      writable: true,
-    });
-    (globalThis as any).__origObserver = orig;
+    vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
 
     await TestBed.configureTestingModule({
       imports: [InfiniteScrollComponent, NoopAnimationsModule],
@@ -26,15 +20,7 @@ describe('InfiniteScrollComponent', () => {
   });
 
   afterEach(() => {
-    const orig = (globalThis as any).__origObserver;
-    if (orig) {
-      Object.defineProperty(globalThis, 'IntersectionObserver', {
-        value: orig,
-        configurable: true,
-        writable: true,
-      });
-      delete (globalThis as any).__origObserver;
-    }
+    vi.unstubAllGlobals();
   });
 
   it('should create', () => {

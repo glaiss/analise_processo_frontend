@@ -5,6 +5,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
@@ -14,6 +15,7 @@ class StubComponent {}
 
 describe('HeaderComponent', () => {
   let authService: any;
+  let notificationService: any;
 
   beforeEach(async () => {
     authService = {
@@ -25,6 +27,13 @@ describe('HeaderComponent', () => {
       stopImpersonating: vi.fn(),
     };
 
+    notificationService = {
+      success: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+      info: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [HeaderComponent, NoopAnimationsModule],
       providers: [
@@ -32,6 +41,7 @@ describe('HeaderComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
+        { provide: NotificationService, useValue: notificationService },
         ThemeService,
       ],
     }).compileComponents();
@@ -65,6 +75,7 @@ describe('HeaderComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
+        { provide: NotificationService, useValue: notificationService },
         ThemeService,
       ],
     });
@@ -91,6 +102,7 @@ describe('HeaderComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
+        { provide: NotificationService, useValue: notificationService },
         ThemeService,
       ],
     });
