@@ -156,4 +156,84 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.title()).toBe('Processos');
     expect(fixture.componentInstance.subtitle()).toBe('Sherlock Laws - Gerenciamento e análise de processos judiciais');
   });
+
+  it('should show error state when errorMessage is present', () => {
+    processState.errorMessage.mockReturnValue('Erro ao carregar processos');
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('app-error-state')).toBeTruthy();
+  });
+
+  it('should show content loader when loading and no processes', () => {
+    processState.isLoading.mockReturnValue(true);
+    processState.filteredProcesses.mockReturnValue([]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('app-content-loader')).toBeTruthy();
+  });
+
+  it('should render table when processes exist', () => {
+    processState.filteredProcesses.mockReturnValue([
+      { numero: '123456', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: false, assuntoJudicial: 'Direito Civil', processoSituacao: 'ATIVO' },
+    ]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('table')).toBeTruthy();
+    expect(compiled.textContent).toContain('123456');
+  });
+
+  it('should show loading more indicator when loading with existing processes', () => {
+    processState.isLoading.mockReturnValue(true);
+    processState.filteredProcesses.mockReturnValue([
+      { numero: '123', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: false, assuntoJudicial: 'Teste', processoSituacao: 'ATIVO' },
+    ]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.loading-more-indicator')).toBeTruthy();
+  });
+
+  it('should show empty state when no processes and not loading', () => {
+    processState.isLoading.mockReturnValue(false);
+    processState.filteredProcesses.mockReturnValue([]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('app-empty-state')).toBeTruthy();
+  });
+
+  it('should show count badge when totalProcessos > 0', () => {
+    processState.totalElementCount.mockReturnValue(5);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.count-badge')).toBeTruthy();
+    expect(compiled.querySelector('.count-badge')?.textContent).toContain('5');
+  });
+
+  it('should show monitored star icon for monitored process', () => {
+    processState.filteredProcesses.mockReturnValue([
+      { numero: '123', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: true, assuntoJudicial: 'Teste', processoSituacao: 'ATIVO' },
+    ]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    const monitoredIcon = compiled.querySelector('.monitored');
+    expect(monitoredIcon).toBeTruthy();
+  });
+
+  it('should render monitored-row class for monitored process', () => {
+    processState.filteredProcesses.mockReturnValue([
+      { numero: '123', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: true, assuntoJudicial: 'Teste', processoSituacao: 'ATIVO' },
+    ]);
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    const rows = compiled.querySelectorAll('.mat-mdc-row');
+    expect(rows.length).toBe(1);
+    expect(rows[0].classList.contains('monitorado-row')).toBe(true);
+  });
 });

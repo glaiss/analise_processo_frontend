@@ -431,4 +431,176 @@ describe('ProcessDetailsComponent', () => {
     fixture.detectChanges();
     expect(compiled.querySelector('.documents-tab-layout')).toBeTruthy();
   });
+
+  it('should show loading overlay when processo is null', () => {
+    processState.getProcessoDetalhe.mockReturnValue(new Subject());
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('app-loading-overlay')).toBeTruthy();
+  });
+
+  it('should render breadcrumb navigation', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.breadcrumb')).toBeTruthy();
+    expect(compiled.querySelector('.breadcrumb .active')?.textContent).toContain('Detalhes');
+  });
+
+  it('should render info summary bar with process data', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const items = compiled.querySelectorAll('.summary-item');
+    expect(items.length).toBe(5);
+    expect(items[0].textContent).toContain('TJSP');
+    expect(items[1].textContent).toContain('Sistema X');
+    expect(items[2].textContent).toContain('1');
+    expect(items[4].textContent).toContain('80');
+  });
+
+  it('should render side card info items', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const infoItems = compiled.querySelectorAll('.info-item');
+    expect(infoItems.length).toBe(6);
+    expect(infoItems[0].textContent).toContain('Direito Civil');
+    expect(infoItems[1].textContent).toContain('1ª Vara Cível');
+    expect(infoItems[4].textContent).toContain('João');
+    expect(infoItems[5].textContent).toContain('Equipe A');
+  });
+
+  it('should render subtitle row with assunto fallback when assunto is null', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ assuntoJudicial: null })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.subtitle-row')?.textContent).toContain('assunto não tem nome');
+  });
+
+  it('should show empty state when movimentacoes is empty', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ movimentacoes: [] })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[0] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('app-empty-state')).toBeTruthy();
+  });
+
+  it('should show empty state when partes is empty', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ partes: [] })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[1] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('app-empty-state')).toBeTruthy();
+  });
+
+  it('should show empty state when hipoteses is empty', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ hipoteses: [] })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[2] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('app-empty-state')).toBeTruthy();
+  });
+
+  it('should render empty timeline state', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ anotacoes: [], historicoContatos: [] })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelectorAll('.timeline-item').length).toBe(0);
+  });
+
+  it('should render timeline with CONTATO type items', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({
+      anotacoes: [
+        { id: 'a1', texto: 'Note 1', usuarioNome: 'User A', dataCriacao: '2024-01-02T10:00:00' },
+      ],
+      historicoContatos: [
+        { descricao: 'Contact 1', usuarioNome: 'User B', dataCriacao: '2024-01-01T10:00:00' },
+      ],
+    })));
+    const fixture = createComponent();
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    const items = compiled.querySelectorAll('.timeline-item');
+    expect(items.length).toBe(2);
+    expect(items[0].classList.contains('contact')).toBe(false);
+    expect(items[1].classList.contains('contact')).toBe(true);
+  });
+
+  it('should show document viewer no selection state', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.documentoSelecionado.set(null);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[3] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('.no-selection')).toBeTruthy();
+  });
+
+  it('should show star icon when monitorado is true', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({ monitorado: true })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    expect(compiled.querySelector('.monitored')).toBeTruthy();
+  });
+
+  it('should render flow stepper with correct steps', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const steps = compiled.querySelectorAll('.flow-step');
+    expect(steps.length).toBe(5);
+    expect(steps[0].textContent).toContain('Atribuído');
+    expect(steps[1].textContent).toContain('Em Conversa');
+    expect(steps[2].textContent).toContain('Em Negociação');
+    expect(steps[3].textContent).toContain('Positivo');
+    expect(steps[4].textContent).toContain('Negativo');
+  });
+
+  it('should render partes tab when partes exist', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({
+      partes: [
+        { nome: 'João Silva', polo: 'ATIVO', documento: '123', advogados: ['Dr. Advogado'] },
+      ],
+    })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[1] as HTMLElement).click();
+    fixture.detectChanges();
+    expect(compiled.querySelector('.parte-card')).toBeTruthy();
+    expect(compiled.querySelector('.parte-card')?.textContent).toContain('João Silva');
+    expect(compiled.querySelector('.adv-item')?.textContent).toContain('Dr. Advogado');
+  });
+
+  it('should render hipoteses in score tab', () => {
+    processState.getProcessoDetalhe.mockReturnValue(of(mockProcesso({
+      hipoteses: [
+        { nomeRegra: 'Regra 1', pontos: 50, justificativa: 'Justificativa 1' },
+        { nomeRegra: 'Regra 2', pontos: -20, justificativa: 'Justificativa 2' },
+      ],
+    })));
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const tabLabels = compiled.querySelectorAll('.mat-mdc-tab');
+    (tabLabels[2] as HTMLElement).click();
+    fixture.detectChanges();
+    const cards = compiled.querySelectorAll('.hipotese-card');
+    expect(cards.length).toBe(2);
+    expect(cards[0].textContent).toContain('Regra 1');
+    expect(cards[0].querySelector('.hip-points')?.textContent).toContain('+50');
+    expect(cards[1].querySelector('.hip-points')?.textContent).toContain('-20');
+  });
+
+  it('should render status chips in title row', () => {
+    const fixture = createComponent();
+    const compiled = fixture.nativeElement;
+    const chips = compiled.querySelectorAll('mat-chip');
+    expect(chips.length).toBeGreaterThanOrEqual(2);
+    expect(chips[0].textContent).toContain('MEDIO');
+    expect(chips[1].textContent).toContain('ATRIBUIDO');
+  });
 });
