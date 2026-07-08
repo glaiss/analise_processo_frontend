@@ -12,7 +12,11 @@ describe('InfiniteScrollComponent', () => {
       observe(...args: any[]) { return mockObserver.observe(...args); }
       disconnect(...args: any[]) { return mockObserver.disconnect(...args); }
     };
-    vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
+    Object.defineProperty(globalThis, 'IntersectionObserver', {
+      value: MockIntersectionObserver,
+      configurable: true,
+      writable: true,
+    });
 
     await TestBed.configureTestingModule({
       imports: [InfiniteScrollComponent, NoopAnimationsModule],
@@ -20,7 +24,7 @@ describe('InfiniteScrollComponent', () => {
   });
 
   afterEach(() => {
-    vi.unstubAllGlobals();
+    delete (globalThis as any).IntersectionObserver;
   });
 
   it('should create', () => {
