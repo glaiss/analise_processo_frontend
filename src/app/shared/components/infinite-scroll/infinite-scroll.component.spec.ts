@@ -12,11 +12,29 @@ describe('InfiniteScrollComponent', () => {
       observe(...args: any[]) { return mockObserver.observe(...args); }
       disconnect(...args: any[]) { return mockObserver.disconnect(...args); }
     };
-    vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
+    const orig = globalThis.IntersectionObserver;
+    Object.defineProperty(globalThis, 'IntersectionObserver', {
+      value: MockIntersectionObserver,
+      configurable: true,
+      writable: true,
+    });
+    (globalThis as any).__origObserver = orig;
 
     await TestBed.configureTestingModule({
       imports: [InfiniteScrollComponent, NoopAnimationsModule],
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    const orig = (globalThis as any).__origObserver;
+    if (orig) {
+      Object.defineProperty(globalThis, 'IntersectionObserver', {
+        value: orig,
+        configurable: true,
+        writable: true,
+      });
+      delete (globalThis as any).__origObserver;
+    }
   });
 
   it('should create', () => {

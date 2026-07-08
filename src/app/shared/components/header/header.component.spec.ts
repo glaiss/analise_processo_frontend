@@ -20,6 +20,7 @@ describe('HeaderComponent', () => {
       currentUser: vi.fn(() => ({ username: 'joao', nome: 'João Silva', authorities: [{ authority: 'ROLE_ADMIN' }] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
+      hasRole: vi.fn(() => true),
       logout: vi.fn(),
       stopImpersonating: vi.fn(),
     };
@@ -51,6 +52,7 @@ describe('HeaderComponent', () => {
       currentUser: vi.fn(() => ({ username: 'maria', authorities: [] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
+      hasRole: vi.fn(() => true),
       logout: vi.fn(),
       stopImpersonating: vi.fn(),
     };
@@ -76,6 +78,7 @@ describe('HeaderComponent', () => {
       currentUser: vi.fn(() => ({ username: '', authorities: [] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
+      hasRole: vi.fn(() => true),
       logout: vi.fn(),
       stopImpersonating: vi.fn(),
     };
@@ -149,7 +152,7 @@ describe('HeaderComponent', () => {
     fixture.componentInstance.stopImpersonating();
 
     expect(authService.stopImpersonating).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
   });
 
   it('should navigate to alterar-senha on alterarSenha', () => {
