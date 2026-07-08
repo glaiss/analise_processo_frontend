@@ -58,7 +58,8 @@ describe('authInterceptor', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
-  it('should not redirect on 401 for login endpoint', () => {
+  it('should show invalid credentials notification on 401 for login endpoint', () => {
+    const notification = TestBed.inject(NotificationService);
     http.post('/api/usuarios/login', {}).subscribe({
       error: () => {}
     });
@@ -66,6 +67,7 @@ describe('authInterceptor', () => {
     const req = httpMock.expectOne('/api/usuarios/login');
     req.flush('Unauthorized', { status: 401, statusText: 'Unauthorized' });
 
+    expect(notification.error).toHaveBeenCalledWith('Usuário ou senha inválidos.');
     expect(router.navigate).not.toHaveBeenCalled();
   });
 

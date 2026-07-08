@@ -38,25 +38,15 @@ export class LoginComponent {
   };
 
   hidePassword = signal(true);
-  error = signal<string | null>(null);
 
   onSubmit() {
-    this.error.set(null);
     this.auth.login(this.credentials).subscribe({
       next: () => {
         this.auth.checkImpersonation().subscribe(() => {
           this.router.navigate(['/dashboard']);
         });
       },
-      error: (err) => {
-        if (err.status === 0) {
-          this.error.set('Sistema indisponível. Verifique sua conexão e tente novamente.');
-        } else if (err.status >= 500) {
-          this.error.set('Erro interno do servidor. Tente novamente mais tarde.');
-        } else {
-          this.error.set('Usuário ou senha inválidos.');
-        }
-      }
+      error: () => {}
     });
   }
 }

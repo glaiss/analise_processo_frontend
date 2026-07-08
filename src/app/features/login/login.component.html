@@ -21,10 +21,6 @@
           </button>
         </mat-form-field>
 
-        @if (error()) {
-          <p class="error-text">{{ error() }}</p>
-        }
-
         <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!loginForm.form.valid || auth.isLoading()">
           @if (auth.isLoading()) {
             <mat-spinner diameter="24"></mat-spinner>

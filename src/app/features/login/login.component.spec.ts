@@ -3,7 +3,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../core/services/auth.service';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('LoginComponent', () => {
   let authService: any;
@@ -52,24 +52,9 @@ describe('LoginComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
   });
 
-  it('should set network error when status is 0', () => {
-    authService.login.mockReturnValue(throwError(() => ({ status: 0 })));
+  it('should not render inline error message', () => {
     const fixture = TestBed.createComponent(LoginComponent);
-    fixture.componentInstance.onSubmit();
-    expect(fixture.componentInstance.error()).toBe('Sistema indisponível. Verifique sua conexão e tente novamente.');
-  });
-
-  it('should set server error when status >= 500', () => {
-    authService.login.mockReturnValue(throwError(() => ({ status: 500 })));
-    const fixture = TestBed.createComponent(LoginComponent);
-    fixture.componentInstance.onSubmit();
-    expect(fixture.componentInstance.error()).toBe('Erro interno do servidor. Tente novamente mais tarde.');
-  });
-
-  it('should set invalid credentials error for other status codes', () => {
-    authService.login.mockReturnValue(throwError(() => ({ status: 401 })));
-    const fixture = TestBed.createComponent(LoginComponent);
-    fixture.componentInstance.onSubmit();
-    expect(fixture.componentInstance.error()).toBe('Usuário ou senha inválidos.');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.error-text')).toBeNull();
   });
 });
