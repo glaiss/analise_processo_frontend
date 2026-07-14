@@ -1,0 +1,52 @@
+<div class="meus-dados-page">
+  <mat-card class="meus-dados-card">
+    <mat-card-header>
+      <mat-card-title>Meus Dados</mat-card-title>
+      <mat-card-subtitle>Altere suas informações pessoais</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="section">
+        <h3 class="section-title">Nome</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nome</mat-label>
+          <input matInput name="nome" [(ngModel)]="nome" required>
+        </mat-form-field>
+
+        @if (errorNome()) {
+          <p class="error-text">{{ errorNome() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="button" [disabled]="!nome().trim() || loadingNome()" (click)="salvarNome()">
+          @if (loadingNome()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Salvar Nome
+          }
+        </button>
+      </div>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <div class="section">
+        <h3 class="section-title">Email</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput name="email" [(ngModel)]="email" required type="email">
+        </mat-form-field>
+
+        @if (errorEmail()) {
+          <p class="error-text">{{ errorEmail() }}</p>
+        }
+
+        <button mat-flat-button color="primary" type="button" [disabled]="!email().trim() || loadingEmail()" (click)="salvarEmail()">
+          @if (loadingEmail()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Salvar Email
+          }
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

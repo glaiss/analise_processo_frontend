@@ -5,3 +5,4 @@ export * from './score-item.model';
 export * from './evento-contato.model';
 export * from './processo-detalhe.model';
 export * from './atribuicao-processo-resumo.model';
+export * from './processo-contato.model';

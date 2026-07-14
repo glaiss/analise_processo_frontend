@@ -28,23 +28,34 @@
       <div class="filters-extra-row">
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Status</mat-label>
-          <mat-select (selectionChange)="onStatusChange($event.value)" multiple>
+          <mat-select (selectionChange)="onStatusChange($event.value)" multiple panelClass="filter-select-panel">
             @for (s of statusOptions; track s) {
-              <mat-option [value]="s">{{ s }}</mat-option>
+              <mat-option [value]="s">{{ statusDisplay[s] }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="filter-field">
           <mat-label>Situa&ccedil;&atilde;o</mat-label>
-          <mat-select (selectionChange)="onSituacaoChange($event.value)" multiple>
+          <mat-select (selectionChange)="onSituacaoChange($event.value)" multiple panelClass="filter-select-panel">
             @for (sit of situacaoOptions; track sit) {
-              <mat-option [value]="sit">{{ sit }}</mat-option>
+              <mat-option [value]="sit">{{ situacaoDisplay[sit] }}</mat-option>
             }
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" class="filter-field assunto-field">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Score</mat-label>
+          <mat-select (selectionChange)="onScoreChange($event.value)" multiple panelClass="filter-select-panel">
+            @for (score of scoreOptions; track score) {
+              <mat-option [value]="score">{{ scoreDisplay[score] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filters-extra-row">
+        <mat-form-field appearance="outline" class="filter-field full-width">
           <mat-label>Assunto</mat-label>
           <input matInput [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()" placeholder="Ex: tribut&aacute;rio, c&iacute;vel...">
           <button mat-icon-button matSuffix (click)="onAssuntoSearch()" matTooltip="Filtrar">
@@ -56,17 +67,6 @@
             </button>
           }
         </mat-form-field>
-      </div>
-
-      <div class="filters-extra-row">
-        <div class="nivel-filter">
-          <span class="filter-label">N&iacute;vel de Risco:</span>
-          <mat-chip-listbox (change)="onChipNivelChange($event)" [multiple]="true">
-            <mat-chip-option value="ALTO" class="risk-chip risk-alto">Alto</mat-chip-option>
-            <mat-chip-option value="INTERMEDIARIO_ALTO" class="risk-chip risk-intermediario">Int. Alto</mat-chip-option>
-            <mat-chip-option value="MEDIO" class="risk-chip risk-medio">M&eacute;dio</mat-chip-option>
-          </mat-chip-listbox>
-        </div>
       </div>
     </div>
   }

@@ -34,6 +34,10 @@
     <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     <span>{{ theme.isDark() ? 'Modo Claro' : 'Modo Escuro' }}</span>
   </button>
+  <button mat-menu-item (click)="meusDados()">
+    <mat-icon>person</mat-icon>
+    <span>Meus Dados</span>
+  </button>
   <button mat-menu-item (click)="alterarSenha()">
     <mat-icon>lock</mat-icon>
     <span>Alterar Senha</span>

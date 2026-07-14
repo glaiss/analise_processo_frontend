@@ -65,6 +65,7 @@ describe('ProcessDetailsComponent', () => {
       adicionarAnotacao: vi.fn().mockReturnValue(of(undefined)),
       deletarAnotacao: vi.fn().mockReturnValue(of(undefined)),
       discardProcess: vi.fn().mockReturnValue(of(undefined)),
+      atualizarStatus: vi.fn().mockReturnValue(of(undefined)),
     };
 
     documentoService = {
@@ -600,7 +601,164 @@ describe('ProcessDetailsComponent', () => {
     const compiled = fixture.nativeElement;
     const chips = compiled.querySelectorAll('mat-chip');
     expect(chips.length).toBeGreaterThanOrEqual(2);
-    expect(chips[0].textContent).toContain('MEDIO');
-    expect(chips[1].textContent).toContain('ATRIBUIDO');
+    expect(chips[0].textContent).toContain('Médio');
+    expect(chips[1].textContent).toContain('Atribuído');
+  });
+
+  it('should open WhatsApp link on abrirContato with WHATSAPP type', () => {
+    const openSpy = vi.fn();
+    vi.stubGlobal('open', openSpy);
+    const fixture = createComponent();
+    fixture.componentInstance.abrirContato({
+      id: '1', tipo: 'WHATSAPP', valor: '5511999999999', nome: 'Contato', principal: true,
+    });
+    expect(openSpy).toHaveBeenCalledWith('https://wa.me/5511999999999', '_blank');
+    vi.unstubAllGlobals();
+  });
+
+  it('should open mailto link on abrirContato with EMAIL type', () => {
+    const openSpy = vi.fn();
+    vi.stubGlobal('open', openSpy);
+    const fixture = createComponent();
+    fixture.componentInstance.abrirContato({
+      id: '2', tipo: 'EMAIL', valor: 'teste@test.com', nome: 'Email', principal: false,
+    });
+    expect(openSpy).toHaveBeenCalledWith('mailto:teste@test.com', '_blank');
+    vi.unstubAllGlobals();
+  });
+
+  describe('flow stepper', () => {
+    it('getCurrentStepIndex should return correct index', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.getCurrentStepIndex()).toBe(0);
+    });
+
+    it('getCurrentStepIndex should return -1 when no processo', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(null);
+      expect(fixture.componentInstance.getCurrentStepIndex()).toBe(-1);
+    });
+
+    it('isStepCompleted should handle currentIdx === 4', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.CONCLUIDO_RECUSADO,
+      }));
+      expect(fixture.componentInstance.isStepCompleted(0)).toBe(false);
+      expect(fixture.componentInstance.isStepCompleted(4)).toBe(false);
+    });
+
+    it('isStepCompleted should handle currentIdx === 3 with index === 4', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.CONCLUIDO_SUCESSO,
+      }));
+      expect(fixture.componentInstance.isStepCompleted(0)).toBe(true);
+      expect(fixture.componentInstance.isStepCompleted(1)).toBe(true);
+      expect(fixture.componentInstance.isStepCompleted(2)).toBe(true);
+      expect(fixture.componentInstance.isStepCompleted(3)).toBe(true);
+      expect(fixture.componentInstance.isStepCompleted(4)).toBe(false);
+    });
+
+    it('isStepCurrent should return correct values', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isStepCurrent(0)).toBe(true);
+      expect(fixture.componentInstance.isStepCurrent(1)).toBe(false);
+    });
+
+    it('isStepCurrent should return false when no processo', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(null);
+      expect(fixture.componentInstance.isStepCurrent(0)).toBe(false);
+    });
+
+    it('isConnectorActive should return true for completed steps', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isConnectorActive(0)).toBe(true);
+    });
+
+    it('isConnectorActive should return false for non-completed steps', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isConnectorActive(1)).toBe(false);
+    });
+
+    it('isConnectorActive should return false when beforeIdx === 3', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.CONCLUIDO_SUCESSO,
+      }));
+      expect(fixture.componentInstance.isConnectorActive(3)).toBe(false);
+    });
+
+    it('isStepAvailable should return true for valid transitions', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isStepAvailable(1)).toBe(true);
+    });
+
+    it('isStepAvailable should return false for invalid transitions', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isStepAvailable(0)).toBe(false);
+      expect(fixture.componentInstance.isStepAvailable(3)).toBe(false);
+    });
+
+    it('isStepAvailable should handle terminal to positive transition', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.CONCLUIDO_RECUSADO,
+      }));
+      expect(fixture.componentInstance.isStepAvailable(3)).toBe(true);
+    });
+
+    it('isStepAvailable should return false when no processo', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(null);
+      expect(fixture.componentInstance.isStepAvailable(0)).toBe(false);
+    });
+
+    it('isTerminalStatus should return true for terminal statuses', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.CONCLUIDO_SUCESSO,
+      }));
+      expect(fixture.componentInstance.isTerminalStatus()).toBe(true);
+    });
+
+    it('isTerminalStatus should return false for non-terminal status', () => {
+      const fixture = createComponent();
+      expect(fixture.componentInstance.isTerminalStatus()).toBe(false);
+    });
+
+    it('avancarStatus should call atualizarStatus for step transition', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.EM_CONVERSA,
+      }));
+      processState.atualizarStatus = vi.fn(() => of(null));
+      fixture.componentInstance.avancarStatus(2);
+      expect(processState.atualizarStatus).toHaveBeenCalledWith('123456', StatusAtribuicao.EM_NEGOCIACAO);
+    });
+
+    it('avancarStatus should handle error notification', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.processo.set(mockProcesso({
+        statusAtribuicao: StatusAtribuicao.EM_CONVERSA,
+      }));
+      processState.atualizarStatus = vi.fn(() => throwError(() => new Error('fail')));
+      fixture.componentInstance.avancarStatus(2);
+      expect(notification.error).toHaveBeenCalledWith('Erro ao atualizar status do processo');
+    });
+
+    it('avancarStatus should not proceed without numero', () => {
+      const fixture = createComponent();
+      fixture.componentInstance.numero.set(null);
+      fixture.componentInstance.avancarStatus(1);
+      expect(processState.atualizarStatus).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should handle preview error notification', () => {
+    documentoService.download = vi.fn(() => throwError(() => new Error('preview fail')));
+    const fixture = createComponent();
+    expect(notification.error).toHaveBeenCalledWith('Erro ao carregar pré-visualização', 3000);
   });
 });

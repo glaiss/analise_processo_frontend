@@ -17,6 +17,9 @@ import { FilterBarComponent } from '../../shared/components/filter-bar/filter-ba
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { ContentLoaderComponent } from '../../shared/components/content-loader/content-loader.component';
+import { SituacaoDisplayPipe } from '../../shared/pipes/situacao-display.pipe';
+import { StatusDisplayPipe } from '../../shared/pipes/status-display.pipe';
+import { ScoreDisplayPipe } from '../../shared/pipes/score-display.pipe';
 
 @Component({
   selector: 'app-processos',
@@ -39,6 +42,9 @@ import { ContentLoaderComponent } from '../../shared/components/content-loader/c
     EmptyStateComponent,
     ErrorStateComponent,
     ContentLoaderComponent,
+    SituacaoDisplayPipe,
+    StatusDisplayPipe,
+    ScoreDisplayPipe,
   ],
   templateUrl: './processos.component.html',
   styleUrl: './processos.component.scss',
@@ -86,7 +92,7 @@ export class ProcessosComponent implements OnInit {
   onFilterChange(filters: {
     searchQuery: string;
     selectedNiveis: string[];
-    selectedStatus: any[];
+    selectedStatus: string[];
     selectedSituacao: string[];
     selectedAssunto: string;
   }) {
@@ -95,11 +101,13 @@ export class ProcessosComponent implements OnInit {
     this.selectedStatus.set(filters.selectedStatus);
     this.selectedSituacao.set(filters.selectedSituacao);
     this.selectedAssunto.set(filters.selectedAssunto);
-    this.processState.setSearchQuery(filters.searchQuery);
-    this.processState.setFilterNivel(filters.selectedNiveis);
-    this.processState.setFilterStatus(filters.selectedStatus);
-    this.processState.setFilterSituacao(filters.selectedSituacao);
-    this.processState.setFilterAssunto(filters.selectedAssunto);
+    this.processState.setAllFilters({
+      searchQuery: filters.searchQuery,
+      niveis: filters.selectedNiveis,
+      status: filters.selectedStatus as any,
+      situacao: filters.selectedSituacao,
+      assunto: filters.selectedAssunto,
+    });
   }
 
   onClearFilters() {
@@ -108,12 +116,13 @@ export class ProcessosComponent implements OnInit {
     this.selectedStatus.set([]);
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
-    this.processState.setSearchQuery('');
-    this.processState.setFilterNivel([]);
-    this.processState.setFilterStatus([]);
-    this.processState.setFilterSituacao([]);
-    this.processState.setFilterAssunto('');
-    this.processState.loadProcesses();
+    this.processState.setAllFilters({
+      searchQuery: '',
+      niveis: [],
+      status: [],
+      situacao: [],
+      assunto: '',
+    });
   }
 
   toggleMonitoramento(numero: string, event: MouseEvent) {

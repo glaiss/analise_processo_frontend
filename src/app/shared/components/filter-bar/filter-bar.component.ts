@@ -6,9 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule, MatChipListboxChange } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/enums.model';
+import { StatusAtribuicao, ProcessoSituacao, SITUACAO_DISPLAY, STATUS_DISPLAY, SCORE_OPTIONS, SCORE_DISPLAY } from '../../../core/models/processo/enums.model';
 
 @Component({
   selector: 'app-filter-bar',
@@ -21,7 +20,6 @@ import { StatusAtribuicao, ProcessoSituacao } from '../../../core/models/process
     MatSelectModule,
     MatIconModule,
     MatButtonModule,
-    MatChipsModule,
     MatTooltipModule,
   ],
   templateUrl: './filter-bar.component.html',
@@ -38,14 +36,34 @@ export class FilterBarComponent {
 
   readonly statusOptions = Object.values(StatusAtribuicao);
   readonly situacaoOptions = Object.values(ProcessoSituacao);
+  readonly situacaoDisplay = SITUACAO_DISPLAY;
+  readonly statusDisplay = STATUS_DISPLAY;
+  readonly scoreOptions = [...SCORE_OPTIONS];
+  readonly scoreDisplay = SCORE_DISPLAY;
 
   hasActiveFilters = input(false);
 
-  search = output<void>();
+  search = output<{
+    searchQuery: string;
+    selectedNiveis: string[];
+    selectedStatus: string[];
+    selectedSituacao: string[];
+    selectedAssunto: string;
+  }>();
   clearFilters = output<void>();
 
+  private emitSearch() {
+    this.search.emit({
+      searchQuery: this.searchQuery(),
+      selectedNiveis: this.selectedNiveis(),
+      selectedStatus: this.selectedStatus(),
+      selectedSituacao: this.selectedSituacao(),
+      selectedAssunto: this.selectedAssunto(),
+    });
+  }
+
   onSearch() {
-    this.search.emit();
+    this.emitSearch();
   }
 
   onClear() {
@@ -60,18 +78,21 @@ export class FilterBarComponent {
 
   onStatusChange(values: string[]) {
     this.selectedStatus.set(values);
+    this.emitSearch();
   }
 
   onSituacaoChange(values: string[]) {
     this.selectedSituacao.set(values);
+    this.emitSearch();
   }
 
-  onChipNivelChange(event: MatChipListboxChange) {
-    this.selectedNiveis.set(event.value as string[]);
+  onScoreChange(values: string[]) {
+    this.selectedNiveis.set(values);
+    this.emitSearch();
   }
 
   onAssuntoSearch() {
-    this.search.emit();
+    this.emitSearch();
   }
 
   toggleAdvanced() {

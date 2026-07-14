@@ -20,6 +20,8 @@ import { Documento, DocumentoService } from '../../../core/services/documento.se
 import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
 import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
+import { StatusDisplayPipe } from '../../../shared/pipes/status-display.pipe';
+import { ScoreDisplayPipe } from '../../../shared/pipes/score-display.pipe';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo';
@@ -28,6 +30,9 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 import { UploadDocumentDialogComponent } from '../../../shared/components/upload-document-dialog/upload-document-dialog.component';
 import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
+import { ContactProcessDialogComponent } from '../../../shared/components/contact-process-dialog/contact-process-dialog.component';
+import { ContatoService } from '../../../core/services/contato.service';
+import { ProcessoContatoDTO } from '../../../core/models/processo/processo-contato.model';
 
 @Component({
   selector: 'app-process-details',
@@ -52,7 +57,9 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 
       SafePipe,
       LoadingOverlayComponent,
-      EmptyStateComponent
+      EmptyStateComponent,
+      StatusDisplayPipe,
+      ScoreDisplayPipe,
     ],
   templateUrl: './process-details.component.html',
   styleUrl: './process-details.component.scss'
@@ -66,6 +73,7 @@ export class ProcessDetailsComponent implements OnInit {
   private location = inject(Location);
   private platformId = inject(PLATFORM_ID);
   private enriquecimentoService = inject(EnriquecimentoService);
+  private contatoService = inject(ContatoService);
 
   numero = signal<string | null>(null);
   processo = signal<ProcessoDetalheDTO | null>(null);
@@ -76,6 +84,7 @@ export class ProcessDetailsComponent implements OnInit {
   novaAnotacao = signal<string>('');
   enviandoAnotacao = signal<boolean>(false);
   reprocessando = signal<boolean>(false);
+  contatos = signal<ProcessoContatoDTO[]>([]);
 
   ngOnInit() {
     const num = this.route.snapshot.paramMap.get('numero');
@@ -240,6 +249,19 @@ export class ProcessDetailsComponent implements OnInit {
         },
         error: () => {}
       });
+      this.contatoService.listar(this.numero()!).subscribe({
+        next: (ctts) => this.contatos.set(ctts),
+        error: () => {}
+      });
+    }
+  }
+
+  abrirContato(contato: ProcessoContatoDTO) {
+    if (contato.tipo === 'WHATSAPP') {
+      const numero = contato.valor.replace(/\D/g, '');
+      window.open(`https://wa.me/${numero}`, '_blank');
+    } else if (contato.tipo === 'EMAIL') {
+      window.open(`mailto:${contato.valor}`, '_blank');
     }
   }
 
@@ -454,6 +476,38 @@ export class ProcessDetailsComponent implements OnInit {
     const numero = this.numero();
     const step = this.FLOW_STEPS[stepIndex];
     if (!numero || !step) return;
+
+    const currentIdx = this.getCurrentStepIndex();
+
+    if (currentIdx === 0 && stepIndex === 1) {
+      const dialogRef = this.dialog.open(ContactProcessDialogComponent, {
+        width: '480px',
+        disableClose: true,
+        data: { numero, contatos: [] }
+      });
+
+      dialogRef.afterClosed().subscribe({
+        next: (result) => {
+          if (!result) return;
+
+          this.contatoService.salvar(numero, {
+            tipo: result.tipo,
+            valor: result.valor,
+            nome: result.nome || undefined,
+            principal: true
+          }).subscribe({
+            next: () => {
+              this.processState.atualizarStatus(numero, step.status).subscribe({
+                next: () => this.refreshDetails(),
+                error: () => this.notification.error('Erro ao atualizar status do processo')
+              });
+            },
+            error: () => this.notification.error('Erro ao salvar contato')
+          });
+        }
+      });
+      return;
+    }
 
     this.processState.atualizarStatus(numero, step.status).subscribe({
       next: () => {

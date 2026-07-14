@@ -23,7 +23,7 @@
           {{ processo().diasParaVencer }} dias
         </mat-chip>
       }
-      <mat-chip>{{ processo().statusAtribuicao }}</mat-chip>
+      <mat-chip>{{ processo().statusAtribuicao | statusDisplay }}</mat-chip>
     </mat-chip-set>
   </mat-card-actions>
 </mat-card>

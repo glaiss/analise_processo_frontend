@@ -4,11 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { ProcessoResumoDTO } from '../../../core/models/processo/processo-resumo.model';
+import { StatusDisplayPipe } from '../../pipes/status-display.pipe';
 
 @Component({
   selector: 'app-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule],
+  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, StatusDisplayPipe],
   templateUrl: './process-card.component.html',
   styleUrl: './process-card.component.scss'
 })

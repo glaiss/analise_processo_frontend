@@ -32,10 +32,10 @@
         <div class="status-chips">
           <mat-chip-set>
             <mat-chip highlighted [color]="getLevelColor(p.nivel)">
-              {{ p.nivel }}
+              {{ p.nivel | scoreDisplay }}
             </mat-chip>
             <mat-chip>
-              {{ p.statusAtribuicao }}
+              {{ p.statusAtribuicao | statusDisplay }}
             </mat-chip>
           </mat-chip-set>
         </div>
@@ -45,6 +45,21 @@
         <mat-icon>chevron_right</mat-icon>
         <span>{{ p.assuntoJudicial || 'assunto não tem nome' }}</span>
       </div>
+
+      @if (contatos().length > 0) {
+        <div class="contact-bar">
+          <span class="contact-bar-label">Contatos:</span>
+          @for (c of contatos(); track c.id) {
+            <button mat-stroked-button class="contact-chip"
+              [class.whatsapp]="c.tipo === 'WHATSAPP'"
+              (click)="abrirContato(c)"
+              [matTooltip]="c.tipo === 'WHATSAPP' ? 'Abrir WhatsApp' : 'Enviar E-mail'">
+              <mat-icon>{{ c.tipo === 'WHATSAPP' ? 'chat' : 'email' }}</mat-icon>
+              {{ c.nome || c.valor }}
+            </button>
+          }
+        </div>
+      }
 
       <!-- Flow Stepper -->
       <div class="flow-stepper">

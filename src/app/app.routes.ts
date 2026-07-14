@@ -93,6 +93,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/admin/user-team-association/user-team-association.component').then(m => m.UserTeamAssociationComponent)
   },
   {
+    path: 'meus-dados',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/meus-dados/meus-dados.component').then(m => m.MeusDadosComponent)
+  },
+  {
     path: 'alterar-senha',
     canActivate: [authGuard],
     loadComponent: () => import('./features/alterar-senha/alterar-senha.component').then(m => m.AlterarSenhaComponent)

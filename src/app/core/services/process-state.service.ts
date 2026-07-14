@@ -130,6 +130,21 @@ export class ProcessStateService {
     this.loadProcesses();
   }
 
+  setAllFilters(filters: {
+    searchQuery: string;
+    niveis: string[];
+    status: StatusAtribuicao[];
+    situacao: string[];
+    assunto: string;
+  }) {
+    this.searchQuery.set(filters.searchQuery);
+    this.filterNivel.set(filters.niveis);
+    this.filterStatus.set(filters.status);
+    this.filterSituacao.set(filters.situacao);
+    this.filterAssunto.set(filters.assunto);
+    this.loadProcesses();
+  }
+
   readonly filteredProcesses = computed(() => this.processes());
 
   getProcessoDetalhe(numero: string) {

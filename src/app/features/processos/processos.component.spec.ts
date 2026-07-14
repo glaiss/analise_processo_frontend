@@ -24,11 +24,7 @@ describe('ProcessosComponent', () => {
     processState = {
       loadProcesses: vi.fn(),
       loadNextPage: vi.fn(),
-      setSearchQuery: vi.fn(),
-      setFilterNivel: vi.fn(),
-      setFilterStatus: vi.fn(),
-      setFilterSituacao: vi.fn(),
-      setFilterAssunto: vi.fn(),
+      setAllFilters: vi.fn(),
       setMode: vi.fn(),
       alternarMonitoramento: vi.fn().mockReturnValue({ subscribe: vi.fn() }),
       getProcessoDetalhe: vi.fn(),
@@ -80,11 +76,13 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([StatusAtribuicao.ATRIBUIDO]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual(['ATIVO']);
     expect(fixture.componentInstance.selectedAssunto()).toBe('tributário');
-    expect(processState.setSearchQuery).toHaveBeenCalledWith('test123');
-    expect(processState.setFilterNivel).toHaveBeenCalledWith(['ALTO', 'MEDIO']);
-    expect(processState.setFilterStatus).toHaveBeenCalledWith([StatusAtribuicao.ATRIBUIDO]);
-    expect(processState.setFilterSituacao).toHaveBeenCalledWith(['ATIVO']);
-    expect(processState.setFilterAssunto).toHaveBeenCalledWith('tributário');
+    expect(processState.setAllFilters).toHaveBeenCalledWith({
+      searchQuery: 'test123',
+      niveis: ['ALTO', 'MEDIO'],
+      status: [StatusAtribuicao.ATRIBUIDO],
+      situacao: ['ATIVO'],
+      assunto: 'tributário',
+    });
   });
 
   it('should call loadNextPage on scroll', () => {
@@ -122,9 +120,13 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
-    expect(processState.setSearchQuery).toHaveBeenCalledWith('');
-    expect(processState.setFilterAssunto).toHaveBeenCalledWith('');
-    expect(processState.loadProcesses).toHaveBeenCalled();
+    expect(processState.setAllFilters).toHaveBeenCalledWith({
+      searchQuery: '',
+      niveis: [],
+      status: [],
+      situacao: [],
+      assunto: '',
+    });
   });
 
   it('should compute hasActiveFilters correctly', () => {

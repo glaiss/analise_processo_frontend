@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { HeaderComponent } from './header.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter, Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -175,5 +176,112 @@ describe('HeaderComponent', () => {
     fixture.componentInstance.alterarSenha();
 
     expect(navigateSpy).toHaveBeenCalledWith(['/alterar-senha']);
+  });
+
+  it('should navigate to meus-dados on meusDados', () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.meusDados();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['/meus-dados']);
+  });
+
+  it('should open impersonate dialog and impersonate on confirm', () => {
+    const dialogRef = { afterClosed: vi.fn(() => of('admin@test.com')) };
+    const dialogMock = { open: vi.fn(() => dialogRef) };
+
+    TestBed.overrideComponent(HeaderComponent, {
+      set: { providers: [{ provide: MatDialog, useValue: dialogMock }] },
+    });
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    authService.impersonate = vi.fn(() => of(null));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    fixture.componentInstance.openImpersonateDialog();
+
+    expect(dialogMock.open).toHaveBeenCalled();
+    expect(authService.impersonate).toHaveBeenCalledWith('admin@test.com');
+    expect(notificationService.success).toHaveBeenCalledWith('Você entrou como admin@test.com');
+    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+  });
+
+  it('should show error notification when impersonate fails', () => {
+    const dialogRef = { afterClosed: vi.fn(() => of('user@test.com')) };
+    const dialogMock = { open: vi.fn(() => dialogRef) };
+
+    TestBed.overrideComponent(HeaderComponent, {
+      set: { providers: [{ provide: MatDialog, useValue: dialogMock }] },
+    });
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    authService.impersonate = vi.fn(() => throwError(() => new Error('fail')));
+
+    fixture.componentInstance.openImpersonateDialog();
+
+    expect(notificationService.error).toHaveBeenCalledWith('Erro ao entrar como usuário. Verifique o e-mail.');
+  });
+
+  it('should not impersonate when dialog is cancelled', () => {
+    const dialogRef = { afterClosed: vi.fn(() => of(null)) };
+    const dialogMock = { open: vi.fn(() => dialogRef) };
+
+    TestBed.overrideComponent(HeaderComponent, {
+      set: { providers: [{ provide: MatDialog, useValue: dialogMock }] },
+    });
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    authService.impersonate = vi.fn();
+
+    fixture.componentInstance.openImpersonateDialog();
+
+    expect(authService.impersonate).not.toHaveBeenCalled();
+  });
+
+  it('should show success notification on stop impersonating', () => {
+    authService.stopImpersonating.mockReturnValue(of(null));
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigate');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.componentInstance.stopImpersonating();
+
+    expect(notificationService.success).toHaveBeenCalledWith('Voltou para seu usuário administrador');
+    expect(authService.stopImpersonating).toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+  });
+
+  it('should render impersonation banner when impersonating', () => {
+    authService.isImpersonating = vi.fn(() => true);
+    authService.impersonatingAdmin = vi.fn(() => 'admin@original.com');
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    const banner = fixture.nativeElement.querySelector('.impersonation-banner');
+    expect(banner).toBeTruthy();
+    expect(banner.textContent).toContain('joao');
+    expect(banner.textContent).toContain('admin@original.com');
+  });
+
+  it('should render toolbar with menu button and user avatar', () => {
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    const toolbar = fixture.nativeElement.querySelector('.app-toolbar');
+    expect(toolbar).toBeTruthy();
+    expect(toolbar.textContent).toContain('Sherlock Law');
+    const avatarBtn = fixture.nativeElement.querySelector('.user-avatar-btn');
+    expect(avatarBtn).toBeTruthy();
+    expect(avatarBtn.textContent).toContain('J');
   });
 });

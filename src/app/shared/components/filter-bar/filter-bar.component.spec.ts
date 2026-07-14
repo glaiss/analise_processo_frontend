@@ -64,11 +64,10 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedSituacao()).toEqual(['ENRIQUECIDO']);
   });
 
-  it('should update selectedNiveis on onChipNivelChange', () => {
+  it('should update selectedNiveis on onScoreChange', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
-    const event = { value: ['ALTO', 'MEDIO'] } as any;
-    fixture.componentInstance.onChipNivelChange(event);
-    expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO', 'MEDIO']);
+    fixture.componentInstance.onScoreChange(['ALTO', 'INTERMEDIARIO_BAIXO']);
+    expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO', 'INTERMEDIARIO_BAIXO']);
   });
 
   it('should emit search on onAssuntoSearch', () => {
@@ -95,6 +94,11 @@ describe('FilterBarComponent', () => {
   it('should expose situacao enum values', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     expect(fixture.componentInstance.situacaoOptions.length).toBeGreaterThan(0);
+  });
+
+  it('should expose all score types', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    expect(fixture.componentInstance.scoreOptions).toEqual(['ALTO', 'INTERMEDIARIO_ALTO', 'MEDIO', 'INTERMEDIARIO_BAIXO', 'MINIMO']);
   });
 
   it('should show search input', () => {
@@ -129,5 +133,36 @@ describe('FilterBarComponent', () => {
     fixture.componentRef.setInput('hasActiveFilters', false);
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.clear-filters-btn')).toBeFalsy();
+  });
+
+  it('should show clear search button when searchQuery has a value', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.searchQuery.set('12345');
+    fixture.detectChanges();
+    const warnIcons = fixture.nativeElement.querySelectorAll('.search-field mat-icon[color="warn"]');
+    expect(warnIcons.length).toBe(1);
+    expect(warnIcons[0].textContent).toContain('close');
+  });
+
+  it('should clear searchQuery and emit search when close button clicked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.searchQuery.set('12345');
+    fixture.detectChanges();
+    const emitSpy = vi.spyOn(fixture.componentInstance.search, 'emit');
+    const warnIcons = fixture.nativeElement.querySelectorAll('.search-field mat-icon[color="warn"]');
+    const clearBtn = warnIcons[0].closest('button') as HTMLElement;
+    clearBtn.click();
+    expect(fixture.componentInstance.searchQuery()).toBe('');
+    expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('should show clear assunto button when selectedAssunto has a value', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.showAdvanced.set(true);
+    fixture.componentInstance.selectedAssunto.set('tributário');
+    fixture.detectChanges();
+    const warnIcons = fixture.nativeElement.querySelectorAll('.full-width mat-icon[color="warn"]');
+    expect(warnIcons.length).toBe(1);
+    expect(warnIcons[0].textContent).toContain('close');
   });
 });

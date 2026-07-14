@@ -1,4 +1,4 @@
-import { StatusAtribuicao, ResultadoAtendimento, TipologiaProcesso, ProcessoSituacao } from './enums.model';
+import { StatusAtribuicao, ResultadoAtendimento, TipologiaProcesso, ProcessoSituacao, SITUACAO_DISPLAY, STATUS_DISPLAY } from './enums.model';
 
 describe('StatusAtribuicao', () => {
   it('should have all expected values', () => {
@@ -33,8 +33,25 @@ describe('ProcessoSituacao', () => {
     expect(ProcessoSituacao.EM_ENRIQUECIMENTO).toBe('EM_ENRIQUECIMENTO');
     expect(ProcessoSituacao.ENRIQUECIDO).toBe('ENRIQUECIDO');
     expect(ProcessoSituacao.DESCARTADO_SCORE_BAIXO).toBe('DESCARTADO_SCORE_BAIXO');
+    expect(ProcessoSituacao.DESCARTADO_POR_USUARIO).toBe('DESCARTADO_POR_USUARIO');
     expect(ProcessoSituacao.PROPOSTA_APRESENTADA).toBe('PROPOSTA_APRESENTADA');
     expect(ProcessoSituacao.FINALIZADO).toBe('FINALIZADO');
     expect(ProcessoSituacao.ERRO_PROCESSAMENTO).toBe('ERRO_PROCESSAMENTO');
+  });
+
+  it('should have display labels for every value', () => {
+    const values = Object.values(ProcessoSituacao);
+    for (const v of values) {
+      expect(SITUACAO_DISPLAY[v]).toBeTruthy();
+    }
+  });
+});
+
+describe('STATUS_DISPLAY', () => {
+  it('should have display labels for every StatusAtribuicao value', () => {
+    const values = Object.values(StatusAtribuicao);
+    for (const v of values) {
+      expect(STATUS_DISPLAY[v]).toBeTruthy();
+    }
   });
 });

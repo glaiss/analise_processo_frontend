@@ -166,4 +166,16 @@ export class AuthService {
   alterarSenha(senhaAtual: string, senhaNova: string) {
     return this.http.put(`${this.apiUrl}/senha`, { senhaAtual, senhaNova });
   }
+
+  alterarNome(novoNome: string) {
+    return this.http.put<User>(`${this.apiUrl}/nome`, { nome: novoNome }).pipe(
+      tap(user => this.saveSession(user))
+    );
+  }
+
+  alterarEmail(novoEmail: string) {
+    return this.http.put<User>(`${this.apiUrl}/email`, { email: novoEmail }).pipe(
+      tap(user => this.saveSession(user))
+    );
+  }
 }

@@ -53,81 +53,38 @@
 
 .filters-extra-row {
   display: flex;
-  align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
-
-  & + .filters-extra-row {
-    margin-top: 12px;
-  }
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: stretch;
   }
 }
 
 .filter-field {
-  width: 220px;
+  flex: 1;
+  min-width: 0;
 
   @media (max-width: 768px) {
     width: 100%;
   }
 
-  &.assunto-field {
+  &.full-width {
     flex: 1;
-    min-width: 200px;
+    width: 100%;
   }
 }
 
-.nivel-filter {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+:root {
+  --filter-panel-max-height: 200px;
+}
 
-  .filter-label {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    white-space: nowrap;
-  }
+.filter-select-panel {
+  max-height: var(--filter-panel-max-height) !important;
+  min-height: 48px;
 
-  .mat-mdc-chip-listbox {
-    margin: 0;
-  }
-
-  .risk-chip {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    transition: all 0.15s ease;
-    --mdc-chip-elevated-container-color: transparent;
-    --mdc-chip-elevated-disabled-container-color: transparent;
-    border: 1px solid var(--border-strong);
-
-    &:hover {
-      border-color: var(--border-strong);
-    }
-
-    &.risk-alto.mdc-evolution-chip--selected {
-      --mdc-chip-elevated-container-color: var(--risk-bg-high);
-      --mdc-chip-elevated-disabled-container-color: var(--risk-bg-high);
-      border-color: var(--risk-border-high);
-      .mdc-evolution-chip__text-label { color: var(--red-600); }
-    }
-
-    &.risk-intermediario.mdc-evolution-chip--selected {
-      --mdc-chip-elevated-container-color: var(--risk-bg-medium-high);
-      --mdc-chip-elevated-disabled-container-color: var(--risk-bg-medium-high);
-      border-color: var(--risk-border-medium-high);
-      .mdc-evolution-chip__text-label { color: var(--risk-text-medium-high); }
-    }
-
-    &.risk-medio.mdc-evolution-chip--selected {
-      --mdc-chip-elevated-container-color: var(--risk-bg-medium);
-      --mdc-chip-elevated-disabled-container-color: var(--risk-bg-medium);
-      border-color: var(--risk-border-medium);
-      .mdc-evolution-chip__text-label { color: var(--risk-text-medium); }
-    }
+  .mdc-list-item {
+    height: auto !important;
+    min-height: 44px;
   }
 }
+

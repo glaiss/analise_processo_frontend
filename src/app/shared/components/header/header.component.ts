@@ -73,6 +73,10 @@ export class HeaderComponent {
     });
   }
 
+  meusDados() {
+    this.router.navigate(['/meus-dados']);
+  }
+
   alterarSenha() {
     this.router.navigate(['/alterar-senha']);
   }
