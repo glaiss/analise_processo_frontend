@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild, AfterViewInit, OnDestroy, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -32,7 +32,7 @@ export class InfiniteScrollComponent implements AfterViewInit, OnDestroy {
   private resolveRoot(): Element | null {
     if (!this.scrollRoot) return null;
     if (this.scrollRoot instanceof ElementRef) return this.scrollRoot.nativeElement;
-    return this.scrollRoot as Element;
+    return this.scrollRoot;
   }
 
   ngOnDestroy() {

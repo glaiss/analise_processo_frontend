@@ -1,4 +1,4 @@
-import { Component, inject, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -23,9 +23,9 @@ import { ImpersonateDialogComponent } from '../../../shared/components/impersona
 export class HeaderComponent {
   auth = inject(AuthService);
   theme = inject(ThemeService);
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private notification = inject(NotificationService);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly notification = inject(NotificationService);
 
   @Output() toggleSidenav = new EventEmitter<void>();
 
@@ -38,7 +38,7 @@ export class HeaderComponent {
   logout() {
     this.auth.logout().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        void this.router.navigate(['/login']);
       },
       error: () => {}
     });
@@ -55,7 +55,7 @@ export class HeaderComponent {
       this.auth.impersonate(targetEmail).subscribe({
         next: () => {
           this.notification.success(`Você entrou como ${targetEmail}`);
-          this.router.navigate(['/dashboard']);
+          void this.router.navigate(['/dashboard']);
         },
         error: () => {
           this.notification.error('Erro ao entrar como usuário. Verifique o e-mail.');
@@ -68,16 +68,16 @@ export class HeaderComponent {
     this.auth.stopImpersonating().subscribe({
       next: () => {
         this.notification.success('Voltou para seu usuário administrador');
-        this.router.navigate(['/dashboard']);
+        void this.router.navigate(['/dashboard']);
       }
     });
   }
 
   meusDados() {
-    this.router.navigate(['/meus-dados']);
+    void this.router.navigate(['/meus-dados']);
   }
 
   alterarSenha() {
-    this.router.navigate(['/alterar-senha']);
+    void this.router.navigate(['/alterar-senha']);
   }
 }

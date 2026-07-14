@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { loginGuard } from './login.guard';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../../environments/environment';
@@ -39,7 +39,7 @@ describe('loginGuard', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
 
-  it('should check session and redirect to dashboard if valid', () => new Promise<void>(done => {
+  it('should check session and redirect to dashboard if valid', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
     const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;
@@ -54,7 +54,7 @@ describe('loginGuard', () => {
     });
   }));
 
-  it('should allow access to login when session check fails', () => new Promise<void>(done => {
+  it('should allow access to login when session check fails', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
     const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;
@@ -67,7 +67,7 @@ describe('loginGuard', () => {
     httpMock.expectOne(`${API_URL}/me`).error(new ProgressEvent('error'));
   }));
 
-  it('should allow access to login when session returns null', () => new Promise<void>(done => {
+  it('should allow access to login when session returns null', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
     const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;

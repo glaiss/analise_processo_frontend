@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map, take, of, catchError } from 'rxjs';
+import { catchError, map, of, take } from 'rxjs';
 
 export const loginGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
@@ -9,7 +9,7 @@ export const loginGuard: CanActivateFn = () => {
 
   // If already authenticated in memory, redirect to dashboard
   if (authService.isAuthenticated()) {
-    router.navigate(['/dashboard']);
+    void router.navigate(['/dashboard']);
     return false;
   }
 
@@ -18,7 +18,7 @@ export const loginGuard: CanActivateFn = () => {
     take(1),
     map(user => {
       if (user) {
-        router.navigate(['/dashboard']);
+        void router.navigate(['/dashboard']);
         return false;
       }
       return true;

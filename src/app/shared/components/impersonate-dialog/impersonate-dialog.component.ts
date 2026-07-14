@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -60,7 +60,7 @@ import { UserService, UsuarioResponse } from '../../../core/services/user.servic
       </button>
     </mat-dialog-actions>
   `,
-  styles: [`
+  styles: `
     .full-width { width: 100%; }
     mat-dialog-content { min-width: 400px; }
     .user-option {
@@ -71,18 +71,18 @@ import { UserService, UsuarioResponse } from '../../../core/services/user.servic
     .user-option-name { font-weight: 500; font-size: 0.9rem; }
     .user-option-email { font-size: 0.75rem; color: var(--text-tertiary, #888); }
     .no-results { font-size: 0.85rem; color: var(--text-tertiary, #888); padding: 12px 16px; }
-  `]
+  `
 })
 export class ImpersonateDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<ImpersonateDialogComponent>);
-  private userService = inject(UserService);
+  private readonly userService = inject(UserService);
 
-  allUsers = signal<UsuarioResponse[]>([]);
-  loading = signal(false);
+  readonly allUsers = signal<UsuarioResponse[]>([]);
+  readonly loading = signal(false);
   searchTerm = '';
   selectedEmail = '';
 
-  filteredUsers = computed(() => {
+  readonly filteredUsers = computed(() => {
     const term = this.searchTerm.toLowerCase().trim();
     if (!term) return this.allUsers();
     return this.allUsers().filter(u =>
@@ -91,7 +91,7 @@ export class ImpersonateDialogComponent implements OnInit {
     );
   });
 
-  noResults = computed(() => this.filteredUsers().length === 0);
+  readonly noResults = computed(() => this.filteredUsers().length === 0);
 
   ngOnInit() {
     this.loadUsers();

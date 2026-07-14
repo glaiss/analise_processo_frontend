@@ -1,5 +1,5 @@
 <div class="association-container">
-  <app-page-header title="Vincular Usuários a Equipes" [backButton]="true" backRouterLink="/admin"/>
+  <app-page-header title="Vincular Usuários a Equipes" backRouterLink="/admin" [backButton]="true"/>
 
   <div class="association-grid">
     <!-- Formulário de Vinculação -->
@@ -49,7 +49,7 @@
             <button mat-flat-button color="primary" type="submit" [disabled]="associationForm.invalid || loading()">
               @if (loading()) {
                 <span class="spinner-button">
-                  <mat-spinner diameter="20" color="accent"></mat-spinner> Vinculando...
+                  <mat-spinner diameter="20" color="accent" /> Vinculando...
                 </span>
               } @else {
                 Vincular Usuário
@@ -70,7 +70,7 @@
       <mat-card-content>
         @if (loadingList()) {
           <div class="loading-container">
-            <mat-spinner diameter="40"></mat-spinner>
+            <mat-spinner diameter="40" />
             <p>Carregando usuários...</p>
           </div>
         } @else {
@@ -78,32 +78,32 @@
             <app-empty-state icon="person_off" message="Nenhum usuário cadastrado no sistema."/>
           } @else {
             <div class="table-container">
-              <table mat-table [dataSource]="usuarios()" class="mat-elevation-z1">
+              <table mat-table class="mat-elevation-z1" [dataSource]="usuarios()">
                 
                 <!-- Nome Column -->
                 <ng-container matColumnDef="nome">
-                  <th mat-header-cell *matHeaderCellDef> Nome </th>
-                  <td mat-cell *matCellDef="let element"> {{ element.nome }} </td>
+                  <th *matHeaderCellDef mat-header-cell> Nome </th>
+                  <td *matCellDef="let element" mat-cell> {{ element.nome }} </td>
                 </ng-container>
 
                 <!-- Username Column -->
                 <ng-container matColumnDef="username">
-                  <th mat-header-cell *matHeaderCellDef> Username </th>
-                  <td mat-cell *matCellDef="let element"> {{ element.username }} </td>
+                  <th *matHeaderCellDef mat-header-cell> Username </th>
+                  <td *matCellDef="let element" mat-cell> {{ element.username }} </td>
                 </ng-container>
 
                 <!-- Role Column -->
                 <ng-container matColumnDef="role">
-                  <th mat-header-cell *matHeaderCellDef> Perfil </th>
-                  <td mat-cell *matCellDef="let element"> 
+                  <th *matHeaderCellDef mat-header-cell> Perfil </th>
+                  <td *matCellDef="let element" mat-cell> 
                     <span class="role-badge">{{ element.role }}</span>
                   </td>
                 </ng-container>
 
                 <!-- Equipe Column -->
                 <ng-container matColumnDef="equipe">
-                  <th mat-header-cell *matHeaderCellDef> Equipe </th>
-                  <td mat-cell *matCellDef="let element">
+                  <th *matHeaderCellDef mat-header-cell> Equipe </th>
+                  <td *matCellDef="let element" mat-cell>
                     @if (element.equipeNome) {
                       <span class="team-badge">{{ element.equipeNome }}</span>
                     } @else {
@@ -114,10 +114,10 @@
 
                 <!-- Ações Column -->
                 <ng-container matColumnDef="acoes">
-                  <th mat-header-cell *matHeaderCellDef> Ações </th>
-                  <td mat-cell *matCellDef="let element">
+                  <th *matHeaderCellDef mat-header-cell> Ações </th>
+                  <td *matCellDef="let element" mat-cell>
                     @if (element.equipeNome) {
-                      <button mat-icon-button color="warn" (click)="desvincular(element.id)" matTooltip="Remover usuário da equipe">
+                      <button mat-icon-button color="warn" matTooltip="Remover usuário da equipe" (click)="desvincular(element.id)">
                         <mat-icon>link_off</mat-icon>
                       </button>
                     } @else {
@@ -128,8 +128,8 @@
                   </td>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+                <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
               </table>
             </div>
           }

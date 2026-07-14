@@ -1,17 +1,17 @@
 import { TestBed } from '@angular/core/testing';
-import { App } from './app';
+import { AppComponent } from './app';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router, NavigationEnd } from '@angular/router';
+import { NavigationEnd, Router, provideRouter } from '@angular/router';
 import { AuthService } from './core/services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
-import { of, Subject } from 'rxjs';
+import { Subject, of } from 'rxjs';
 
-@Component({ template: '', standalone: true })
+@Component({ selector: 'app-test', template: '', standalone: true })
 class StubComponent {}
 
-describe('App', () => {
+describe('AppComponent', () => {
   let authService: any;
 
   beforeEach(async () => {
@@ -28,7 +28,7 @@ describe('App', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [App, NoopAnimationsModule],
+      imports: [AppComponent, NoopAnimationsModule],
       providers: [
         provideRouter([{ path: 'login', component: StubComponent }]),
         provideHttpClient(),
@@ -39,25 +39,25 @@ describe('App', () => {
   });
 
   it('should create the app', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 
   it('should show menu by default when not on login route', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
     expect(component.showMenu).toBe(true);
   });
 
   it('should call checkSession and checkImpersonation on init', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.componentInstance.ngOnInit();
     expect(authService.checkSession).toHaveBeenCalled();
   });
 
   it('should hide menu when navigating to login route', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const router = TestBed.inject(Router);
     const events$ = of(new NavigationEnd(1, '/login', '/login'));
     Object.defineProperty(router, 'events', { get: () => events$ });
@@ -66,7 +66,7 @@ describe('App', () => {
   });
 
   it('should show menu when navigating away from login route', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const router = TestBed.inject(Router);
     const events$ = of(new NavigationEnd(1, '/dashboard', '/dashboard'));
     Object.defineProperty(router, 'events', { get: () => events$ });
@@ -75,7 +75,7 @@ describe('App', () => {
   });
 
   it('should call checkImpersonation after navigation', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const router = TestBed.inject(Router);
     const events$ = of(new NavigationEnd(1, '/login', '/login'));
     Object.defineProperty(router, 'events', { get: () => events$ });
@@ -85,7 +85,7 @@ describe('App', () => {
   });
 
   it('should call toggleSidenav when toggled', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
     const sidenavSpy = { toggle: vi.fn() };
     component.sidenav = sidenavSpy as any;
@@ -94,14 +94,14 @@ describe('App', () => {
   });
 
   it('should not throw when toggleSidenav is called without sidenav', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
     component.sidenav = undefined as any;
     expect(() => component.toggleSidenav()).not.toThrow();
   });
 
   it('should render sidenav and header when authenticated and menu is shown', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.componentInstance.showMenu = true;
     authService.isAuthenticated.mockReturnValue(true);
     fixture.detectChanges();
@@ -112,7 +112,7 @@ describe('App', () => {
   });
 
   it('should not render sidenav and header when showMenu is false', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.componentInstance.showMenu = false;
     authService.isAuthenticated.mockReturnValue(true);
     fixture.detectChanges();
@@ -121,7 +121,7 @@ describe('App', () => {
   });
 
   it('should not render sidenav and header when not authenticated', () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(AppComponent);
     fixture.componentInstance.showMenu = true;
     authService.isAuthenticated.mockReturnValue(false);
     fixture.detectChanges();

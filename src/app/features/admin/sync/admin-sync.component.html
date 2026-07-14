@@ -9,9 +9,9 @@
         <mat-card-subtitle>Sincronizar tipos de movimentação</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="syncMovimentos()" [disabled]="loadingMovimentos()">
+        <button mat-raised-button color="primary" [disabled]="loadingMovimentos()" (click)="syncMovimentos()">
           @if (loadingMovimentos()) {
-            <mat-spinner diameter="20"></mat-spinner>
+            <mat-spinner diameter="20" />
           } @else {
             Sincronizar
           }
@@ -26,9 +26,9 @@
         <mat-card-subtitle>Sincronizar classes judiciais</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="syncClasses()" [disabled]="loadingClasses()">
+        <button mat-raised-button color="primary" [disabled]="loadingClasses()" (click)="syncClasses()">
           @if (loadingClasses()) {
-            <mat-spinner diameter="20"></mat-spinner>
+            <mat-spinner diameter="20" />
           } @else {
             Sincronizar
           }
@@ -43,9 +43,9 @@
         <mat-card-subtitle>Sincronizar assuntos judiciais</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="syncAssuntos()" [disabled]="loadingAssuntos()">
+        <button mat-raised-button color="primary" [disabled]="loadingAssuntos()" (click)="syncAssuntos()">
           @if (loadingAssuntos()) {
-            <mat-spinner diameter="20"></mat-spinner>
+            <mat-spinner diameter="20" />
           } @else {
             Sincronizar
           }
@@ -60,9 +60,9 @@
         <mat-card-subtitle>Executar todas as sincronizações de uma vez</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="warn" (click)="syncTudo()" [disabled]="loadingTudo()">
+        <button mat-raised-button color="warn" [disabled]="loadingTudo()" (click)="syncTudo()">
           @if (loadingTudo()) {
-            <mat-spinner diameter="20"></mat-spinner>
+            <mat-spinner diameter="20" />
           } @else {
             Sincronizar Todos
           }
@@ -99,9 +99,9 @@
         </div>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" (click)="syncIngestao()" [disabled]="loadingIngestao()">
+        <button mat-raised-button color="primary" [disabled]="loadingIngestao()" (click)="syncIngestao()">
           @if (loadingIngestao()) {
-            <mat-spinner diameter="20"></mat-spinner>
+            <mat-spinner diameter="20" />
           } @else {
             Iniciar Ingestão
           }

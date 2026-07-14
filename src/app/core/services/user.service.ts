@@ -3,13 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Page } from '../models/processo/pagination.model';
-
 export enum Role {
   ADMIN = 'ADMIN',
   GESTOR = 'GESTOR',
-  ANALISTA = 'ANALISTA'
+  ANALISTA = 'ANALISTA',
 }
-
 export interface UsuarioRequest {
   username: string;
   nome?: string;
@@ -17,7 +15,6 @@ export interface UsuarioRequest {
   role: Role;
   equipeId?: string;
 }
-
 export interface UsuarioResponse {
   id: string;
   username: string;
@@ -26,26 +23,19 @@ export interface UsuarioResponse {
   equipeId?: string;
   equipeNome?: string;
 }
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/usuarios`;
-
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/usuarios`;
   criarUsuario(usuario: UsuarioRequest): Observable<void> {
     return this.http.post<void>(this.apiUrl, usuario);
   }
-
   getUsuarios(page: number = 0, size: number = 100): Observable<Page<UsuarioResponse>> {
     return this.http.get<Page<UsuarioResponse>>(`${this.apiUrl}?page=${page}&size=${size}`);
   }
-
   associarEquipe(usuarioId: string, equipeId: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${usuarioId}/equipe/${equipeId}`, {});
   }
-
   desassociarEquipe(usuarioId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${usuarioId}/equipe`);
   }

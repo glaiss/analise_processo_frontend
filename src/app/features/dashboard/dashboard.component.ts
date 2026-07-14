@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,15 +22,15 @@ import { ProcessoFilterParams } from '../../core/services/distribution.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
-  viewMode = signal<'meus' | 'equipe'>('meus');
+  readonly viewMode = signal<'meus' | 'equipe'>('meus');
 
-  searchQuery = signal<string>('');
-  selectedNiveis = signal<string[]>([]);
-  selectedStatus = signal<string[]>([]);
-  selectedSituacao = signal<string[]>([]);
-  selectedAssunto = signal<string>('');
+  readonly searchQuery = signal<string>('');
+  readonly selectedNiveis = signal<string[]>([]);
+  readonly selectedStatus = signal<string[]>([]);
+  readonly selectedSituacao = signal<string[]>([]);
+  readonly selectedAssunto = signal<string>('');
 
-  hasActiveFilters = computed(() =>
+  readonly hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
     this.selectedStatus().length > 0 ||
     this.selectedSituacao().length > 0 ||
@@ -38,7 +38,7 @@ export class DashboardComponent {
     this.searchQuery().length > 0
   );
 
-  filterParams = computed<ProcessoFilterParams | undefined>(() => {
+  readonly filterParams = computed<ProcessoFilterParams | undefined>(() => {
     if (!this.hasActiveFilters()) return undefined;
     return {
       numero: this.searchQuery() || undefined,

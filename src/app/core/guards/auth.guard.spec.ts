@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { authGuard } from './auth.guard';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../../environments/environment';
@@ -39,7 +39,7 @@ describe('authGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('should check session when not authenticated', () => new Promise<void>(done => {
+  it('should check session when not authenticated', async () => new Promise<void>(done => {
     (authService as any).user.set(null);
 
     const result$ = TestBed.runInInjectionContext(() => authGuard({} as any, {} as any)) as any;
@@ -54,7 +54,7 @@ describe('authGuard', () => {
     });
   }));
 
-  it('should redirect to login when session check fails', () => new Promise<void>(done => {
+  it('should redirect to login when session check fails', async () => new Promise<void>(done => {
     (authService as any).user.set(null);
 
     const result$ = TestBed.runInInjectionContext(() => authGuard({} as any, {} as any)) as any;
@@ -67,7 +67,7 @@ describe('authGuard', () => {
     httpMock.expectOne(`${API_URL}/me`).error(new ProgressEvent('error'));
   }));
 
-  it('should redirect to login when session returns null', () => new Promise<void>(done => {
+  it('should redirect to login when session returns null', async () => new Promise<void>(done => {
     (authService as any).user.set(null);
 
     const result$ = TestBed.runInInjectionContext(() => authGuard({} as any, {} as any)) as any;

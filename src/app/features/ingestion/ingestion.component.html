@@ -3,10 +3,10 @@
 
   <mat-card>
     <mat-card-content>
-      <form (ngSubmit)="onSubmit()" #ingestForm="ngForm">
+      <form #ingestForm="ngForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tribunal</mat-label>
-          <mat-select name="tribunal" [(ngModel)]="formData.tribunal" required>
+          <mat-select name="tribunal" required [(ngModel)]="formData.tribunal">
             @for (t of tribunais; track t) {
               <mat-option [value]="t">{{ t }}</mat-option>
             }
@@ -15,17 +15,17 @@
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Total de Processos</mat-label>
-          <input matInput type="number" name="total" [(ngModel)]="formData.total" required>
+          <input matInput type="number" name="total" required [(ngModel)]="formData.total">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Tamanho do Lote (Size)</mat-label>
-          <input matInput type="number" name="size" [(ngModel)]="formData.size" required>
+          <input matInput type="number" name="size" required [(ngModel)]="formData.size">
         </mat-form-field>
 
         <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!ingestForm.form.valid || loading()">
           @if (loading()) {
-            <mat-spinner diameter="24"></mat-spinner>
+            <mat-spinner diameter="24" />
           } @else {
             Iniciar Sincronização
           }

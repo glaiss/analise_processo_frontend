@@ -1,9 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, provideRouter } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
-import { of, Subject, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { ProcessDetailsComponent } from './process-details.component';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { DocumentoService } from '../../../core/services/documento.service';

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { ProcessosComponent } from './processos.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
 import { StatusAtribuicao } from '../../core/models/processo/enums.model';
@@ -8,14 +8,18 @@ import { StatusAtribuicao } from '../../core/models/processo/enums.model';
 class MockIntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin: string = '';
-  readonly thresholds: ReadonlyArray<number> = [];
+  readonly thresholds: readonly number[] = [];
   constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
   observe() { vi.fn(); }
   unobserve() { vi.fn(); }
   disconnect() { vi.fn(); }
   takeRecords(): IntersectionObserverEntry[] { return []; }
 }
-Object.defineProperty(globalThis, 'IntersectionObserver', { value: MockIntersectionObserver });
+Object.defineProperty(globalThis, 'IntersectionObserver', {
+  value: MockIntersectionObserver,
+  configurable: true,
+  writable: true,
+});
 
 describe('ProcessosComponent', () => {
   let processState: any;
@@ -99,7 +103,7 @@ describe('ProcessosComponent', () => {
 
   it('should navigate to process on openProcess', () => {
     const fixture = TestBed.createComponent(ProcessosComponent);
-    const router = fixture.componentInstance['router'];
+    const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigate');
     fixture.componentInstance.openProcess('123456');
     expect(navigateSpy).toHaveBeenCalledWith(['/processos', '123456']);

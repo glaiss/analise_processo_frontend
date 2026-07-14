@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
+import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo/pagination.model';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
@@ -35,15 +35,15 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
   styleUrl: './team-management.component.scss'
 })
 export class TeamManagementComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private equipeService = inject(EquipeService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly equipeService = inject(EquipeService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
   teamForm: FormGroup;
-  equipes = signal<EquipeDto[]>([]);
-  loading = signal(false);
-  loadingList = signal(false);
+  readonly equipes = signal<EquipeDto[]>([]);
+  readonly loading = signal(false);
+  readonly loadingList = signal(false);
   displayedColumns: string[] = ['nome', 'status'];
 
   constructor() {
@@ -98,6 +98,6 @@ export class TeamManagementComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/admin']);
+    void this.router.navigate(['/admin']);
   }
 }

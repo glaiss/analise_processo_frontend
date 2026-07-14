@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { SITUACAO_DISPLAY, ProcessoSituacao } from '../../core/models/processo/enums.model';
+import { ProcessoSituacao, SITUACAO_DISPLAY } from '../../core/models/processo/enums.model';
 
 @Pipe({
   name: 'situacaoDisplay',

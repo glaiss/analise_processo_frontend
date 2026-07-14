@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -65,7 +65,7 @@ export interface ContactProcessDialogData {
       </button>
     </mat-dialog-actions>
   `,
-  styles: [`
+  styles: `
     mat-dialog-content { overflow: hidden; max-height: none; padding: 0 24px; }
     .dialog-subtitle { margin: 0 0 12px; color: var(--text-secondary); font-size: 14px; }
     .section-label { display: block; font-weight: 600; font-size: 13px; color: var(--text-tertiary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -74,7 +74,7 @@ export interface ContactProcessDialogData {
     .contact-row { display: flex; gap: 12px; }
     .type-field { flex: 0 0 140px; }
     .value-field { flex: 1; }
-  `]
+  `
 })
 export class ContactProcessDialogComponent {
   tipo: string = 'WHATSAPP';

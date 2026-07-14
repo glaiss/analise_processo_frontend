@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../core/services/auth.service';
 import { of } from 'rxjs';
@@ -41,7 +41,7 @@ describe('LoginComponent', () => {
     authService.checkImpersonation.mockReturnValue(of(undefined));
 
     const fixture = TestBed.createComponent(LoginComponent);
-    const router = fixture.componentInstance['router'];
+    const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigate');
 
     fixture.componentInstance.credentials = { username: 'user', password: 'pass' };

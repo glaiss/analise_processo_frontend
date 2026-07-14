@@ -1,34 +1,32 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
 import { StatusAtribuicao } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
-import { tap, catchError, of, map } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProcessStateService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/v1/analise/processos`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/v1/analise/processos`;
 
   // State
-  private processes = signal<ProcessoResumoDTO[]>([]);
-  private loading = signal<boolean>(false);
-  private error = signal<string | null>(null);
-  private currentPage = signal<number>(0);
-  private totalPages = signal<number>(0);
-  private totalElements = signal<number>(0);
-  private mode = signal<'all' | 'monitorados'>('all');
+  private readonly processes = signal<ProcessoResumoDTO[]>([]);
+  private readonly loading = signal<boolean>(false);
+  private readonly error = signal<string | null>(null);
+  private readonly currentPage = signal<number>(0);
+  private readonly totalPages = signal<number>(0);
+  private readonly totalElements = signal<number>(0);
+  private readonly mode = signal<'all' | 'monitorados'>('all');
 
   // Filters
-  private filterNivel = signal<string[]>([]);
-  private filterStatus = signal<StatusAtribuicao[]>([]);
-  private filterSituacao = signal<string[]>([]);
-  private filterAssunto = signal<string>('');
-  private searchQuery = signal<string>('');
-  private groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
+  private readonly filterNivel = signal<string[]>([]);
+  private readonly filterStatus = signal<StatusAtribuicao[]>([]);
+  private readonly filterSituacao = signal<string[]>([]);
+  private readonly filterAssunto = signal<string>('');
+  private readonly searchQuery = signal<string>('');
+  private readonly groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
 
   // Computed
   readonly allProcesses = computed(() => this.processes());
@@ -46,39 +44,30 @@ export class ProcessStateService {
 
   loadProcesses(append: boolean = false) {
     if (this.loading()) return;
-
     if (!append) {
       this.currentPage.set(0);
       this.processes.set([]);
     }
-
     this.loading.set(true);
     let params = new HttpParams()
       .set('page', this.currentPage().toString())
       .set('size', '20');
-
     if (this.searchQuery()) {
       params = params.set('numero', this.searchQuery());
     }
-
     if (this.filterAssunto()) {
       params = params.set('assunto', this.filterAssunto());
     }
-
     this.filterNivel().forEach(nivel => {
       params = params.append('niveis', nivel);
     });
-
     this.filterStatus().forEach(status => {
       params = params.append('status', status);
     });
-
     this.filterSituacao().forEach(situacao => {
       params = params.append('situacao', situacao);
     });
-
     const endpoint = this.mode() === 'monitorados' ? `${this.apiUrl}/monitorados` : this.apiUrl;
-
     this.http.get<Page<ProcessoResumoDTO>>(endpoint, { params }).pipe(
       tap({
         next: (pageData) => {
@@ -182,7 +171,6 @@ export class ProcessStateService {
     const key = this.groupBy();
     const filtered = this.allProcesses();
     const groups: Record<string, ProcessoResumoDTO[]> = {};
-
     filtered.forEach(p => {
       const groupKey = p[key] || 'Não Atribuído';
       if (!groups[groupKey]) {
@@ -190,7 +178,6 @@ export class ProcessStateService {
       }
       groups[groupKey].push(p);
     });
-
     return Object.entries(groups).map(([name, items]) => ({
       name,
       items,

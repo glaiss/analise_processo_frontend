@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { AssignedProcessCardComponent } from './assigned-process-card.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
-import { StatusAtribuicao, ProcessoSituacao, TipologiaProcesso, ResultadoAtendimento } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, ResultadoAtendimento, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/enums.model';
 import { of, throwError } from 'rxjs';
 
 function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): AtribuicaoProcessoResumoDTO {
@@ -202,7 +202,7 @@ describe('AssignedProcessCardComponent', () => {
   });
 
   describe('situationColorClass', () => {
-    const situationCases: [string, string][] = [
+    const situationCases: Array<[string, string]> = [
       ['AGUARDANDO_DISTRIBUICAO', 'situation-pending'],
       ['PENDENTE_ENRIQUECIMENTO', 'situation-pending'],
       ['EM_ENRIQUECIMENTO', 'situation-processing'],

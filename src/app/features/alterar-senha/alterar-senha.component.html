@@ -6,27 +6,27 @@
     </mat-card-header>
 
     <mat-card-content>
-      <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <form #form="ngForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Senha Atual</mat-label>
-          <input matInput [type]="hideAtual() ? 'password' : 'text'" name="senhaAtual" [(ngModel)]="senhaAtual" required>
-          <button mat-icon-button matSuffix type="button" (click)="hideAtual.set(!hideAtual())" [matTooltip]="hideAtual() ? 'Mostrar senha' : 'Ocultar senha'">
+          <input matInput name="senhaAtual" required [type]="hideAtual() ? 'password' : 'text'" [(ngModel)]="senhaAtual">
+          <button mat-icon-button matSuffix type="button" [matTooltip]="hideAtual() ? 'Mostrar senha' : 'Ocultar senha'" (click)="hideAtual.set(!hideAtual())">
             <mat-icon>{{ hideAtual() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nova Senha</mat-label>
-          <input matInput [type]="hideNova() ? 'password' : 'text'" name="senhaNova" [(ngModel)]="senhaNova" required minlength="4">
-          <button mat-icon-button matSuffix type="button" (click)="hideNova.set(!hideNova())" [matTooltip]="hideNova() ? 'Mostrar senha' : 'Ocultar senha'">
+          <input matInput name="senhaNova" required minlength="4" [type]="hideNova() ? 'password' : 'text'" [(ngModel)]="senhaNova">
+          <button mat-icon-button matSuffix type="button" [matTooltip]="hideNova() ? 'Mostrar senha' : 'Ocultar senha'" (click)="hideNova.set(!hideNova())">
             <mat-icon>{{ hideNova() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Confirmar Nova Senha</mat-label>
-          <input matInput [type]="hideConfirmacao() ? 'password' : 'text'" name="senhaConfirmacao" [(ngModel)]="senhaConfirmacao" required>
-          <button mat-icon-button matSuffix type="button" (click)="hideConfirmacao.set(!hideConfirmacao())" [matTooltip]="hideConfirmacao() ? 'Mostrar senha' : 'Ocultar senha'">
+          <input matInput name="senhaConfirmacao" required [type]="hideConfirmacao() ? 'password' : 'text'" [(ngModel)]="senhaConfirmacao">
+          <button mat-icon-button matSuffix type="button" [matTooltip]="hideConfirmacao() ? 'Mostrar senha' : 'Ocultar senha'" (click)="hideConfirmacao.set(!hideConfirmacao())">
             <mat-icon>{{ hideConfirmacao() ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
@@ -37,7 +37,7 @@
 
         <button mat-flat-button color="primary" class="full-width" type="submit" [disabled]="!form.form.valid || loading()">
           @if (loading()) {
-            <mat-spinner diameter="24"></mat-spinner>
+            <mat-spinner diameter="24" />
           } @else {
             Alterar Senha
           }

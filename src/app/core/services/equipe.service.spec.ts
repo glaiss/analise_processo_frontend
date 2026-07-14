@@ -1,15 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { EquipeService } from './equipe.service';
 import { environment } from '../../../environments/environment';
-
 const API_URL = `${environment.apiUrl}/equipes`;
-
 describe('EquipeService', () => {
   let service: EquipeService;
   let httpMock: HttpTestingController;
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [provideHttpClient(), provideHttpClientTesting(), EquipeService],
@@ -17,13 +14,10 @@ describe('EquipeService', () => {
     service = TestBed.inject(EquipeService);
     httpMock = TestBed.inject(HttpTestingController);
   });
-
   afterEach(() => httpMock.verify());
-
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-
   describe('getEquipes', () => {
     it('should GET equipes with pagination', () => {
       service.getEquipes(0, 20).subscribe();
@@ -32,7 +26,6 @@ describe('EquipeService', () => {
       req.flush({ content: [] });
     });
   });
-
   describe('getEquipesAtivas', () => {
     it('should GET ativas with pagination', () => {
       service.getEquipesAtivas(1, 10).subscribe();
@@ -41,7 +34,6 @@ describe('EquipeService', () => {
       req.flush({ content: [] });
     });
   });
-
   describe('criarEquipe', () => {
     it('should POST new equipe', () => {
       const equipe = { nome: 'Nova Equipe', ativo: true };

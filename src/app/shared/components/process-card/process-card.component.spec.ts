@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { ProcessCardComponent } from './process-card.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ProcessoResumoDTO } from '../../../core/models/processo/processo-resumo.model';
-import { StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, StatusAtribuicao } from '../../../core/models/processo/enums.model';
 
 function createProcesso(overrides?: Partial<ProcessoResumoDTO>): ProcessoResumoDTO {
   return {

@@ -29,10 +29,10 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
   styleUrl: './ingestion.component.scss'
 })
 export class IngestionComponent {
-  private ingestionService = inject(IngestionService);
-  private notification = inject(NotificationService);
+  private readonly ingestionService = inject(IngestionService);
+  private readonly notification = inject(NotificationService);
 
-  loading = signal<boolean>(false);
+  readonly loading = signal<boolean>(false);
   
   formData = {
     tribunal: 'TJSP',

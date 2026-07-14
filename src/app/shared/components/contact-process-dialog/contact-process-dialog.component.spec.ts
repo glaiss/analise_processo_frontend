@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ContactProcessDialogComponent } from './contact-process-dialog.component';
 

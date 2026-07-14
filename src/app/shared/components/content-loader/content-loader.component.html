@@ -51,7 +51,7 @@
   @default {
     <div class="skeleton-text">
       @for (row of rowsArray; track row) {
-        <div class="skeleton-line" [class]="'w-' + [60, 80, 70, 90, 50][row % 5] + ' skeleton-pulse'"></div>
+          <div class="skeleton-line" [ngClass]="'w-' + [60, 80, 70, 90, 50][row % 5] + ' skeleton-pulse'"></div>
       }
     </div>
   }

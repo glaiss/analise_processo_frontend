@@ -28,7 +28,7 @@ describe('MonitoringComponent', () => {
         if (name.includes('hikaricp.connections.max')) return of(createMetric(20));
         if (name.includes('classes.loaded')) return of(createMetric(5000));
         if (name.includes('uptime')) return of(createMetric(3600000));
-        if (name.includes('gc.pause')) return of({
+        if (name.includes('gc.pause')) {return of({
           name: 'gc.pause',
           measurements: [
             { statistic: 'COUNT', value: 10 },
@@ -36,7 +36,7 @@ describe('MonitoringComponent', () => {
             { statistic: 'MAX', value: 100 }
           ],
           availableTags: []
-        });
+        });}
         if (name.includes('gc.memory.allocated')) return of(createMetric(1000000));
         if (name.includes('gc.live.data.size')) return of(createMetric(200000));
         if (name.includes('buffer.memory.used')) {

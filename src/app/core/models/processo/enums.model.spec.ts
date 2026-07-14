@@ -1,4 +1,4 @@
-import { StatusAtribuicao, ResultadoAtendimento, TipologiaProcesso, ProcessoSituacao, SITUACAO_DISPLAY, STATUS_DISPLAY } from './enums.model';
+import { ProcessoSituacao, ResultadoAtendimento, SITUACAO_DISPLAY, STATUS_DISPLAY, StatusAtribuicao, TipologiaProcesso } from './enums.model';
 
 describe('StatusAtribuicao', () => {
   it('should have all expected values', () => {

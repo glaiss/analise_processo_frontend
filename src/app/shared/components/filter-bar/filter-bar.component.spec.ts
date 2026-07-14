@@ -26,7 +26,7 @@ describe('FilterBarComponent', () => {
 
   it('should emit search on onSearch', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
-    const emitSpy = vi.spyOn(fixture.componentInstance.search, 'emit');
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
     fixture.componentInstance.onSearch();
     expect(emitSpy).toHaveBeenCalled();
   });
@@ -72,7 +72,7 @@ describe('FilterBarComponent', () => {
 
   it('should emit search on onAssuntoSearch', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
-    const emitSpy = vi.spyOn(fixture.componentInstance.search, 'emit');
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
     fixture.componentInstance.onAssuntoSearch();
     expect(emitSpy).toHaveBeenCalled();
   });
@@ -148,7 +148,7 @@ describe('FilterBarComponent', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     fixture.componentInstance.searchQuery.set('12345');
     fixture.detectChanges();
-    const emitSpy = vi.spyOn(fixture.componentInstance.search, 'emit');
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
     const warnIcons = fixture.nativeElement.querySelectorAll('.search-field mat-icon[color="warn"]');
     const clearBtn = warnIcons[0].closest('button') as HTMLElement;
     clearBtn.click();

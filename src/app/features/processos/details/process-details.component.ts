@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, computed, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -65,32 +65,32 @@ import { ProcessoContatoDTO } from '../../../core/models/processo/processo-conta
   styleUrl: './process-details.component.scss'
 })
 export class ProcessDetailsComponent implements OnInit {
-  private route = inject(ActivatedRoute);
-  private processState = inject(ProcessStateService);
-  private documentoService = inject(DocumentoService);
-  private notification = inject(NotificationService);
-  private dialog = inject(MatDialog);
-  private location = inject(Location);
-  private platformId = inject(PLATFORM_ID);
-  private enriquecimentoService = inject(EnriquecimentoService);
-  private contatoService = inject(ContatoService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly processState = inject(ProcessStateService);
+  private readonly documentoService = inject(DocumentoService);
+  private readonly notification = inject(NotificationService);
+  private readonly dialog = inject(MatDialog);
+  private readonly location = inject(Location);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly enriquecimentoService = inject(EnriquecimentoService);
+  private readonly contatoService = inject(ContatoService);
 
-  numero = signal<string | null>(null);
-  processo = signal<ProcessoDetalheDTO | null>(null);
-  documentos = signal<Page<Documento>>({ content: [], totalElements: 0, totalPages: 0, size: 0, number: 0, last: true, first: true, empty: true });
-  documentoSelecionado = signal<Documento | null>(null);
-  previewUrl = signal<string | null>(null);
-  carregandoPreview = signal<boolean>(false);
-  novaAnotacao = signal<string>('');
-  enviandoAnotacao = signal<boolean>(false);
-  reprocessando = signal<boolean>(false);
-  contatos = signal<ProcessoContatoDTO[]>([]);
-  editandoContatoId = signal<string | null>(null);
-  editFormNome = signal<string>('');
-  editFormValor = signal<string>('');
-  salvandoContato = signal<boolean>(false);
+  readonly numero = signal<string | null>(null);
+  readonly processo = signal<ProcessoDetalheDTO | null>(null);
+  readonly documentos = signal<Page<Documento>>({ content: [], totalElements: 0, totalPages: 0, size: 0, number: 0, last: true, first: true, empty: true });
+  readonly documentoSelecionado = signal<Documento | null>(null);
+  readonly previewUrl = signal<string | null>(null);
+  readonly carregandoPreview = signal<boolean>(false);
+  readonly novaAnotacao = signal<string>('');
+  readonly enviandoAnotacao = signal<boolean>(false);
+  readonly reprocessando = signal<boolean>(false);
+  readonly contatos = signal<ProcessoContatoDTO[]>([]);
+  readonly editandoContatoId = signal<string | null>(null);
+  readonly editFormNome = signal<string>('');
+  readonly editFormValor = signal<string>('');
+  readonly salvandoContato = signal<boolean>(false);
 
-  mostrarAbaContatos = computed(() => {
+  readonly mostrarAbaContatos = computed(() => {
     const status = this.processo()?.statusAtribuicao;
     if (!status) return false;
     return this.getCurrentStepIndex() >= 1;
@@ -226,7 +226,7 @@ export class ProcessDetailsComponent implements OnInit {
     }
   }
 
-  timeline = computed(() => {
+  readonly timeline = computed(() => {
     const p = this.processo();
     if (!p) return [];
 
@@ -521,7 +521,7 @@ export class ProcessDetailsComponent implements OnInit {
   copyProcessNumber() {
     const numero = this.processo()?.numero;
     if (numero) {
-      navigator.clipboard.writeText(numero).then(() => {
+      void navigator.clipboard.writeText(numero).then(() => {
         this.notification.success('Número do processo copiado!', 2000);
       });
     }
@@ -543,9 +543,9 @@ export class ProcessDetailsComponent implements OnInit {
   }
 
   formatFileSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(0) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return `${bytes  } B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)  } KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)  } MB`;
   }
 
   getLevelColor(level: string): 'primary' | 'accent' | 'warn' | undefined {

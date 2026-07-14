@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
-import { provideHttpClient, HttpClient, withInterceptors } from '@angular/common/http';
-import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClient, HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { authInterceptor } from './auth.interceptor';
 import { Router } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';

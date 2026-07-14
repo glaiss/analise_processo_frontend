@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { ProcessSidebarListComponent } from './process-sidebar-list.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ProcessoResumoDTO } from '../../../core/models/processo/processo-resumo.model';
-import { StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, StatusAtribuicao } from '../../../core/models/processo/enums.model';
 
 function createProcesso(overrides?: Partial<ProcessoResumoDTO>): ProcessoResumoDTO {
   return {

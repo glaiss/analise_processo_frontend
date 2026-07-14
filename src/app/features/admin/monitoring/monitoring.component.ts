@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,39 +44,39 @@ interface GcPause {
   styleUrl: './monitoring.component.scss'
 })
 export class MonitoringComponent implements OnInit {
-  private actuator = inject(ActuatorService);
+  private readonly actuator = inject(ActuatorService);
 
-  appInfo = signal<AppInfo | null>(null);
-  health = signal<Health | null>(null);
-  heap = signal<MetricValue | null>(null);
-  nonHeap = signal<MetricValue | null>(null);
-  cpu = signal<{ system: number; process: number } | null>(null);
-  threads = signal<{ live: number; peak: number } | null>(null);
-  dbPool = signal<MetricValue | null>(null);
-  uptime = signal<number | null>(null);
-  classes = signal<number | null>(null);
+  readonly appInfo = signal<AppInfo | null>(null);
+  readonly health = signal<Health | null>(null);
+  readonly heap = signal<MetricValue | null>(null);
+  readonly nonHeap = signal<MetricValue | null>(null);
+  readonly cpu = signal<{ system: number; process: number } | null>(null);
+  readonly threads = signal<{ live: number; peak: number } | null>(null);
+  readonly dbPool = signal<MetricValue | null>(null);
+  readonly uptime = signal<number | null>(null);
+  readonly classes = signal<number | null>(null);
 
-  gcPause = signal<GcPause | null>(null);
-  gcAllocated = signal<number | null>(null);
-  gcLiveData = signal<number | null>(null);
-  bufferDirect = signal<number | null>(null);
-  bufferMapped = signal<number | null>(null);
-  daemonThreads = signal<number | null>(null);
-  fileOpen = signal<number | null>(null);
-  fileMax = signal<number | null>(null);
-  loadAverage = signal<number | null>(null);
-  dbPending = signal<number | null>(null);
-  dbTimeout = signal<number | null>(null);
+  readonly gcPause = signal<GcPause | null>(null);
+  readonly gcAllocated = signal<number | null>(null);
+  readonly gcLiveData = signal<number | null>(null);
+  readonly bufferDirect = signal<number | null>(null);
+  readonly bufferMapped = signal<number | null>(null);
+  readonly daemonThreads = signal<number | null>(null);
+  readonly fileOpen = signal<number | null>(null);
+  readonly fileMax = signal<number | null>(null);
+  readonly loadAverage = signal<number | null>(null);
+  readonly dbPending = signal<number | null>(null);
+  readonly dbTimeout = signal<number | null>(null);
 
-  diskFree = signal<number | null>(null);
-  diskTotal = signal<number | null>(null);
-  cpuCount = signal<number | null>(null);
-  activeSessions = signal<number | null>(null);
-  unloadedClasses = signal<number | null>(null);
-  hikariAcquire = signal<number | null>(null);
+  readonly diskFree = signal<number | null>(null);
+  readonly diskTotal = signal<number | null>(null);
+  readonly cpuCount = signal<number | null>(null);
+  readonly activeSessions = signal<number | null>(null);
+  readonly unloadedClasses = signal<number | null>(null);
+  readonly hikariAcquire = signal<number | null>(null);
 
-  loading = signal(true);
-  error = signal<string | null>(null);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
   autoRefreshHandle: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit() {
@@ -293,12 +293,13 @@ export class MonitoringComponent implements OnInit {
   }
 
   private updateGcPause(m: Metric) {
-    let count = 0, totalTime = 0, maxTime = 0;
+    let count = 0; let totalTime = 0; let maxTime = 0;
     for (const sample of m.measurements) {
-      switch (sample.statistic) {
+      switch (sample.statistic ?? '') {
         case 'COUNT': count = sample.value; break;
         case 'TOTAL_TIME': totalTime = sample.value; break;
         case 'MAX': maxTime = sample.value; break;
+        default: break;
       }
     }
     this.gcPause.set({ count, totalTime, maxTime });
@@ -349,7 +350,7 @@ export class MonitoringComponent implements OnInit {
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    return `${parseFloat((bytes / k**i).toFixed(1))  } ${  sizes[i]}`;
   }
 
   formatUptime(ms: number): string {
@@ -377,7 +378,9 @@ export class MonitoringComponent implements OnInit {
   }
 
   getStatusColor(status: string | undefined): string {
-    switch (status?.toUpperCase()) {
+    const statusUpper = status?.toUpperCase();
+    if (statusUpper === undefined) return '';
+    switch (statusUpper) {
       case 'UP': return 'primary';
       case 'DOWN': return 'warn';
       case 'OUT_OF_SERVICE': return 'warn';

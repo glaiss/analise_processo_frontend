@@ -15,9 +15,9 @@ import { ProcessStateService } from '../../../core/services/process-state.servic
 })
 export class ProcessSidebarListComponent {
   processState = inject(ProcessStateService);
-  private router = inject(Router);
+  private readonly router = inject(Router);
 
   navigate(numero: string) {
-    this.router.navigate(['/processos', numero]);
+    void this.router.navigate(['/processos', numero]);
   }
 }

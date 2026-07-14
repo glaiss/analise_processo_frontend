@@ -1,11 +1,11 @@
 <mat-card class="assigned-process-card" [ngClass]="[situationColorClass, selected ? 'selected' : '']">
   <mat-card-header>
     <mat-card-title>
-      <mat-checkbox [checked]="selected" (click)="toggleSelection($event)" matTooltip="Selecionar para reprocessar"></mat-checkbox>
-      <mat-icon [class.monitored]="atribuicao.monitorado" (click)="toggleMonitoramento($event)" matTooltip="Alternar Monitoramento">
+      <mat-checkbox matTooltip="Selecionar para reprocessar" [checked]="selected" (click)="toggleSelection($event)" />
+      <mat-icon matTooltip="Alternar Monitoramento" [class.monitored]="atribuicao.monitorado" (click)="toggleMonitoramento($event)">
         {{ atribuicao.monitorado ? 'star' : 'star_border' }}
       </mat-icon>
-      <span class="process-number font-mono" (click)="copyProcessNumber($event)" matTooltip="Copiar número do processo">{{ atribuicao.processoNumero }}</span>
+      <span class="process-number font-mono" matTooltip="Copiar número do processo" (click)="copyProcessNumber($event)">{{ atribuicao.processoNumero }}</span>
     </mat-card-title>
     <mat-card-subtitle>
       {{ atribuicao.processoTribunal }} - {{ atribuicao.processoOrgaoJulgadorNome }}
@@ -16,7 +16,7 @@
       <div class="info-row">
         <span class="label">Score Final:</span>
         <mat-chip-listbox>
-          <mat-chip [color]="scoreColor" selected class="font-mono">{{ atribuicao.processoScoreFinal }}</mat-chip>
+          <mat-chip selected class="font-mono" [color]="scoreColor">{{ atribuicao.processoScoreFinal }}</mat-chip>
         </mat-chip-listbox>
       </div>
       <div class="info-row">
@@ -37,14 +37,14 @@
       <div class="info-row">
         <span class="label">Status Atribuição:</span>
         <mat-chip-listbox>
-          <mat-chip [color]="statusColor" selected>{{ atribuicao.status }}</mat-chip>
+          <mat-chip selected [color]="statusColor">{{ atribuicao.status }}</mat-chip>
         </mat-chip-listbox>
       </div>
       <div class="info-row">
         <span class="label">Status Prazo:</span>
         @if (atribuicao.statusPrazo) {
           <mat-chip-listbox>
-            <mat-chip [color]="statusPrazoColor" selected>
+            <mat-chip selected [color]="statusPrazoColor">
               {{ atribuicao.statusPrazo }}
               @if (atribuicao.isVencendoPrazo) {
                 <mat-icon matChipTrailingIcon>warning</mat-icon>
@@ -62,7 +62,7 @@
     </div>
   </mat-card-content>
 
-  <mat-divider></mat-divider>
+  <mat-divider />
 
   <mat-card-footer class="footer-info">
     <div class="footer-row">

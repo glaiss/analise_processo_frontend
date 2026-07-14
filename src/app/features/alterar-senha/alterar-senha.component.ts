@@ -30,19 +30,19 @@ import { NotificationService } from '../../core/services/notification.service';
   styleUrl: './alterar-senha.component.scss'
 })
 export class AlterarSenhaComponent {
-  private auth = inject(AuthService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
   senhaAtual = '';
   senhaNova = '';
   senhaConfirmacao = '';
 
-  hideAtual = signal(true);
-  hideNova = signal(true);
-  hideConfirmacao = signal(true);
-  loading = signal(false);
-  error = signal<string | null>(null);
+  readonly hideAtual = signal(true);
+  readonly hideNova = signal(true);
+  readonly hideConfirmacao = signal(true);
+  readonly loading = signal(false);
+  readonly error = signal<string | null>(null);
 
   onSubmit() {
     this.error.set(null);
@@ -67,7 +67,7 @@ export class AlterarSenhaComponent {
       next: () => {
         this.loading.set(false);
         this.notification.success('Senha alterada com sucesso.');
-        this.router.navigate(['/dashboard']);
+        void this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         this.loading.set(false);

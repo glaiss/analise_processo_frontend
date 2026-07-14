@@ -1,7 +1,7 @@
 <div class="page-container">
   <app-page-header title="Redirecionar Processos" subtitle="Redirecionar processos de um usuário para outra pessoa ou equipe"/>
 
-  <app-loading-overlay [isLoading]="loading()" message="Redirecionando processos..."/>
+  <app-loading-overlay message="Redirecionando processos..." [isLoading]="loading()"/>
 
   <mat-card>
     <mat-card-content>
@@ -18,7 +18,7 @@
       @if (origemTipo() === 'usuario') {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuário de Origem</mat-label>
-          <mat-select [(value)]="selectedOrigemUsuarioId" [disabled]="loading() || loadingUsuarios()">
+          <mat-select [disabled]="loading() || loadingUsuarios()" [(value)]="selectedOrigemUsuarioId">
             @for (user of usuarios(); track user.id) {
               <mat-option [value]="user.id">{{ user.nome }}</mat-option>
             }
@@ -26,7 +26,7 @@
         </mat-form-field>
       }
 
-      <mat-divider class="section-divider"></mat-divider>
+      <mat-divider class="section-divider" />
 
       <h3 class="section-title">Destino</h3>
       <p class="description">Para onde os processos serão redirecionados:</p>
@@ -41,7 +41,7 @@
       @if (tipoDestino() === 'PESSOA') {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Usuário de Destino</mat-label>
-          <mat-select [(value)]="selectedDestinoUsuarioId" [disabled]="loading() || loadingUsuarios()">
+          <mat-select [disabled]="loading() || loadingUsuarios()" [(value)]="selectedDestinoUsuarioId">
             @for (user of usuarios(); track user.id) {
               <mat-option [value]="user.id">{{ user.nome }}</mat-option>
             }
@@ -52,7 +52,7 @@
       @if (tipoDestino() === 'EQUIPE') {
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Equipe de Destino</mat-label>
-          <mat-select [(value)]="selectedDestinoEquipeId" [disabled]="loading() || loadingEquipes()">
+          <mat-select [disabled]="loading() || loadingEquipes()" [(value)]="selectedDestinoEquipeId">
             @for (equipe of equipes(); track equipe.id) {
               <mat-option [value]="equipe.id">{{ equipe.nome }}</mat-option>
             }
@@ -64,10 +64,10 @@
         <button
           mat-flat-button
           color="warn"
-          (click)="redirecionar()"
-          [disabled]="loading()">
+          [disabled]="loading()"
+          (click)="redirecionar()">
           @if (loading()) {
-            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
             Redirecionando...
           } @else {
             Redirecionar Processos

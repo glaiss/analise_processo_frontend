@@ -1,6 +1,6 @@
 <mat-card class="process-card" [class.high-priority]="processo().scoreFinal > 100">
   <mat-card-header>
-    <div mat-card-avatar class="score-avatar" [class]="scoreColor">
+    <div mat-card-avatar class="score-avatar" [ngClass]="scoreColor">
       {{ processo().scoreFinal }}
     </div>
     <mat-card-title class="font-mono">{{ processo().numero }}</mat-card-title>
@@ -18,7 +18,7 @@
   <mat-card-actions align="end">
     <mat-chip-set>
       @if (processo().prazoVencendo) {
-        <mat-chip [color]="deadlineColor" selected>
+        <mat-chip selected [color]="deadlineColor">
           <mat-icon matChipAvatar>alarm</mat-icon>
           {{ processo().diasParaVencer }} dias
         </mat-chip>

@@ -15,11 +15,11 @@ describe('AssignedProcessesListComponent', () => {
   let notificationService: any;
 
   beforeEach(async () => {
-    (window as any).IntersectionObserver = class {
+    vi.stubGlobal('IntersectionObserver', class {
       observe = vi.fn();
       disconnect = vi.fn();
       constructor(_callback: any) { }
-    };
+    });
 
     const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true };
 
@@ -47,6 +47,10 @@ describe('AssignedProcessesListComponent', () => {
         { provide: NotificationService, useValue: notificationService },
       ],
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   describe('mode: meus', () => {

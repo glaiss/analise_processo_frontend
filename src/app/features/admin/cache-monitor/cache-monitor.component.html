@@ -2,12 +2,12 @@
   <app-page-header
     title="Monitor de Cache"
     subtitle="Visualização das chaves e estatísticas de acerto dos caches em memória (Caffeine)"
-    [backButton]="true"
     backRouterLink="/admin"
+    [backButton]="true"
   />
 
   <div class="toolbar">
-    <button mat-raised-button color="primary" (click)="carregar()" [disabled]="loading()">
+    <button mat-raised-button color="primary" [disabled]="loading()" (click)="carregar()">
       <mat-icon>refresh</mat-icon>
       Atualizar
     </button>
@@ -25,9 +25,9 @@
     </mat-card>
   }
 
-  <app-loading-overlay [isLoading]="loading()" message="Carregando caches..." />
+  <app-loading-overlay message="Carregando caches..." [isLoading]="loading()" />
 
-  <app-infinite-scroll (scrolled)="onScroll()" [isLoading]="loading()">
+  <app-infinite-scroll [isLoading]="loading()" (scrolled)="onScroll()">
     <div class="cache-grid">
       @for (cache of cachesVisiveisLista(); track trackByNome($index, cache)) {
         <mat-card class="cache-card">
@@ -63,7 +63,7 @@
               </div>
             </div>
 
-            <mat-divider></mat-divider>
+            <mat-divider />
 
             <div class="chaves-header">
               <mat-icon>key</mat-icon>

@@ -1,14 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { AlterarSenhaComponent } from './alterar-senha.component';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
-@Component({ template: '', standalone: true })
+@Component({ selector: 'app-test', template: '', standalone: true })
 class StubComponent {}
 
 describe('AlterarSenhaComponent', () => {

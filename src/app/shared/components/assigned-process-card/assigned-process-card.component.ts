@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -6,7 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AtribuicaoProcessoResumoDTO, StatusAtribuicao, ProcessoSituacao } from '../../../core/models/processo/index';
+import { AtribuicaoProcessoResumoDTO, ProcessoSituacao, StatusAtribuicao } from '../../../core/models/processo/index';
 import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
@@ -32,9 +32,9 @@ export class AssignedProcessCardComponent {
     this.selectedChange.emit(this.selected);
   }
 
-  private router = inject(Router);
-  private processState = inject(ProcessStateService);
-  private notification = inject(NotificationService);
+  private readonly router = inject(Router);
+  private readonly processState = inject(ProcessStateService);
+  private readonly notification = inject(NotificationService);
 
   toggleMonitoramento(event: Event) {
     event.stopPropagation();
@@ -49,7 +49,7 @@ export class AssignedProcessCardComponent {
 
   copyProcessNumber(event: Event) {
     event.stopPropagation();
-    navigator.clipboard.writeText(this.atribuicao.processoNumero).then(() => {
+    void navigator.clipboard.writeText(this.atribuicao.processoNumero).then(() => {
       this.notification.success('Número do processo copiado!', 2000);
     });
   }
@@ -60,6 +60,7 @@ export class AssignedProcessCardComponent {
       case StatusAtribuicao.DISPONIVEL: return 'primary';
       case StatusAtribuicao.ATRIBUIDO: return 'accent';
       case StatusAtribuicao.EM_CONVERSA: return 'accent';
+      case StatusAtribuicao.EM_NEGOCIACAO: return 'accent';
       case StatusAtribuicao.CONCLUIDO_SUCESSO: return 'success';
       case StatusAtribuicao.CONCLUIDO_RECUSADO: return 'warn';
       default: return 'basic';
@@ -88,6 +89,8 @@ export class AssignedProcessCardComponent {
         return 'situation-ready';
       case ProcessoSituacao.DESCARTADO_SCORE_BAIXO:
         return 'situation-discarded';
+      case ProcessoSituacao.DESCARTADO_POR_USUARIO:
+        return 'situation-discarded';
       case ProcessoSituacao.PROPOSTA_APRESENTADA:
         return 'situation-proposal';
       case ProcessoSituacao.FINALIZADO:
@@ -100,6 +103,6 @@ export class AssignedProcessCardComponent {
 
   openDetails(event: Event) {
     event.stopPropagation();
-    this.router.navigate(['/processos', this.atribuicao.processoNumero]);
+    void this.router.navigate(['/processos', this.atribuicao.processoNumero]);
   }
 }

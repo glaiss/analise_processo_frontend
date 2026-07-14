@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { RedirecionarProcessosComponent } from './redirecionar-processos.component';
 import { DistributionService } from '../../../core/services/distribution.service';
 import { UserService, UsuarioResponse } from '../../../core/services/user.service';
-import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
+import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';

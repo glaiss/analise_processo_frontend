@@ -17,7 +17,7 @@ function createMockUser(overrides?: Partial<User>): User {
 }
 
 class MockAuthService {
-  private _user = createMockUser();
+  private readonly _user = createMockUser();
   currentUser = () => this._user;
   alterarNome = vi.fn().mockReturnValue(of(undefined));
   alterarEmail = vi.fn().mockReturnValue(of(undefined));

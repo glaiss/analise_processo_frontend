@@ -10,7 +10,7 @@
         <h3 class="section-title">Nome</h3>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Nome</mat-label>
-          <input matInput name="nome" [(ngModel)]="nome" required>
+          <input matInput name="nome" required [(ngModel)]="nome">
         </mat-form-field>
 
         @if (errorNome()) {
@@ -19,20 +19,20 @@
 
         <button mat-flat-button color="primary" type="button" [disabled]="!nome().trim() || loadingNome()" (click)="salvarNome()">
           @if (loadingNome()) {
-            <mat-spinner diameter="24"></mat-spinner>
+            <mat-spinner diameter="24" />
           } @else {
             Salvar Nome
           }
         </button>
       </div>
 
-      <mat-divider class="section-divider"></mat-divider>
+      <mat-divider class="section-divider" />
 
       <div class="section">
         <h3 class="section-title">Email</h3>
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Email</mat-label>
-          <input matInput name="email" [(ngModel)]="email" required type="email">
+          <input matInput name="email" required type="email" [(ngModel)]="email">
         </mat-form-field>
 
         @if (errorEmail()) {
@@ -41,7 +41,7 @@
 
         <button mat-flat-button color="primary" type="button" [disabled]="!email().trim() || loadingEmail()" (click)="salvarEmail()">
           @if (loadingEmail()) {
-            <mat-spinner diameter="24"></mat-spinner>
+            <mat-spinner diameter="24" />
           } @else {
             Salvar Email
           }

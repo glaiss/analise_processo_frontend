@@ -33,14 +33,14 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   styleUrl: './admin-sync.component.scss'
 })
 export class AdminSyncComponent {
-  private syncService = inject(AdminSyncService);
-  private notification = inject(NotificationService);
+  private readonly syncService = inject(AdminSyncService);
+  private readonly notification = inject(NotificationService);
 
-  loadingMovimentos = signal(false);
-  loadingClasses = signal(false);
-  loadingAssuntos = signal(false);
-  loadingTudo = signal(false);
-  loadingIngestao = signal(false);
+  readonly loadingMovimentos = signal(false);
+  readonly loadingClasses = signal(false);
+  readonly loadingAssuntos = signal(false);
+  readonly loadingTudo = signal(false);
+  readonly loadingIngestao = signal(false);
 
   ingestaoForm = {
     tribunal: 'TJSP',

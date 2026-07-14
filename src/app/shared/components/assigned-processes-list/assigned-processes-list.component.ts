@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Input, signal, computed, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,20 +26,20 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
   @Input() title: string = 'Processos Atribuídos';
   @Input() filter?: ProcessoFilterParams;
 
-  private distService = inject(DistributionService);
-  private enriquecimentoService = inject(EnriquecimentoService);
-  private notification = inject(NotificationService);
+  private readonly distService = inject(DistributionService);
+  private readonly enriquecimentoService = inject(EnriquecimentoService);
+  private readonly notification = inject(NotificationService);
 
   atribuicoes: AtribuicaoProcessoResumoDTO[] = [];
-  isLoading = signal(false);
+  readonly isLoading = signal(false);
   currentPage = 0;
   isLastPage = false;
   totalElements = 0;
 
-  selectedNumeros = signal<Set<string>>(new Set());
-  reprocessando = signal(false);
+  readonly selectedNumeros = signal<Set<string>>(new Set());
+  readonly reprocessando = signal(false);
 
-  selectedCount = computed(() => this.selectedNumeros().size);
+  readonly selectedCount = computed(() => this.selectedNumeros().size);
 
   ngOnInit() {
     this.title = this.mode === 'meus' ? 'Meus Processos' : 'Processos da Equipe';

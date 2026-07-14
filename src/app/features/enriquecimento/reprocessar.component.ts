@@ -23,10 +23,10 @@ import { PageHeaderComponent } from '../../shared/components/page-header/page-he
   styleUrl: './reprocessar.component.scss'
 })
 export class ReprocessarComponent {
-  private service = inject(EnriquecimentoService);
-  private notification = inject(NotificationService);
+  private readonly service = inject(EnriquecimentoService);
+  private readonly notification = inject(NotificationService);
   
-  loading = signal(false);
+  readonly loading = signal(false);
 
   executarProcessamento() {
     this.loading.set(true);

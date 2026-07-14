@@ -37,14 +37,14 @@ interface CacheItem {
   styleUrl: './cache-monitor.component.scss'
 })
 export class CacheMonitorComponent implements OnInit {
-  private cacheService = inject(CacheService);
+  private readonly cacheService = inject(CacheService);
 
-  todosCaches = signal<CacheItem[]>([]);
-  cachesVisiveis = signal(2);
-  loading = signal(true);
-  error = signal<string | null>(null);
-  totalEntradas = signal(0);
-  ultimaAtualizacao = signal<Date | null>(null);
+  readonly todosCaches = signal<CacheItem[]>([]);
+  readonly cachesVisiveis = signal(2);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly totalEntradas = signal(0);
+  readonly ultimaAtualizacao = signal<Date | null>(null);
 
   readonly tamanhoPagina = 2;
 
@@ -126,7 +126,7 @@ export class CacheMonitorComponent implements OnInit {
 
   formatPercent(value: number): string {
     if (value === undefined || value === null || isNaN(value)) return '0%';
-    return (value * 100).toFixed(1) + '%';
+    return `${(value * 100).toFixed(1)  }%`;
   }
 
   trackByNome(_index: number, item: CacheItem): string {

@@ -8,8 +8,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { UserService, Role } from '../../../core/services/user.service';
-import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
+import { Role, UserService } from '../../../core/services/user.service';
+import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Router } from '@angular/router';
 import { Page } from '../../../core/models/processo/pagination.model';
@@ -34,17 +34,17 @@ import { PageHeaderComponent } from '../../../shared/components/page-header/page
   styleUrl: './user-management.component.scss'
 })
 export class UserManagementComponent {
-  private fb = inject(FormBuilder);
-  private userService = inject(UserService);
-  private equipeService = inject(EquipeService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly userService = inject(UserService);
+  private readonly equipeService = inject(EquipeService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
   userForm: FormGroup;
   roles = Object.values(Role);
-  equipes = signal<EquipeDto[]>([]);
-  loading = signal(false);
-  loadingEquipes = signal(false);
+  readonly equipes = signal<EquipeDto[]>([]);
+  readonly loading = signal(false);
+  readonly loadingEquipes = signal(false);
   
   // Controle de paginação para equipes
   private currentPage = 0;
@@ -89,7 +89,7 @@ export class UserManagementComponent {
 
   onEquipesScroll(event: any) {
     const threshold = 50;
-    const target = event.target;
+    const {target} = event;
     if (target.scrollTop + target.offsetHeight >= target.scrollHeight - threshold) {
       this.loadEquipes();
     }
@@ -101,7 +101,7 @@ export class UserManagementComponent {
       this.userService.criarUsuario(this.userForm.value).subscribe({
         next: () => {
           this.notification.success('Usuário criado com sucesso!');
-          this.router.navigate(['/admin']);
+          void this.router.navigate(['/admin']);
           this.loading.set(false);
         },
         error: (err: any) => {
@@ -113,6 +113,6 @@ export class UserManagementComponent {
   }
 
   back() {
-    this.router.navigate(['/admin']);
+    void this.router.navigate(['/admin']);
   }
 }

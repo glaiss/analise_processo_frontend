@@ -3,7 +3,7 @@
     <!-- Header Section -->
     <header class="details-header">
       <div class="top-bar">
-        <button mat-icon-button (click)="goBack()" matTooltip="Voltar">
+        <button mat-icon-button matTooltip="Voltar" (click)="goBack()">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <div class="breadcrumb">
@@ -14,16 +14,16 @@
       </div>
       <div class="title-row">
         <div class="title-with-actions">
-          <h1 class="font-mono copy-number" (click)="copyProcessNumber()" matTooltip="Copiar número do processo">{{ p.numero }}</h1>
-          <button mat-icon-button (click)="toggleMonitoramento()" matTooltip="Alternar Monitoramento">
+          <h1 class="font-mono copy-number" matTooltip="Copiar número do processo" (click)="copyProcessNumber()">{{ p.numero }}</h1>
+          <button mat-icon-button matTooltip="Alternar Monitoramento" (click)="toggleMonitoramento()">
             <mat-icon [class.monitored]="p.monitorado">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
           </button>
-          <button mat-icon-button (click)="onDiscard()" matTooltip="Descartar Processo">
+          <button mat-icon-button matTooltip="Descartar Processo" (click)="onDiscard()">
             <mat-icon color="warn">delete_forever</mat-icon>
           </button>
-          <button mat-icon-button (click)="reprocessar()" [disabled]="reprocessando()" matTooltip="Reprocessar Processo">
+          <button mat-icon-button matTooltip="Reprocessar Processo" [disabled]="reprocessando()" (click)="reprocessar()">
             @if (reprocessando()) {
-              <mat-spinner diameter="20"></mat-spinner>
+              <mat-spinner diameter="20" />
             } @else {
               <mat-icon>refresh</mat-icon>
             }
@@ -69,7 +69,7 @@
             <div class="flow-step-label">
               <span class="step-name">{{ step.label }}</span>
               @if (isStepAvailable(i)) {
-                <button mat-button [color]="i === 4 ? 'warn' : 'primary'" class="step-action" (click)="avancarStatus(i)">
+                <button mat-button class="step-action" [color]="i === 4 ? 'warn' : 'primary'" (click)="avancarStatus(i)">
                   {{ i === 4 ? 'Recusar' : 'Avançar' }}
                 </button>
               }
@@ -100,7 +100,7 @@
         </div>
         <div class="summary-item highlight">
           <span class="label">Score Final</span>
-          <span class="value" [class]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>
+          <span class="value" [ngClass]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>
         </div>
       </div>
 
@@ -121,7 +121,7 @@
                       <div matListItemLine class="mov-desc">{{ mov.descricao }}</div>
                       <div matListItemMeta class="mov-date">{{ mov.dataHora | date:'dd/MM/yyyy HH:mm' }}</div>
                     </mat-list-item>
-                    <mat-divider></mat-divider>
+                    <mat-divider />
                   } @empty {
                     <app-empty-state icon="info" message="Nenhuma movimentação registrada para este processo."/>
                   }
@@ -177,7 +177,7 @@
                 <div class="score-analysis-container">
                   <div class="score-header">
                     <h2>Detalhamento do Score</h2>
-                    <div class="total-score-badge" [class]="getScoreColor(p.scoreFinal)">
+                    <div class="total-score-badge" [ngClass]="getScoreColor(p.scoreFinal)">
                       {{ p.scoreFinal }} pontos
                     </div>
                   </div>
@@ -237,7 +237,7 @@
                               </mat-form-field>
                               <div class="contato-row-actions">
                                 <button mat-button (click)="cancelEditContato()">Cancelar</button>
-                                <button mat-flat-button color="primary" (click)="salvarEditContato(contato)" [disabled]="!editFormNome().trim() || !editFormValor().trim() || salvandoContato()">
+                                <button mat-flat-button color="primary" [disabled]="!editFormNome().trim() || !editFormValor().trim() || salvandoContato()" (click)="salvarEditContato(contato)">
                                   Salvar
                                 </button>
                               </div>
@@ -252,23 +252,23 @@
                               <span class="contato-valor">{{ formatContatoValor(contato) }}</span>
                               <span class="contato-row-spacer"></span>
                               @if (contato.tipo === 'WHATSAPP') {
-                                <button mat-icon-button (click)="abrirContato(contato)" matTooltip="Abrir WhatsApp" class="whatsapp-btn">
+                                <button mat-icon-button matTooltip="Abrir WhatsApp" class="whatsapp-btn" (click)="abrirContato(contato)">
                                   <mat-icon class="whatsapp-icon">chat</mat-icon>
                                 </button>
                               } @else {
-                                <button mat-icon-button (click)="abrirContato(contato)" matTooltip="Enviar E-mail" class="email-btn">
+                                <button mat-icon-button matTooltip="Enviar E-mail" class="email-btn" (click)="abrirContato(contato)">
                                   <mat-icon>email</mat-icon>
                                 </button>
                               }
                               @if (!contato.principal) {
-                                <button mat-icon-button (click)="definirComoPrincipal(contato)" matTooltip="Definir como principal">
+                                <button mat-icon-button matTooltip="Definir como principal" (click)="definirComoPrincipal(contato)">
                                   <mat-icon>star_border</mat-icon>
                                 </button>
                               }
-                              <button mat-icon-button (click)="startEditContato(contato)" matTooltip="Editar contato">
+                              <button mat-icon-button matTooltip="Editar contato" (click)="startEditContato(contato)">
                                 <mat-icon>edit</mat-icon>
                               </button>
-                              <button mat-icon-button (click)="deletarContato(contato)" matTooltip="Excluir contato">
+                              <button mat-icon-button matTooltip="Excluir contato" (click)="deletarContato(contato)">
                                 <mat-icon color="warn">delete</mat-icon>
                               </button>
                             }
@@ -302,7 +302,7 @@
                   @if (documentos().content.length > 0) {
                     <div class="documents-list">
                       @for (doc of documentos().content; track doc.id) {
-                        <div (click)="selecionarDocumento(doc)" [class.selected]="documentoSelecionado()?.id === doc.id" class="doc-item">
+                        <div class="doc-item" [class.selected]="documentoSelecionado()?.id === doc.id" (click)="selecionarDocumento(doc)">
                           <mat-icon class="doc-check-icon">check_circle</mat-icon>
                           <span class="doc-name">{{ doc.nomeArquivo }}</span>
                         </div>
@@ -319,7 +319,7 @@
                   @if (documentoSelecionado(); as selectedDoc) {
                     <div class="viewer-header">
                       <div class="viewer-info">
-                        <mat-icon class="viewer-doc-icon" [class]="getDocIcon(selectedDoc.contentType)">{{ getDocIcon(selectedDoc.contentType) }}</mat-icon>
+                        <mat-icon class="viewer-doc-icon" [ngClass]="getDocIcon(selectedDoc.contentType)">{{ getDocIcon(selectedDoc.contentType) }}</mat-icon>
                         <div class="viewer-doc-details">
                           <h3>{{ selectedDoc.nomeArquivo }}</h3>
                           <span class="viewer-doc-meta">
@@ -332,10 +332,10 @@
                         </div>
                       </div>
                       <div class="viewer-actions">
-                        <button mat-icon-button (click)="baixarDocumento(selectedDoc)" matTooltip="Baixar">
+                        <button mat-icon-button matTooltip="Baixar" (click)="baixarDocumento(selectedDoc)">
                           <mat-icon>download</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="onDeleteDocument(selectedDoc)" matTooltip="Excluir">
+                        <button mat-icon-button matTooltip="Excluir" (click)="onDeleteDocument(selectedDoc)">
                           <mat-icon color="warn">delete</mat-icon>
                         </button>
                       </div>
@@ -343,15 +343,16 @@
                     <div class="viewer-content">
                       @if (carregandoPreview()) {
                         <div class="viewer-loading">
-                          <mat-spinner diameter="40"></mat-spinner>
+                          <mat-spinner diameter="40" />
                           <p>Carregando documento...</p>
                         </div>
                       } @else if (previewUrl()) {
                         @if (selectedDoc.contentType.includes('pdf')) {
-                          <iframe [src]="previewUrl() | safe" width="100%" height="100%" class="viewer-frame"></iframe>
+                          <iframe width="100%" height="100%" class="viewer-frame" [src]="previewUrl() | safe"></iframe>
                         } @else if (selectedDoc.contentType.includes('image')) {
                           <div class="image-container">
-                            <img [src]="previewUrl() | safe" alt="Documento" class="viewer-image">
+                            <!-- eslint-disable-next-line @angular-eslint/template/prefer-ngsrc -->
+                            <img alt="Documento" class="viewer-image" [attr.src]="previewUrl() | safe">
                           </div>
                         } @else {
                           <div class="unsupported-viewer">
@@ -402,7 +403,7 @@
                   <dt>Data Ajuizamento</dt>
                   <dd>{{ p.dataAjuizamento | date:'dd/MM/yyyy' }}</dd>
                 </div>
-                <mat-divider></mat-divider>
+                <mat-divider />
                 <div class="info-item">
                   <dt>Responsável</dt>
                   <dd>{{ p.usuarioResponsavel || 'Não atribuído' }}</dd>
@@ -428,12 +429,12 @@
               <div class="new-annotation">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Nova anotação...</mat-label>
-                  <textarea matInput #noteInput [(ngModel)]="novaAnotacao" rows="3" [disabled]="enviandoAnotacao()"></textarea>
+                  <textarea #noteInput matInput rows="3" [disabled]="enviandoAnotacao()" [(ngModel)]="novaAnotacao"></textarea>
                 </mat-form-field>
                 <div class="actions">
                   <button mat-flat-button color="primary" [disabled]="!novaAnotacao() || enviandoAnotacao()" (click)="adicionarAnotacao()">
                     @if (enviandoAnotacao()) {
-                      <mat-spinner diameter="20"></mat-spinner>
+                      <mat-spinner diameter="20" />
                     } @else {
                       Salvar
                     }
@@ -455,7 +456,7 @@
                       <div class="timeline-date-row">
                         <span class="date">{{ item.dataCriacao | date:'dd/MM/yyyy HH:mm' }}</span>
                         @if (item.type === 'ANOTACAO') {
-                          <button mat-icon-button (click)="deletarAnotacao(item.id)" matTooltip="Excluir anotação" class="delete-annotation-btn">
+                          <button mat-icon-button matTooltip="Excluir anotação" class="delete-annotation-btn" (click)="deletarAnotacao(item.id)">
                             <mat-icon color="warn">delete_outline</mat-icon>
                           </button>
                         }
@@ -473,8 +474,8 @@
       </div>
     </div>
   } @else {
-    <app-loading-overlay [isLoading]="true" message="Carregando detalhes do processo..." [fullPage]="true"/>
+    <app-loading-overlay message="Carregando detalhes do processo..." [isLoading]="true" [fullPage]="true"/>
   }
 
-  <input type="file" (change)="onFileSelected($event)" #fileInput style="display: none">
+  <input #fileInput type="file" style="display: none" (change)="onFileSelected($event)">
 </div>

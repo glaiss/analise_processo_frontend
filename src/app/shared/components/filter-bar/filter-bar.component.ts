@@ -1,4 +1,4 @@
-import { Component, input, output, model } from '@angular/core';
+import { Component, input, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { StatusAtribuicao, ProcessoSituacao, SITUACAO_DISPLAY, STATUS_DISPLAY, SCORE_OPTIONS, SCORE_DISPLAY } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATUS_DISPLAY, StatusAtribuicao } from '../../../core/models/processo/enums.model';
 
 @Component({
   selector: 'app-filter-bar',
@@ -26,13 +26,13 @@ import { StatusAtribuicao, ProcessoSituacao, SITUACAO_DISPLAY, STATUS_DISPLAY, S
   styleUrl: './filter-bar.component.scss',
 })
 export class FilterBarComponent {
-  searchQuery = model<string>('');
-  selectedNiveis = model<string[]>([]);
-  selectedStatus = model<(string)[]>([]);
-  selectedSituacao = model<string[]>([]);
-  selectedAssunto = model<string>('');
+  readonly searchQuery = model<string>('');
+  readonly selectedNiveis = model<string[]>([]);
+  readonly selectedStatus = model<(string)[]>([]);
+  readonly selectedSituacao = model<string[]>([]);
+  readonly selectedAssunto = model<string>('');
 
-  showAdvanced = model(false);
+  readonly showAdvanced = model(false);
 
   readonly statusOptions = Object.values(StatusAtribuicao);
   readonly situacaoOptions = Object.values(ProcessoSituacao);
@@ -41,9 +41,9 @@ export class FilterBarComponent {
   readonly scoreOptions = [...SCORE_OPTIONS];
   readonly scoreDisplay = SCORE_DISPLAY;
 
-  hasActiveFilters = input(false);
+  readonly hasActiveFilters = input(false);
 
-  search = output<{
+  filterChange = output<{
     searchQuery: string;
     selectedNiveis: string[];
     selectedStatus: string[];
@@ -53,7 +53,7 @@ export class FilterBarComponent {
   clearFilters = output<void>();
 
   private emitSearch() {
-    this.search.emit({
+    this.filterChange.emit({
       searchQuery: this.searchQuery(),
       selectedNiveis: this.selectedNiveis(),
       selectedStatus: this.selectedStatus(),

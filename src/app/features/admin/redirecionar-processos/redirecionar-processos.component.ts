@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDividerModule } from '@angular/material/divider';
 import { DistributionService, RedirecionarProcessoRequest } from '../../../core/services/distribution.service';
 import { UserService, UsuarioResponse } from '../../../core/services/user.service';
-import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
+import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '../../../shared/components/loading-overlay/loading-overlay.component';
@@ -38,25 +38,25 @@ import { Page } from '../../../core/models/processo/pagination.model';
   styleUrl: './redirecionar-processos.component.scss'
 })
 export class RedirecionarProcessosComponent implements OnInit {
-  private distService = inject(DistributionService);
-  private userService = inject(UserService);
-  private equipeService = inject(EquipeService);
-  private notification = inject(NotificationService);
+  private readonly distService = inject(DistributionService);
+  private readonly userService = inject(UserService);
+  private readonly equipeService = inject(EquipeService);
+  private readonly notification = inject(NotificationService);
 
-  loading = signal(false);
-  loadingUsuarios = signal(false);
-  loadingEquipes = signal(false);
+  readonly loading = signal(false);
+  readonly loadingUsuarios = signal(false);
+  readonly loadingEquipes = signal(false);
 
   // Origem: 'disponiveis' (nao atribuidos) ou 'usuario' (de um usuario especifico)
-  origemTipo = signal<'disponiveis' | 'usuario'>('usuario');
-  selectedOrigemUsuarioId = signal<string>('');
+  readonly origemTipo = signal<'disponiveis' | 'usuario'>('usuario');
+  readonly selectedOrigemUsuarioId = signal<string>('');
 
   // Destino
-  tipoDestino = signal<'PESSOA' | 'EQUIPE'>('PESSOA');
-  usuarios = signal<UsuarioResponse[]>([]);
-  equipes = signal<EquipeDto[]>([]);
-  selectedDestinoUsuarioId = signal<string>('');
-  selectedDestinoEquipeId = signal<string>('');
+  readonly tipoDestino = signal<'PESSOA' | 'EQUIPE'>('PESSOA');
+  readonly usuarios = signal<UsuarioResponse[]>([]);
+  readonly equipes = signal<EquipeDto[]>([]);
+  readonly selectedDestinoUsuarioId = signal<string>('');
+  readonly selectedDestinoEquipeId = signal<string>('');
 
   ngOnInit() {
     this.loadUsuarios();

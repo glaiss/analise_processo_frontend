@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 export const adminGuard: CanActivateFn = () => {
@@ -13,6 +13,6 @@ export const adminGuard: CanActivateFn = () => {
   }
 
   // Se não for admin, redireciona para o dashboard
-  router.navigate(['/dashboard']);
+  void router.navigate(['/dashboard']);
   return false;
 };

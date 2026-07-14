@@ -29,7 +29,7 @@
     <span class="menu-user-name">{{ auth.currentUser()?.nome || auth.currentUser()?.username }}</span>
     <span class="menu-user-equipe">{{ auth.currentUser()?.equipe }}</span>
   </div>
-  <mat-divider></mat-divider>
+  <mat-divider />
   <button mat-menu-item (click)="theme.toggle()">
     <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     <span>{{ theme.isDark() ? 'Modo Claro' : 'Modo Escuro' }}</span>
@@ -48,7 +48,7 @@
       <span>Entrar como outro usuário</span>
     </button>
   }
-  <mat-divider></mat-divider>
+  <mat-divider />
   <button mat-menu-item (click)="logout()">
     <mat-icon>logout</mat-icon>
     <span>Sair</span>

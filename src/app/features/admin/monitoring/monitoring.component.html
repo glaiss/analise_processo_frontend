@@ -1,11 +1,11 @@
 <div class="monitoring-container">
   <app-page-header title="Monitoramento" subtitle="Saúde e performance da aplicação — atualizado a cada 15s">
-    <button mat-flat-button (click)="refresh()" matTooltip="Atualizar agora">
+    <button mat-flat-button matTooltip="Atualizar agora" (click)="refresh()">
       <mat-icon>refresh</mat-icon> Atualizar
     </button>
   </app-page-header>
 
-  <app-loading-overlay [isLoading]="loading() && !health()" message="Carregando métricas..."/>
+  <app-loading-overlay message="Carregando métricas..." [isLoading]="loading() && !health()"/>
 
   <div class="monitoring-grid">
 
@@ -18,21 +18,21 @@
       <mat-card-content>
         @if (health(); as h) {
           <div class="health-status">
-            <mat-chip [color]="getStatusColor(h.status)" highlighted>{{
+            <mat-chip highlighted [color]="getStatusColor(h.status)">{{
               h.status === 'UP' ? 'Online' : h.status
             }}</mat-chip>
           </div>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="health-components">
             <div class="health-row">
               <span>Banco de Dados</span>
-              <mat-chip [color]="getStatusColor(h.components?.db?.status)" highlighted>
+              <mat-chip highlighted [color]="getStatusColor(h.components?.db?.status)">
                 {{ h.components?.db?.status === 'UP' ? 'Conectado' : h.components?.db?.status }}
               </mat-chip>
             </div>
             <div class="health-row">
               <span>Disco</span>
-              <mat-chip [color]="getStatusColor(h.components?.diskSpace?.status)" highlighted>
+              <mat-chip highlighted [color]="getStatusColor(h.components?.diskSpace?.status)">
                 {{ h.components?.diskSpace?.status === 'UP' ? 'OK' : h.components?.diskSpace?.status }}
               </mat-chip>
             </div>
@@ -86,7 +86,7 @@
               mode="determinate"
               [value]="h.percent"
               [color]="h.percent > 80 ? 'warn' : h.percent > 60 ? 'accent' : 'primary'"
-            ></mat-progress-bar>
+            />
             <span class="metric-percent">{{ h.percent | number:'1.0-0' }}%</span>
           </div>
         } @else {
@@ -94,7 +94,7 @@
         }
 
         @if (nonHeap(); as nh) {
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Non-Heap</span>
             <span class="metric-value">{{ formatBytes(nh.used) }}</span>
@@ -102,7 +102,7 @@
         }
 
         @if (bufferDirect() !== null || bufferMapped() !== null) {
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Buffers Direct</span>
             <span class="metric-value">{{ formatBytes(bufferDirect() ?? 0) }}</span>
@@ -140,7 +140,7 @@
         }
 
         @if (gcAllocated() !== null || gcLiveData() !== null) {
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Alocado entre GCs</span>
             <span class="metric-value">{{ formatBytes(gcAllocated() ?? 0) }}</span>
@@ -170,7 +170,7 @@
               mode="determinate"
               [value]="c.system * 100"
               [color]="c.system > 0.8 ? 'warn' : c.system > 0.5 ? 'accent' : 'primary'"
-            ></mat-progress-bar>
+            />
           </div>
 
           <div class="metric-bar-section">
@@ -182,14 +182,14 @@
               mode="determinate"
               [value]="c.process * 100"
               [color]="c.process > 0.8 ? 'warn' : c.process > 0.5 ? 'accent' : 'primary'"
-            ></mat-progress-bar>
+            />
           </div>
         } @else {
           <p class="no-data">Sem dados de CPU</p>
         }
 
         @if (loadAverage() !== null) {
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Load Average (1m)</span>
             <span class="metric-value">{{ loadAverage() | number:'1.0-2' }}</span>
@@ -216,18 +216,18 @@
             <span class="metric-label">Ativas</span>
             <span class="metric-value">{{ t.live }}</span>
           </div>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Pico</span>
             <span class="metric-value">{{ t.peak }}</span>
           </div>
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Daemon</span>
             <span class="metric-value">{{ daemonThreads() ?? 0 }}</span>
           </div>
           @if (activeSessions() !== null) {
-            <mat-divider></mat-divider>
+            <mat-divider />
             <div class="metric-simple">
               <span class="metric-label">Sessões Ativas</span>
               <span class="metric-value">{{ activeSessions() }}</span>
@@ -256,7 +256,7 @@
               mode="determinate"
               [value]="db.percent"
               [color]="db.percent > 80 ? 'warn' : db.percent > 50 ? 'accent' : 'primary'"
-            ></mat-progress-bar>
+            />
             <span class="metric-percent">{{ db.percent | number:'1.0-0' }}%</span>
           </div>
         } @else {
@@ -264,7 +264,7 @@
         }
 
         @if (dbPending() !== null) {
-          <mat-divider></mat-divider>
+          <mat-divider />
           <div class="metric-simple">
             <span class="metric-label">Pendentes</span>
             <span class="metric-value">{{ dbPending() }}</span>
@@ -306,7 +306,7 @@
               mode="determinate"
               [value]="(fileOpen()! / fileMax()!) * 100"
               [color]="(fileOpen()! / fileMax()!) > 0.8 ? 'warn' : (fileOpen()! / fileMax()!) > 0.5 ? 'accent' : 'primary'"
-            ></mat-progress-bar>
+            />
             <span class="metric-percent">{{ ((fileOpen()! / fileMax()!) * 100) | number:'1.0-0' }}%</span>
           </div>
         } @else {

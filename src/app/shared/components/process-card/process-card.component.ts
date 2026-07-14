@@ -14,7 +14,7 @@ import { StatusDisplayPipe } from '../../pipes/status-display.pipe';
   styleUrl: './process-card.component.scss'
 })
 export class ProcessCardComponent {
-  processo = input.required<ProcessoResumoDTO>();
+  readonly processo = input.required<ProcessoResumoDTO>();
 
   get scoreColor(): string {
     const score = this.processo().scoreFinal;

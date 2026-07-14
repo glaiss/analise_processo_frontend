@@ -15,11 +15,11 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './sidebar.component.scss'
 })
 export class SidebarComponent {
-  private router = inject(Router);
+  private readonly router = inject(Router);
   auth = inject(AuthService);
   version = environment.version;
 
   navigate(path: string) {
-    this.router.navigate([path]);
+    void this.router.navigate([path]);
   }
 }

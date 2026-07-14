@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { DistributionService } from '../../core/services/distribution.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { EquipeService, EquipeDto } from '../../core/services/equipe.service';
+import { EquipeDto, EquipeService } from '../../core/services/equipe.service';
 import { Page } from '../../core/models/processo/pagination.model';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { LoadingOverlayComponent } from '../../shared/components/loading-overlay/loading-overlay.component';
@@ -31,14 +31,14 @@ import { LoadingOverlayComponent } from '../../shared/components/loading-overlay
   styleUrl: './distribuicao.component.scss'
 })
 export class DistribuicaoComponent implements OnInit {
-  private distService = inject(DistributionService);
-  private equipeService = inject(EquipeService);
-  private notification = inject(NotificationService);
+  private readonly distService = inject(DistributionService);
+  private readonly equipeService = inject(EquipeService);
+  private readonly notification = inject(NotificationService);
   
-  loading = signal(false);
-  loadingEquipes = signal(false);
-  equipes = signal<EquipeDto[]>([]);
-  selectedEquipeId = signal<string>('todos');
+  readonly loading = signal(false);
+  readonly loadingEquipes = signal(false);
+  readonly equipes = signal<EquipeDto[]>([]);
+  readonly selectedEquipeId = signal<string>('todos');
 
   ngOnInit() {
     this.loadEquipes();

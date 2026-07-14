@@ -1,13 +1,13 @@
 <mat-sidenav-container class="app-container">
   @if (showMenu && auth.isAuthenticated()) {
     <mat-sidenav #sidenav mode="side" opened class="app-sidenav">
-      <app-sidebar></app-sidebar>
+      <app-sidebar />
     </mat-sidenav>
   }
 
   <mat-sidenav-content>
     @if (showMenu && auth.isAuthenticated()) {
-      <app-header (toggleSidenav)="toggleSidenav()"></app-header>
+      <app-header (toggleSidenav)="toggleSidenav()" />
     }
 
     <main class="content-wrapper">

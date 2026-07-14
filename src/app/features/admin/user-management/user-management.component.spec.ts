@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { UserManagementComponent } from './user-management.component';
-import { UserService, Role } from '../../../core/services/user.service';
-import { EquipeService, EquipeDto } from '../../../core/services/equipe.service';
+import { Role, UserService } from '../../../core/services/user.service';
+import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 describe('UserManagementComponent', () => {

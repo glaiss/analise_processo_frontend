@@ -30,19 +30,19 @@ import { NotificationService } from '../../core/services/notification.service';
   styleUrl: './meus-dados.component.scss'
 })
 export class MeusDadosComponent {
-  private auth = inject(AuthService);
-  private notification = inject(NotificationService);
-  private router = inject(Router);
+  private readonly auth = inject(AuthService);
+  private readonly notification = inject(NotificationService);
+  private readonly router = inject(Router);
 
   currentUser = this.auth.currentUser;
 
-  nome = signal(this.currentUser()?.nome || '');
-  email = signal(this.currentUser()?.username || '');
+  readonly nome = signal(this.currentUser()?.nome || '');
+  readonly email = signal(this.currentUser()?.username || '');
 
-  loadingNome = signal(false);
-  loadingEmail = signal(false);
-  errorNome = signal<string | null>(null);
-  errorEmail = signal<string | null>(null);
+  readonly loadingNome = signal(false);
+  readonly loadingEmail = signal(false);
+  readonly errorNome = signal<string | null>(null);
+  readonly errorEmail = signal<string | null>(null);
 
   salvarNome() {
     this.errorNome.set(null);

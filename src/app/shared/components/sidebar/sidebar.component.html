@@ -4,31 +4,31 @@
 </div>
 
 <mat-nav-list>
-  <a mat-list-item (click)="navigate('/dashboard')" routerLinkActive="active">
+  <a mat-list-item routerLinkActive="active" (click)="navigate('/dashboard')">
     <mat-icon matListItemIcon>dashboard</mat-icon>
     <span matListItemTitle>Dashboard</span>
   </a>
   <a
     mat-list-item
-    (click)="navigate('/processos')"
     routerLinkActive="active"
     [routerLinkActiveOptions]="{ exact: true }"
+    (click)="navigate('/processos')"
   >
     <mat-icon matListItemIcon>assignment</mat-icon>
     <span matListItemTitle>Todos os Processos</span>
   </a>
-  <a mat-list-item (click)="navigate('/processos/monitorados')" routerLinkActive="active">
+  <a mat-list-item routerLinkActive="active" (click)="navigate('/processos/monitorados')">
     <mat-icon matListItemIcon>star</mat-icon>
     <span matListItemTitle>Monitorados</span>
   </a>
-  <a mat-list-item (click)="navigate('/relatorios')" routerLinkActive="active">
+  <a mat-list-item routerLinkActive="active" (click)="navigate('/relatorios')">
     <mat-icon matListItemIcon>analytics</mat-icon>
     <span matListItemTitle>Relatórios</span>
   </a>
-  <mat-divider></mat-divider>
+  <mat-divider />
 
   @if (auth.hasRole('ADMIN')) {
-    <a mat-list-item (click)="navigate('/admin')" routerLinkActive="active">
+    <a mat-list-item routerLinkActive="active" (click)="navigate('/admin')">
       <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
       <span matListItemTitle>Administração</span>
     </a>

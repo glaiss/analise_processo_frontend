@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, ViewChild, PLATFORM_ID } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { Component, OnInit, PLATFORM_ID, ViewChild, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { AuthService } from './core/services/auth.service';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
@@ -20,10 +20,10 @@ import { filter } from 'rxjs';
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
-export class App implements OnInit {
+export class AppComponent implements OnInit {
   auth = inject(AuthService);
-  private router = inject(Router);
-  private platformId = inject(PLATFORM_ID);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
   showMenu = true;
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
@@ -51,7 +51,7 @@ export class App implements OnInit {
 
   toggleSidenav() {
     if (this.sidenav) {
-      this.sidenav.toggle();
+      void this.sidenav.toggle();
     }
   }
 }

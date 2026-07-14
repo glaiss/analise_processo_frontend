@@ -30,20 +30,20 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   auth = inject(AuthService);
-  private router = inject(Router);
+  private readonly router = inject(Router);
 
   credentials = {
     username: '',
     password: ''
   };
 
-  hidePassword = signal(true);
+  readonly hidePassword = signal(true);
 
   onSubmit() {
     this.auth.login(this.credentials).subscribe({
       next: () => {
         this.auth.checkImpersonation().subscribe(() => {
-          this.router.navigate(['/dashboard']);
+          void this.router.navigate(['/dashboard']);
         });
       },
       error: () => {}

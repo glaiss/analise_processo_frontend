@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { Component } from '@angular/core';
 import { HeaderComponent } from './header.component';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -11,7 +11,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
 
-@Component({ template: '', standalone: true })
+@Component({ selector: 'app-test', template: '', standalone: true })
 class StubComponent {}
 
 describe('HeaderComponent', () => {

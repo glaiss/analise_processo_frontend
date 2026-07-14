@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -51,16 +51,16 @@ import { ScoreDisplayPipe } from '../../shared/pipes/score-display.pipe';
 })
 export class ProcessosComponent implements OnInit {
   processState = inject(ProcessStateService);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
-  searchQuery = signal<string>('');
-  selectedNiveis = signal<string[]>([]);
-  selectedStatus = signal<string[]>([]);
-  selectedSituacao = signal<string[]>([]);
-  selectedAssunto = signal<string>('');
+  readonly searchQuery = signal<string>('');
+  readonly selectedNiveis = signal<string[]>([]);
+  readonly selectedStatus = signal<string[]>([]);
+  readonly selectedSituacao = signal<string[]>([]);
+  readonly selectedAssunto = signal<string>('');
 
-  hasActiveFilters = computed(() =>
+  readonly hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
     this.selectedStatus().length > 0 ||
     this.selectedSituacao().length > 0 ||
@@ -68,15 +68,15 @@ export class ProcessosComponent implements OnInit {
     this.searchQuery().length > 0
   );
 
-  totalProcessos = computed(() => this.processState.totalElementCount());
+  readonly totalProcessos = computed(() => this.processState.totalElementCount());
 
-  title = computed(() =>
+  readonly title = computed(() =>
     this.processState.currentMode() === 'monitorados'
       ? 'Processos Monitorados'
       : 'Processos'
   );
 
-  subtitle = computed(() =>
+  readonly subtitle = computed(() =>
     this.processState.currentMode() === 'monitorados'
       ? 'Lista de processos que você está acompanhando'
       : 'Sherlock Laws - Gerenciamento e análise de processos judiciais'
@@ -139,7 +139,7 @@ export class ProcessosComponent implements OnInit {
   }
 
   openProcess(numero: string) {
-    this.router.navigate(['/processos', numero]);
+    void this.router.navigate(['/processos', numero]);
   }
 
   getScoreColor(score: number): string {

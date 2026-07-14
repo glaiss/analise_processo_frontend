@@ -12,7 +12,7 @@
       <mat-card-actions>
         <button mat-flat-button color="primary" [disabled]="loading()" (click)="executarProcessamento()">
           @if (loading()) {
-            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
             Processando...
           } @else {
             Executar Processamento
@@ -31,7 +31,7 @@
       <mat-card-actions>
         <button mat-flat-button color="warn" [disabled]="loading()" (click)="executarReprocessamento()">
           @if (loading()) {
-            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;"></mat-spinner>
+            <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
             Reprocessando...
           } @else {
             Executar Reprocessamento
