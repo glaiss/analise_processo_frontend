@@ -85,6 +85,16 @@ export class ProcessDetailsComponent implements OnInit {
   enviandoAnotacao = signal<boolean>(false);
   reprocessando = signal<boolean>(false);
   contatos = signal<ProcessoContatoDTO[]>([]);
+  editandoContatoId = signal<string | null>(null);
+  editFormNome = signal<string>('');
+  editFormValor = signal<string>('');
+  salvandoContato = signal<boolean>(false);
+
+  mostrarAbaContatos = computed(() => {
+    const status = this.processo()?.statusAtribuicao;
+    if (!status) return false;
+    return this.getCurrentStepIndex() >= 1;
+  });
 
   ngOnInit() {
     const num = this.route.snapshot.paramMap.get('numero');
@@ -262,6 +272,137 @@ export class ProcessDetailsComponent implements OnInit {
       window.open(`https://wa.me/${numero}`, '_blank');
     } else if (contato.tipo === 'EMAIL') {
       window.open(`mailto:${contato.valor}`, '_blank');
+    }
+  }
+
+  formatContatoValor(contato: ProcessoContatoDTO): string {
+    if (contato.tipo === 'EMAIL') return contato.valor;
+    const digits = contato.valor.replace(/\D/g, '');
+    if (digits.length === 11) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+    }
+    if (digits.length === 10) {
+      return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+    }
+    return contato.valor;
+  }
+
+  deletarContato(contato: ProcessoContatoDTO) {
+    if (!this.numero()) return;
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: {
+        title: 'Excluir contato',
+        message: `Tem certeza que deseja excluir o contato "${contato.nome || contato.valor}"?`
+      }
+    });
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (!result) return;
+
+        this.contatoService.deletar(this.numero()!, contato.id).subscribe({
+          next: () => {
+            this.notification.success('Contato excluído com sucesso', 3000);
+            this.carregarContatos();
+          },
+          error: () => this.notification.error('Erro ao excluir contato', 3000)
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  definirComoPrincipal(contato: ProcessoContatoDTO) {
+    if (!this.numero()) return;
+    this.contatoService.atualizar(this.numero()!, contato.id, {
+      tipo: contato.tipo,
+      valor: contato.valor,
+      nome: contato.nome,
+      principal: true
+    }).subscribe({
+      next: () => {
+        this.notification.success('Contato definido como principal', 3000);
+        this.carregarContatos();
+      },
+      error: () => this.notification.error('Erro ao definir contato como principal', 3000)
+    });
+  }
+
+  startEditContato(contato: ProcessoContatoDTO) {
+    this.editandoContatoId.set(contato.id);
+    this.editFormNome.set(contato.nome);
+    this.editFormValor.set(contato.valor);
+  }
+
+  cancelEditContato() {
+    this.editandoContatoId.set(null);
+    this.editFormNome.set('');
+    this.editFormValor.set('');
+  }
+
+  adicionarContato() {
+    const dialogRef = this.dialog.open(ContactProcessDialogComponent, {
+      width: '480px',
+      disableClose: true,
+      data: { numero: this.numero() }
+    });
+
+    dialogRef.afterClosed().subscribe({
+      next: (result) => {
+        if (!result || !this.numero()) return;
+
+        this.salvandoContato.set(true);
+        this.contatoService.salvar(this.numero()!, {
+          tipo: result.tipo,
+          valor: result.valor,
+          nome: result.nome || undefined,
+          principal: result.principal
+        }).subscribe({
+          next: () => {
+            this.notification.success('Contato adicionado com sucesso', 3000);
+            this.carregarContatos();
+            this.salvandoContato.set(false);
+          },
+          error: () => {
+            this.notification.error('Erro ao adicionar contato', 3000);
+            this.salvandoContato.set(false);
+          }
+        });
+      },
+      error: () => {}
+    });
+  }
+
+  salvarEditContato(contato: ProcessoContatoDTO) {
+    const nome = this.editFormNome().trim();
+    const valor = this.editFormValor().trim();
+    if (!nome || !valor) return;
+
+    this.salvandoContato.set(true);
+    this.contatoService.atualizar(this.numero()!, contato.id, {
+      tipo: contato.tipo,
+      valor,
+      nome,
+    }).subscribe({
+      next: () => {
+        this.notification.success('Contato atualizado com sucesso', 3000);
+        this.cancelEditContato();
+        this.carregarContatos();
+      },
+      error: () => {
+        this.notification.error('Erro ao atualizar contato', 3000);
+        this.salvandoContato.set(false);
+      }
+    });
+  }
+
+  private carregarContatos() {
+    if (this.numero()) {
+      this.contatoService.listar(this.numero()!).subscribe({
+        next: (ctts) => this.contatos.set(ctts),
+        error: () => {}
+      });
     }
   }
 
@@ -483,7 +624,7 @@ export class ProcessDetailsComponent implements OnInit {
       const dialogRef = this.dialog.open(ContactProcessDialogComponent, {
         width: '480px',
         disableClose: true,
-        data: { numero, contatos: [] }
+        data: { numero }
       });
 
       dialogRef.afterClosed().subscribe({

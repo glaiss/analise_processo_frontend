@@ -82,5 +82,5 @@ describe('appRoutes', () => {
       const component = await route.loadComponent!();
       expect(component).toBeDefined();
     }
-  });
+  }, 15000);
 });

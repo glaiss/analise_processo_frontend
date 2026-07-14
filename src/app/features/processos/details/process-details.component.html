@@ -46,21 +46,6 @@
         <span>{{ p.assuntoJudicial || 'assunto não tem nome' }}</span>
       </div>
 
-      @if (contatos().length > 0) {
-        <div class="contact-bar">
-          <span class="contact-bar-label">Contatos:</span>
-          @for (c of contatos(); track c.id) {
-            <button mat-stroked-button class="contact-chip"
-              [class.whatsapp]="c.tipo === 'WHATSAPP'"
-              (click)="abrirContato(c)"
-              [matTooltip]="c.tipo === 'WHATSAPP' ? 'Abrir WhatsApp' : 'Enviar E-mail'">
-              <mat-icon>{{ c.tipo === 'WHATSAPP' ? 'chat' : 'email' }}</mat-icon>
-              {{ c.nome || c.valor }}
-            </button>
-          }
-        </div>
-      }
-
       <!-- Flow Stepper -->
       <div class="flow-stepper">
         @for (step of FLOW_STEPS; track step.status; let i = $index) {
@@ -217,6 +202,86 @@
                 </div>
               </div>
             </mat-tab>
+
+            <!-- Contatos -->
+            @if (mostrarAbaContatos()) {
+              <mat-tab>
+                <ng-template mat-tab-label>
+                  <mat-icon class="tab-icon">contact_phone</mat-icon>
+                  Contatos
+                </ng-template>
+                <div class="tab-content">
+                  <div class="contatos-header">
+                    <span class="contatos-title">Contatos do Processo</span>
+                    <button mat-flat-button color="primary" (click)="adicionarContato()">
+                      <mat-icon>add</mat-icon>
+                      Adicionar Contato
+                    </button>
+                  </div>
+                  @if (contatos().length > 0) {
+                    <div class="contatos-list">
+                      @for (contato of contatos(); track contato.id) {
+                        <mat-card class="contato-card" [class.editing]="editandoContatoId() === contato.id" [class.principal]="contato.principal">
+                          <div class="contato-row">
+                            <mat-icon class="contato-row-icon">
+                              {{ contato.tipo === 'WHATSAPP' ? 'chat' : 'email' }}
+                            </mat-icon>
+                            @if (editandoContatoId() === contato.id) {
+                              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                                <mat-label>Nome</mat-label>
+                                <input matInput [(ngModel)]="editFormNome">
+                              </mat-form-field>
+                              <mat-form-field appearance="outline" subscriptSizing="dynamic" class="compact-field">
+                                <mat-label>{{ contato.tipo === 'WHATSAPP' ? 'WhatsApp' : 'E-mail' }}</mat-label>
+                                <input matInput [(ngModel)]="editFormValor">
+                              </mat-form-field>
+                              <div class="contato-row-actions">
+                                <button mat-button (click)="cancelEditContato()">Cancelar</button>
+                                <button mat-flat-button color="primary" (click)="salvarEditContato(contato)" [disabled]="!editFormNome().trim() || !editFormValor().trim() || salvandoContato()">
+                                  Salvar
+                                </button>
+                              </div>
+                            } @else {
+                              @if (contato.principal) {
+                                <mat-icon class="principal-star" matTooltip="Contato principal">star</mat-icon>
+                              }
+                              <span class="contato-row-nome">{{ contato.nome || 'Sem nome' }}</span>
+                              <span class="contato-tipo-badge" [class.whatsapp-badge]="contato.tipo === 'WHATSAPP'" [class.email-badge]="contato.tipo === 'EMAIL'">
+                                {{ contato.tipo === 'WHATSAPP' ? 'WhatsApp' : 'E-mail' }}
+                              </span>
+                              <span class="contato-valor">{{ formatContatoValor(contato) }}</span>
+                              <span class="contato-row-spacer"></span>
+                              @if (contato.tipo === 'WHATSAPP') {
+                                <button mat-icon-button (click)="abrirContato(contato)" matTooltip="Abrir WhatsApp" class="whatsapp-btn">
+                                  <mat-icon class="whatsapp-icon">chat</mat-icon>
+                                </button>
+                              } @else {
+                                <button mat-icon-button (click)="abrirContato(contato)" matTooltip="Enviar E-mail" class="email-btn">
+                                  <mat-icon>email</mat-icon>
+                                </button>
+                              }
+                              @if (!contato.principal) {
+                                <button mat-icon-button (click)="definirComoPrincipal(contato)" matTooltip="Definir como principal">
+                                  <mat-icon>star_border</mat-icon>
+                                </button>
+                              }
+                              <button mat-icon-button (click)="startEditContato(contato)" matTooltip="Editar contato">
+                                <mat-icon>edit</mat-icon>
+                              </button>
+                              <button mat-icon-button (click)="deletarContato(contato)" matTooltip="Excluir contato">
+                                <mat-icon color="warn">delete</mat-icon>
+                              </button>
+                            }
+                          </div>
+                        </mat-card>
+                      }
+                    </div>
+                  } @else {
+                    <app-empty-state icon="contact_phone" message="Nenhum contato registrado para este processo."/>
+                  }
+                </div>
+              </mat-tab>
+            }
 
             <!-- Documentos -->
             <mat-tab>

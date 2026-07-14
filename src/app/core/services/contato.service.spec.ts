@@ -91,4 +91,53 @@ describe('ContatoService', () => {
       expect(error).toBeTruthy();
     });
   });
+
+  describe('atualizar', () => {
+    it('should PUT updated contato for processo', () => {
+      const payload = { tipo: 'WHATSAPP' as const, valor: '5511999999999', nome: 'João Atualizado' };
+
+      service.atualizar('123', '1', payload).subscribe(contato => {
+        expect(contato).toEqual({ id: '1', ...payload, principal: false });
+      });
+
+      const req = httpMock.expectOne(`${API_URL}/123/contatos/1`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush({ id: '1', ...payload, principal: false });
+    });
+
+    it('should handle atualizar error', () => {
+      let error: any;
+      service.atualizar('999', 'x', { tipo: 'EMAIL', valor: 'x@y.com', nome: 'Test' }).subscribe({
+        next: () => { expect(true).toBe(false); },
+        error: (err: any) => { error = err; }
+      });
+
+      const req = httpMock.expectOne(`${API_URL}/999/contatos/x`);
+      req.flush('Not found', { status: 404, statusText: 'Not Found' });
+      expect(error).toBeTruthy();
+    });
+  });
+
+  describe('deletar', () => {
+    it('should DELETE contato for processo', () => {
+      service.deletar('123', '1').subscribe();
+
+      const req = httpMock.expectOne(`${API_URL}/123/contatos/1`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle deletar error', () => {
+      let error: any;
+      service.deletar('999', 'x').subscribe({
+        next: () => { expect(true).toBe(false); },
+        error: (err: any) => { error = err; }
+      });
+
+      const req = httpMock.expectOne(`${API_URL}/999/contatos/x`);
+      req.flush('Not found', { status: 404, statusText: 'Not Found' });
+      expect(error).toBeTruthy();
+    });
+  });
 });

@@ -807,65 +807,6 @@
   }
 }
 
-.contact-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  flex-wrap: wrap;
-
-  .contact-bar-label {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: var(--text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .contact-chip {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 0 12px;
-    min-height: 32px;
-    border-radius: 20px;
-    font-size: 0.8125rem;
-    border: 1px solid var(--border-strong);
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-
-    &.whatsapp {
-      border-color: #25D366;
-      color: #25D366;
-
-      mat-icon {
-        color: #25D366;
-      }
-
-      &:hover {
-        background: rgba(37, 211, 102, 0.08);
-      }
-    }
-
-    &:not(.whatsapp) {
-      border-color: var(--primary-blue);
-      color: var(--primary-blue);
-
-      mat-icon {
-        color: var(--primary-blue);
-      }
-
-      &:hover {
-        background: rgba(var(--primary-blue-rgb), 0.08);
-      }
-    }
-  }
-}
-
 .score-list {
   .points {
     font-weight: 700;
@@ -1126,4 +1067,124 @@
   padding: 100px;
   gap: 16px;
   color: var(--text-tertiary);
+}
+
+.contatos-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+
+  .contatos-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.contatos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .contato-card {
+    border: 1px solid var(--border-strong);
+    box-shadow: none;
+    padding: 4px 12px;
+
+    &.editing {
+      border-color: var(--primary-blue);
+      background-color: var(--bg-blue-50);
+    }
+
+    &.principal {
+      border-left: 3px solid var(--accent-gold);
+    }
+
+    .contato-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 40px;
+
+      .contato-row-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        color: var(--text-tertiary);
+      }
+
+      .compact-field {
+        flex: 0 1 180px;
+        margin: 0;
+
+        .mat-mdc-form-field-subscript-wrapper {
+          display: none;
+        }
+      }
+
+      .principal-star {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: var(--accent-gold);
+        flex-shrink: 0;
+      }
+
+      .contato-row-nome {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text-primary);
+        min-width: 120px;
+      }
+
+      .contato-tipo-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 1px 8px;
+        border-radius: 12px;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+
+        &.whatsapp-badge {
+          background: rgba(37, 211, 102, 0.12);
+          color: #1da851;
+        }
+
+        &.email-badge {
+          background: rgba(63, 81, 181, 0.1);
+          color: var(--primary-blue);
+        }
+      }
+
+      .contato-valor {
+        color: var(--text-secondary);
+        font-size: 0.8125rem;
+      }
+
+      .contato-row-spacer {
+        flex: 1;
+      }
+
+      .contato-row-actions {
+        display: flex;
+        gap: 6px;
+        margin-left: auto;
+      }
+
+      .whatsapp-btn .whatsapp-icon {
+        color: #25D366;
+      }
+
+      .email-btn mat-icon {
+        color: var(--primary-blue);
+      }
+    }
+  }
 }

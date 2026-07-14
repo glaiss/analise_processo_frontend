@@ -18,4 +18,12 @@ export class ContatoService {
   salvar(numero: string, contato: { tipo: string; valor: string; nome?: string; principal?: boolean }): Observable<ProcessoContatoDTO> {
     return this.http.post<ProcessoContatoDTO>(`${this.apiUrl}/${numero}/contatos`, contato);
   }
+
+  atualizar(numero: string, id: string, contato: { tipo: string; valor: string; nome: string; principal?: boolean }): Observable<ProcessoContatoDTO> {
+    return this.http.put<ProcessoContatoDTO>(`${this.apiUrl}/${numero}/contatos/${id}`, contato);
+  }
+
+  deletar(numero: string, id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${numero}/contatos/${id}`);
+  }
 }
