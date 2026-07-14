@@ -28,7 +28,7 @@ describe('CacheMonitorComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CacheMonitorComponent, NoopAnimationsModule],
       providers: [
-        provideRouter([]),
+        provideRouter([{ path: 'admin', component: CacheMonitorComponent }]),
         { provide: CacheService, useValue: mockCacheService },
       ],
     }).compileComponents();
