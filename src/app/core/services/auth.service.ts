@@ -1,7 +1,7 @@
-import { PLATFORM_ID, Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 export interface Authority {
@@ -20,9 +20,10 @@ export interface User {
 }
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly http = inject(HttpClient);
   private readonly USER_KEY = 'auth_user';
   private readonly IMPERSONATION_KEY = 'impersonating_origin';
-  private readonly platformId = inject(PLATFORM_ID);
   private readonly user = signal<User | null>(this.getFromSession(this.USER_KEY));
   private readonly impersonatingOrigin = signal<string | null>(
     this.getFromSession(this.IMPERSONATION_KEY),
@@ -34,7 +35,6 @@ export class AuthService {
   readonly isLoading = computed(() => this.loading());
   readonly isImpersonating = computed(() => !!this.impersonatingOrigin());
   readonly impersonatingAdmin = computed(() => this.impersonatingOrigin());
-  constructor(private readonly http: HttpClient) {}
   private getFromSession(key: string): any {
     if (isPlatformBrowser(this.platformId)) {
       const stored = sessionStorage.getItem(key);
@@ -107,7 +107,7 @@ export class AuthService {
   checkImpersonation() {
     return this.http.get<{ origin: string } | null>(`${this.apiUrl}/impersonating-origin`).pipe(
       tap((result) => {
-        if (result && result.origin) {
+        if (result?.origin) {
           this.impersonatingOrigin.set(result.origin);
           this.setInSession(this.IMPERSONATION_KEY, result.origin);
         } else {

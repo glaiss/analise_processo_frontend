@@ -10,7 +10,7 @@
         <p>Inicia o processamento de processos que ainda não foram enriquecidos.</p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-flat-button color="primary" [disabled]="loading()" (click)="executarProcessamento()">
+        <button type="button" mat-flat-button color="primary" [disabled]="loading()" (click)="executarProcessamento()">
           @if (loading()) {
             <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
             Processando...
@@ -29,7 +29,7 @@
         <p>Inicia o reprocessamento de processos que falharam no enriquecimento.</p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-flat-button color="warn" [disabled]="loading()" (click)="executarReprocessamento()">
+        <button type="button" mat-flat-button color="warn" [disabled]="loading()" (click)="executarReprocessamento()">
           @if (loading()) {
             <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
             Reprocessando...

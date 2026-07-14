@@ -7,7 +7,7 @@
   </div>
 
   @if (selectedCount() > 0) {
-    <button class="fab-reprocess" mat-fab extended color="primary" matBadgeColor="accent" [disabled]="reprocessando()" [matBadge]="reprocessando() ? 0 : selectedCount()" (click)="reprocessarSelecionados()">
+    <button type="button" class="fab-reprocess" mat-fab extended color="primary" matBadgeColor="accent" [disabled]="reprocessando()" [matBadge]="reprocessando() ? 0 : selectedCount()" (click)="reprocessarSelecionados()">
       @if (reprocessando()) {
         <mat-spinner diameter="20" />
       } @else {

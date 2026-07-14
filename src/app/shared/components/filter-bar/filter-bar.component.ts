@@ -43,14 +43,14 @@ export class FilterBarComponent {
 
   readonly hasActiveFilters = input(false);
 
-  filterChange = output<{
+  readonly filterChange = output<{
     searchQuery: string;
     selectedNiveis: string[];
     selectedStatus: string[];
     selectedSituacao: string[];
     selectedAssunto: string;
   }>();
-  clearFilters = output<void>();
+  readonly clearFilters = output<void>();
 
   private emitSearch() {
     this.filterChange.emit({

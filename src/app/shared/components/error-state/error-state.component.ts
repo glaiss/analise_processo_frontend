@@ -14,5 +14,5 @@ export class ErrorStateComponent {
   @Input({ required: true }) message!: string;
   @Input() retryLabel = 'Tentar novamente';
 
-  retry = output<void>();
+  readonly retry = output<void>();
 }

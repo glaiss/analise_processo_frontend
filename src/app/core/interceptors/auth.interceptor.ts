@@ -26,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.error && typeof error.error === 'object' && 'title' in error.error && 'status' in error.error) {
         problemDetail = error.error as ProblemDetail;
-        errorMessage = problemDetail.detail || problemDetail.title || errorMessage;
+        errorMessage = problemDetail.detail ?? problemDetail.title ?? errorMessage;
       } else {
         errorMessage = error.message || errorMessage;
       }
@@ -42,7 +42,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           void router.navigate(['/login']);
         }
       } else if (error.status >= 500) {
-        if (!problemDetail || (problemDetail && problemDetail.detail === 'Ocorreu um erro inesperado.')) {
+        if (!problemDetail || problemDetail?.detail === 'Ocorreu um erro inesperado.') {
           notification.error('Sistema indisponível. Por favor, tente novamente mais tarde.');
         } else {
           notification.error(`Erro no Servidor (${error.status}): ${errorMessage}`);

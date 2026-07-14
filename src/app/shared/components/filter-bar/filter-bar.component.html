@@ -1,23 +1,23 @@
-<div class="filters-bar">
+﻿<div class="filters-bar">
   <div class="filters-main-row">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Buscar por n&uacute;mero do processo</mat-label>
       <input matInput placeholder="0000000-00.0000.0.00.0000" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()">
-      <button mat-icon-button matSuffix matTooltip="Pesquisar" (click)="onSearch()">
+      <button type="button" mat-icon-button matSuffix matTooltip="Pesquisar" (click)="onSearch()">
         <mat-icon>search</mat-icon>
       </button>
-      <button mat-icon-button matSuffix matTooltip="Filtros Avan&ccedil;ados" [class.active]="showAdvanced()" (click)="toggleAdvanced()">
+      <button type="button" mat-icon-button matSuffix matTooltip="Filtros Avan&ccedil;ados" [class.active]="showAdvanced()" (click)="toggleAdvanced()">
         <mat-icon [class.active-icon]="showAdvanced()">tune</mat-icon>
       </button>
       @if (searchQuery()) {
-        <button mat-icon-button matSuffix matTooltip="Limpar busca" (click)="searchQuery.set(''); onSearch()">
+        <button type="button" mat-icon-button matSuffix matTooltip="Limpar busca" (click)="searchQuery.set(''); onSearch()">
           <mat-icon color="warn">close</mat-icon>
         </button>
       }
     </mat-form-field>
 
     @if (hasActiveFilters()) {
-      <button mat-icon-button class="clear-filters-btn" matTooltip="Limpar filtros" (click)="onClear()">
+      <button type="button" mat-icon-button class="clear-filters-btn" matTooltip="Limpar filtros" (click)="onClear()">
         <mat-icon color="warn">filter_alt_off</mat-icon>
       </button>
     }
@@ -58,11 +58,11 @@
         <mat-form-field appearance="outline" class="filter-field full-width">
           <mat-label>Assunto</mat-label>
           <input matInput placeholder="Ex: tribut&aacute;rio, c&iacute;vel..." [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()">
-          <button mat-icon-button matSuffix matTooltip="Filtrar" (click)="onAssuntoSearch()">
+          <button type="button" mat-icon-button matSuffix matTooltip="Filtrar" (click)="onAssuntoSearch()">
             <mat-icon>search</mat-icon>
           </button>
           @if (selectedAssunto()) {
-            <button mat-icon-button matSuffix matTooltip="Limpar" (click)="selectedAssunto.set(''); onAssuntoSearch()">
+            <button type="button" mat-icon-button matSuffix matTooltip="Limpar" (click)="selectedAssunto.set(''); onAssuntoSearch()">
               <mat-icon color="warn">close</mat-icon>
             </button>
           }

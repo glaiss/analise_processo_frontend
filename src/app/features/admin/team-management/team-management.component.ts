@@ -89,7 +89,7 @@ export class TeamManagementComponent implements OnInit {
           this.loading.set(false);
         },
         error: (err: any) => {
-          const errorMessage = err?.error?.message || 'Erro ao criar equipe';
+          const errorMessage = err?.error?.message ?? 'Erro ao criar equipe';
           this.notification.error(errorMessage);
           this.loading.set(false);
         }

@@ -4,7 +4,7 @@ import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
 import { StatusAtribuicao } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ProcessStateService {
@@ -80,7 +80,7 @@ export class ProcessStateService {
           this.totalElements.set(pageData.totalElements);
           this.loading.set(false);
         },
-        error: (err) => {
+        error: (_err) => {
           this.error.set('Erro ao carregar processos');
           this.loading.set(false);
         }
@@ -172,7 +172,7 @@ export class ProcessStateService {
     const filtered = this.allProcesses();
     const groups: Record<string, ProcessoResumoDTO[]> = {};
     filtered.forEach(p => {
-      const groupKey = p[key] || 'Não Atribuído';
+      const groupKey = p[key] ?? 'Não Atribuído';
       if (!groups[groupKey]) {
         groups[groupKey] = [];
       }

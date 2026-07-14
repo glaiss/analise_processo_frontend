@@ -20,26 +20,26 @@ describe('adminGuard', () => {
     authService = TestBed.inject(AuthService);
   });
 
-  it('should allow activation for ADMIN role', () => {
+  it('should allow activation for ADMIN role', async () => {
     vi.spyOn(authService, 'hasRole').mockImplementation((role: string) => role === 'ADMIN');
 
-    const result = TestBed.runInInjectionContext(() => adminGuard({} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(async () => adminGuard({} as any, {} as any));
     expect(result).toBe(true);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should allow activation for GESTOR role', () => {
+  it('should allow activation for GESTOR role', async () => {
     vi.spyOn(authService, 'hasRole').mockImplementation((role: string) => role === 'GESTOR');
 
-    const result = TestBed.runInInjectionContext(() => adminGuard({} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(async () => adminGuard({} as any, {} as any));
     expect(result).toBe(true);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 
-  it('should redirect to dashboard for non-admin roles', () => {
+  it('should redirect to dashboard for non-admin roles', async () => {
     vi.spyOn(authService, 'hasRole').mockReturnValue(false);
 
-    const result = TestBed.runInInjectionContext(() => adminGuard({} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(async () => adminGuard({} as any, {} as any));
     expect(result).toBe(false);
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });

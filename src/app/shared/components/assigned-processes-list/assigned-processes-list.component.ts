@@ -22,13 +22,13 @@ import { EmptyStateComponent } from '../empty-state/empty-state.component';
   styleUrl: './assigned-processes-list.component.scss'
 })
 export class AssignedProcessesListComponent implements OnInit, OnChanges {
-  @Input({ required: true }) mode!: 'meus' | 'equipe';
-  @Input() title: string = 'Processos Atribuídos';
-  @Input() filter?: ProcessoFilterParams;
-
   private readonly distService = inject(DistributionService);
   private readonly enriquecimentoService = inject(EnriquecimentoService);
   private readonly notification = inject(NotificationService);
+
+  @Input({ required: true }) mode!: 'meus' | 'equipe';
+  @Input() title: string = 'Processos Atribuídos';
+  @Input() filter?: ProcessoFilterParams;
 
   atribuicoes: AtribuicaoProcessoResumoDTO[] = [];
   readonly isLoading = signal(false);
@@ -41,11 +41,6 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
 
   readonly selectedCount = computed(() => this.selectedNumeros().size);
 
-  ngOnInit() {
-    this.title = this.mode === 'meus' ? 'Meus Processos' : 'Processos da Equipe';
-    this.loadProcesses();
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['mode'] && !changes['mode'].firstChange) {
       this.resetList();
@@ -53,6 +48,11 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
     if (changes['filter'] && !changes['filter'].firstChange) {
       this.resetList();
     }
+  }
+
+  ngOnInit() {
+    this.title = this.mode === 'meus' ? 'Meus Processos' : 'Processos da Equipe';
+    this.loadProcesses();
   }
 
   resetList() {

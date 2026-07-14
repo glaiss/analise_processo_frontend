@@ -46,7 +46,7 @@ describe('UserManagementComponent', () => {
   });
 
   it('should load equipes on construction', () => {
-    const fixture = TestBed.createComponent(UserManagementComponent);
+    TestBed.createComponent(UserManagementComponent);
     expect(mockEquipeService.getEquipes).toHaveBeenCalled();
   });
 

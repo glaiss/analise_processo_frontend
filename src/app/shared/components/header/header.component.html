@@ -5,20 +5,20 @@
       Visualizando como <strong>{{ auth.currentUser()?.username }}</strong>
       (admin: {{ auth.impersonatingAdmin() }})
     </span>
-    <button mat-raised-button color="primary" (click)="stopImpersonating()">
+    <button type="button" mat-raised-button color="primary" (click)="stopImpersonating()">
       <mat-icon>arrow_back</mat-icon> Voltar para meu usuário
     </button>
   </div>
 }
 
 <mat-toolbar color="primary" class="app-toolbar">
-  <button mat-icon-button (click)="toggleSidenav.emit()">
+  <button type="button" mat-icon-button (click)="toggleSidenav.emit()">
     <mat-icon>menu</mat-icon>
   </button>
   <span>{{ auth.currentUser()?.equipe || 'Sherlock Law' }}</span>
   <span class="spacer"></span>
   <div class="user-toolbar-info">
-    <button class="user-avatar-btn" [matMenuTriggerFor]="userMenu">
+    <button type="button" class="user-avatar-btn" [matMenuTriggerFor]="userMenu">
       <span class="user-avatar">{{ avatarLetter }}</span>
     </button>
   </div>
@@ -30,26 +30,26 @@
     <span class="menu-user-equipe">{{ auth.currentUser()?.equipe }}</span>
   </div>
   <mat-divider />
-  <button mat-menu-item (click)="theme.toggle()">
+  <button type="button" mat-menu-item (click)="theme.toggle()">
     <mat-icon>{{ theme.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
     <span>{{ theme.isDark() ? 'Modo Claro' : 'Modo Escuro' }}</span>
   </button>
-  <button mat-menu-item (click)="meusDados()">
+  <button type="button" mat-menu-item (click)="meusDados()">
     <mat-icon>person</mat-icon>
     <span>Meus Dados</span>
   </button>
-  <button mat-menu-item (click)="alterarSenha()">
+  <button type="button" mat-menu-item (click)="alterarSenha()">
     <mat-icon>lock</mat-icon>
     <span>Alterar Senha</span>
   </button>
   @if (auth.hasRole('ADMIN') && !auth.isImpersonating()) {
-    <button mat-menu-item (click)="openImpersonateDialog()">
+    <button type="button" mat-menu-item (click)="openImpersonateDialog()">
       <mat-icon>visibility</mat-icon>
       <span>Entrar como outro usuário</span>
     </button>
   }
   <mat-divider />
-  <button mat-menu-item (click)="logout()">
+  <button type="button" mat-menu-item (click)="logout()">
     <mat-icon>logout</mat-icon>
     <span>Sair</span>
   </button>

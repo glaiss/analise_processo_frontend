@@ -118,7 +118,7 @@ describe('HeaderComponent', () => {
 
     vi.spyOn(fixture.componentInstance.toggleSidenav, 'emit');
     const menuButton = fixture.nativeElement.querySelector('[aria-label="Menu"]') 
-      || fixture.nativeElement.querySelector('button');
+      ?? fixture.nativeElement.querySelector('button');
     if (menuButton) {
       menuButton.click();
       expect(fixture.componentInstance.toggleSidenav.emit).toHaveBeenCalled();

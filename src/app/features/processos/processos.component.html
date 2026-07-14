@@ -32,7 +32,7 @@
             <ng-container matColumnDef="monitoramento">
               <th *matHeaderCellDef mat-header-cell></th>
               <td *matCellDef="let p" mat-cell>
-                <button mat-icon-button (click)="toggleMonitoramento(p.numero, $event)">
+                <button type="button" mat-icon-button (click)="toggleMonitoramento(p.numero, $event)">
                   <mat-icon [class.monitored]="p.monitorado">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
                 </button>
               </td>
@@ -54,7 +54,7 @@
             <ng-container matColumnDef="nivel">
               <th *matHeaderCellDef mat-header-cell>Nível</th>
               <td *matCellDef="let p" mat-cell>
-                <span class="risk-badge" [ngClass]="p.nivel?.toLowerCase()">{{ p.nivel | scoreDisplay }}</span>
+                <span class="risk-badge" [ngClass]="p.nivel?.toLowerCase()">{{ p.nivel | appScoreDisplay }}</span>
               </td>
             </ng-container>
 
@@ -70,14 +70,14 @@
             <ng-container matColumnDef="status">
               <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Status Atribuição</th>
               <td *matCellDef="let p" mat-cell class="col-hide-sm">
-                <span class="status-badge">{{ p.statusAtribuicao | statusDisplay }}</span>
+                <span class="status-badge">{{ p.statusAtribuicao | appStatusDisplay }}</span>
               </td>
             </ng-container>
 
             <!-- Situação do Processo -->
             <ng-container matColumnDef="processoSituacao">
               <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Situação</th>
-              <td *matCellDef="let p" mat-cell class="col-hide-sm">{{ p.processoSituacao | situacaoDisplay }}</td>
+              <td *matCellDef="let p" mat-cell class="col-hide-sm">{{ p.processoSituacao | appSituacaoDisplay }}</td>
             </ng-container>
 
             <tr

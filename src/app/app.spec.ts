@@ -6,7 +6,7 @@ import { AuthService } from './core/services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
-import { Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 
 @Component({ selector: 'app-test', template: '', standalone: true })
 class StubComponent {}

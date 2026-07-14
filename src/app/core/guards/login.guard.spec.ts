@@ -31,10 +31,10 @@ describe('loginGuard', () => {
 
   afterEach(() => httpMock.verify());
 
-  it('should redirect to dashboard when already authenticated', () => {
+  it('should redirect to dashboard when already authenticated', async () => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(true);
 
-    const result = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any));
+    const result = await TestBed.runInInjectionContext(async () => loginGuard({} as any, {} as any));
     expect(result).toBe(false);
     expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
   });
@@ -42,7 +42,7 @@ describe('loginGuard', () => {
   it('should check session and redirect to dashboard if valid', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
-    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;
+    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any) as any);
     result$.subscribe((result: boolean) => {
       expect(result).toBe(false);
       expect(router.navigate).toHaveBeenCalledWith(['/dashboard']);
@@ -57,7 +57,7 @@ describe('loginGuard', () => {
   it('should allow access to login when session check fails', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
-    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;
+    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any) as any);
     result$.subscribe((result: boolean) => {
       expect(result).toBe(true);
       expect(router.navigate).not.toHaveBeenCalled();
@@ -70,7 +70,7 @@ describe('loginGuard', () => {
   it('should allow access to login when session returns null', async () => new Promise<void>(done => {
     vi.spyOn(authService, 'isAuthenticated').mockReturnValue(false);
 
-    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any)) as any;
+    const result$ = TestBed.runInInjectionContext(() => loginGuard({} as any, {} as any) as any);
     result$.subscribe((result: boolean) => {
       expect(result).toBe(true);
       done();

@@ -113,7 +113,7 @@ export class UserTeamAssociationComponent implements OnInit {
           this.loading.set(false);
         },
         error: (err: any) => {
-          this.notification.error(err?.error?.message || 'Erro ao vincular usuário');
+          this.notification.error(err?.error?.message ?? 'Erro ao vincular usuário');
           this.loading.set(false);
         }
       });
@@ -130,7 +130,7 @@ export class UserTeamAssociationComponent implements OnInit {
         );
       },
       error: (err: any) => {
-        this.notification.error(err?.error?.message || 'Erro ao desvincular usuário');
+        this.notification.error(err?.error?.message ?? 'Erro ao desvincular usuário');
       }
     });
   }

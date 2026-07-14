@@ -53,7 +53,6 @@ describe('UploadDocumentDialogComponent', () => {
     const fixture = TestBed.createComponent(UploadDocumentDialogComponent);
     fixture.detectChanges();
 
-    const text = fixture.nativeElement.querySelector('p, span, .file-name');
     expect(fixture.nativeElement.textContent).toContain('documento.pdf');
   });
 

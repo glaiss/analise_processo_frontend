@@ -19,7 +19,7 @@
         </mat-form-field>
       </div>
 
-      <button mat-flat-button color="primary" [disabled]="loading() || loadingEquipes()" (click)="executar()">
+      <button type="button" mat-flat-button color="primary" [disabled]="loading() || loadingEquipes()" (click)="executar()">
         @if (loading()) {
           <mat-spinner diameter="20" style="display: inline-block; margin-right: 8px;" />
           Executando...

@@ -3,7 +3,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { IngestionComponent } from './ingestion.component';
 import { IngestionService } from '../../core/services/ingestion.service';
 import { NotificationService } from '../../core/services/notification.service';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 describe('IngestionComponent', () => {
   let ingestionService: any;

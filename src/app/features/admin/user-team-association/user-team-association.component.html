@@ -117,11 +117,11 @@
                   <th *matHeaderCellDef mat-header-cell> Ações </th>
                   <td *matCellDef="let element" mat-cell>
                     @if (element.equipeNome) {
-                      <button mat-icon-button color="warn" matTooltip="Remover usuário da equipe" (click)="desvincular(element.id)">
+                      <button type="button" mat-icon-button color="warn" matTooltip="Remover usuário da equipe" (click)="desvincular(element.id)">
                         <mat-icon>link_off</mat-icon>
                       </button>
                     } @else {
-                      <button mat-icon-button disabled>
+                      <button type="button" mat-icon-button disabled>
                         <mat-icon>link_off</mat-icon>
                       </button>
                     }

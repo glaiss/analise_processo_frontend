@@ -122,7 +122,7 @@ export class RedirecionarProcessosComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err: any) => {
-        const msg = err?.error?.message || 'Erro ao redirecionar processos.';
+        const msg = err?.error?.message ?? 'Erro ao redirecionar processos.';
         this.notification.error(msg);
         this.loading.set(false);
       }

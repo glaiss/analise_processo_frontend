@@ -2,7 +2,6 @@ import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './dashboard.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
-import { of } from 'rxjs';
 
 describe('DashboardComponent', () => {
   beforeEach(async () => {

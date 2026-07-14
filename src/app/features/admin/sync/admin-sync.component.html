@@ -9,7 +9,7 @@
         <mat-card-subtitle>Sincronizar tipos de movimentação</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="loadingMovimentos()" (click)="syncMovimentos()">
+        <button type="button" mat-raised-button color="primary" [disabled]="loadingMovimentos()" (click)="syncMovimentos()">
           @if (loadingMovimentos()) {
             <mat-spinner diameter="20" />
           } @else {
@@ -26,7 +26,7 @@
         <mat-card-subtitle>Sincronizar classes judiciais</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="loadingClasses()" (click)="syncClasses()">
+        <button type="button" mat-raised-button color="primary" [disabled]="loadingClasses()" (click)="syncClasses()">
           @if (loadingClasses()) {
             <mat-spinner diameter="20" />
           } @else {
@@ -43,7 +43,7 @@
         <mat-card-subtitle>Sincronizar assuntos judiciais</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="loadingAssuntos()" (click)="syncAssuntos()">
+        <button type="button" mat-raised-button color="primary" [disabled]="loadingAssuntos()" (click)="syncAssuntos()">
           @if (loadingAssuntos()) {
             <mat-spinner diameter="20" />
           } @else {
@@ -60,7 +60,7 @@
         <mat-card-subtitle>Executar todas as sincronizações de uma vez</mat-card-subtitle>
       </mat-card-header>
       <mat-card-actions>
-        <button mat-raised-button color="warn" [disabled]="loadingTudo()" (click)="syncTudo()">
+        <button type="button" mat-raised-button color="warn" [disabled]="loadingTudo()" (click)="syncTudo()">
           @if (loadingTudo()) {
             <mat-spinner diameter="20" />
           } @else {
@@ -99,7 +99,7 @@
         </div>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-raised-button color="primary" [disabled]="loadingIngestao()" (click)="syncIngestao()">
+        <button type="button" mat-raised-button color="primary" [disabled]="loadingIngestao()" (click)="syncIngestao()">
           @if (loadingIngestao()) {
             <mat-spinner diameter="20" />
           } @else {

@@ -72,7 +72,7 @@ export class DistribuicaoComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err: any) => {
-        const msg = err?.error?.message || 'Erro ao executar distribuição.';
+        const msg = err?.error?.message ?? 'Erro ao executar distribuição.';
         this.notification.error(msg);
         this.loading.set(false);
       }

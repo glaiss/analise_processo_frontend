@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, Input, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -21,20 +21,21 @@ import { SituacaoDisplayPipe } from '../../pipes/situacao-display.pipe';
   styleUrl: './assigned-process-card.component.scss'
 })
 export class AssignedProcessCardComponent {
+  private readonly router = inject(Router);
+  private readonly processState = inject(ProcessStateService);
+  private readonly notification = inject(NotificationService);
+
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Input() selected: boolean = false;
-  @Output() selectedChange = new EventEmitter<boolean>();
-  @Output() viewDetails = new EventEmitter<string>();
+
+  readonly selectedChange = output<boolean>();
+  readonly viewDetails = output<string>();
 
   toggleSelection(event: Event) {
     event.stopPropagation();
     this.selected = !this.selected;
     this.selectedChange.emit(this.selected);
   }
-
-  private readonly router = inject(Router);
-  private readonly processState = inject(ProcessStateService);
-  private readonly notification = inject(NotificationService);
 
   toggleMonitoramento(event: Event) {
     event.stopPropagation();

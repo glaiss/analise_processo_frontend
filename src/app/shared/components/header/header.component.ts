@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,11 +27,11 @@ export class HeaderComponent {
   private readonly dialog = inject(MatDialog);
   private readonly notification = inject(NotificationService);
 
-  @Output() toggleSidenav = new EventEmitter<void>();
+  readonly toggleSidenav = output<void>();
 
   get avatarLetter(): string {
     const user = this.auth.currentUser();
-    const name = user?.nome || user?.username || '';
+    const name = user?.nome ?? user?.username ?? '';
     return name.charAt(0).toUpperCase();
   }
 

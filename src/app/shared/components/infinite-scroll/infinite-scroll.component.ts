@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class InfiniteScrollComponent implements AfterViewInit, OnDestroy {
-  @Output() scrolled = new EventEmitter<void>();
+  readonly scrolled = output<void>();
   @Input() isLoading = false;
   @Input() scrollRoot?: HTMLElement | ElementRef | null;
   @ViewChild('anchor') anchor!: ElementRef;

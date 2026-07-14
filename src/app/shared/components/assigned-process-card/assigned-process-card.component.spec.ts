@@ -8,7 +8,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
-import { ProcessoSituacao, ResultadoAtendimento, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/enums.model';
 import { of, throwError } from 'rxjs';
 
 function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): AtribuicaoProcessoResumoDTO {

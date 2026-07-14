@@ -15,5 +15,5 @@ export class EmptyStateComponent {
   @Input() icon = 'info';
   @Input() actionLabel?: string;
 
-  action = output<void>();
+  readonly action = output<void>();
 }

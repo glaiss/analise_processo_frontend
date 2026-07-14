@@ -268,7 +268,7 @@ export class ProcessDetailsComponent implements OnInit {
 
   abrirContato(contato: ProcessoContatoDTO) {
     if (contato.tipo === 'WHATSAPP') {
-      const numero = contato.valor.replace(/\D/g, '');
+      const numero = contato.valor.replace(/\D/gu, '');
       window.open(`https://wa.me/${numero}`, '_blank');
     } else if (contato.tipo === 'EMAIL') {
       window.open(`mailto:${contato.valor}`, '_blank');
@@ -277,7 +277,7 @@ export class ProcessDetailsComponent implements OnInit {
 
   formatContatoValor(contato: ProcessoContatoDTO): string {
     if (contato.tipo === 'EMAIL') return contato.valor;
-    const digits = contato.valor.replace(/\D/g, '');
+    const digits = contato.valor.replace(/\D/gu, '');
     if (digits.length === 11) {
       return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
     }
@@ -356,7 +356,7 @@ export class ProcessDetailsComponent implements OnInit {
         this.contatoService.salvar(this.numero()!, {
           tipo: result.tipo,
           valor: result.valor,
-          nome: result.nome || undefined,
+          nome: result.nome ?? undefined,
           principal: result.principal
         }).subscribe({
           next: () => {
@@ -634,7 +634,7 @@ export class ProcessDetailsComponent implements OnInit {
           this.contatoService.salvar(numero, {
             tipo: result.tipo,
             valor: result.valor,
-            nome: result.nome || undefined,
+            nome: result.nome ?? undefined,
             principal: true
           }).subscribe({
             next: () => {

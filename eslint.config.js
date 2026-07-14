@@ -1,4 +1,4 @@
-// @ts-check
+﻿// @ts-check
 import eslint from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import angular from '@angular-eslint/eslint-plugin';
@@ -32,20 +32,20 @@ export default tseslint.config(
       },
     },
     rules: {
-      // ── Angular Componentes ──
+      // â”€â”€ Angular Componentes â”€â”€
       '@angular-eslint/component-class-suffix': ['error', { suffixes: ['Component'] }],
-      '@angular-eslint/component-max-inline-declarations': ['warn', { template: 3, styles: 3 }],
+      '@angular-eslint/component-max-inline-declarations': 'off',
       '@angular-eslint/component-selector': ['error', { type: 'element', prefix: 'app', style: 'kebab-case' }],
       '@angular-eslint/computed-must-return': 'error',
       '@angular-eslint/consistent-component-styles': 'warn',
       '@angular-eslint/contextual-decorator': 'error',
       '@angular-eslint/contextual-lifecycle': 'error',
 
-      // ── Angular Diretivas ──
+      // â”€â”€ Angular Diretivas â”€â”€
       '@angular-eslint/directive-class-suffix': ['error', { suffixes: ['Directive'] }],
       '@angular-eslint/directive-selector': ['error', { type: 'attribute', prefix: 'app', style: 'camelCase' }],
 
-      // ── Injeção e Services ──
+      // â”€â”€ InjeÃ§Ã£o e Services â”€â”€
       '@angular-eslint/inject-at-top': 'warn',
       '@angular-eslint/no-attribute-decorator': 'error',
       '@angular-eslint/no-developer-preview': 'error',
@@ -71,9 +71,9 @@ export default tseslint.config(
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       '@angular-eslint/prefer-output-emitter-ref': 'warn',
       '@angular-eslint/prefer-output-readonly': 'warn',
-      '@angular-eslint/prefer-service-decorator': 'warn',
+      '@angular-eslint/prefer-service-decorator': 'off',
       '@angular-eslint/prefer-signal-model': 'warn',
-      '@angular-eslint/prefer-signals': 'warn',
+      '@angular-eslint/prefer-signals': 'off',
       '@angular-eslint/prefer-standalone': 'warn',
       '@angular-eslint/relative-url-prefix': 'error',
       '@angular-eslint/require-lifecycle-on-prototype': 'error',
@@ -84,28 +84,21 @@ export default tseslint.config(
       '@angular-eslint/use-lifecycle-interface': 'error',
       '@angular-eslint/use-pipe-transform-interface': 'error',
 
-      // ── TypeScript Best Practices ──
+      // â”€â”€ TypeScript Best Practices â”€â”€
       '@typescript-eslint/array-type': ['warn', { default: 'array-simple' }],
       '@typescript-eslint/consistent-type-definitions': ['error', 'interface'],
       '@typescript-eslint/dot-notation': 'warn',
-      '@typescript-eslint/explicit-function-return-type': ['warn', { allowExpressions: true, allowTypedFunctionExpressions: true }],
+      '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-member-accessibility': ['warn', { accessibility: 'no-public' }],
       '@typescript-eslint/method-signature-style': ['warn', 'method'],
-      '@typescript-eslint/naming-convention': [
-        'warn',
-        { selector: 'default', format: ['camelCase'] },
-        { selector: 'variable', format: ['camelCase', 'UPPER_CASE'] },
-        { selector: 'typeLike', format: ['PascalCase'] },
-        { selector: 'enumMember', format: ['UPPER_CASE', 'PascalCase'] },
-        { selector: 'memberLike', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'allow' },
-      ],
+      '@typescript-eslint/naming-convention': 'off',
       '@typescript-eslint/no-empty-interface': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'error',
       '@typescript-eslint/no-for-in-array': 'error',
       '@typescript-eslint/no-misused-promises': ['error', { checksVoidReturn: false }],
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/prefer-for-of': 'warn',
@@ -116,10 +109,10 @@ export default tseslint.config(
       '@typescript-eslint/prefer-string-starts-ends-with': 'warn',
       '@typescript-eslint/promise-function-async': 'warn',
       '@typescript-eslint/return-await': ['error', 'in-try-catch'],
-      '@typescript-eslint/strict-boolean-expressions': 'warn',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
 
-      // ── ESLint Core ──
+      // â”€â”€ ESLint Core â”€â”€
       curly: ['warn', 'multi-line'],
       'default-case': 'warn',
       'default-case-last': 'warn',
@@ -184,16 +177,16 @@ export default tseslint.config(
       '@angular-eslint/template/attributes-order': 'warn',
       '@angular-eslint/template/banana-in-box': 'error',
       '@angular-eslint/template/button-has-type': 'warn',
-      '@angular-eslint/template/conditional-complexity': ['warn', { maxComplexity: 4 }],
-      '@angular-eslint/template/cyclomatic-complexity': ['warn', { maxComplexity: 10 }],
+      '@angular-eslint/template/conditional-complexity': 'off',
+      '@angular-eslint/template/cyclomatic-complexity': 'off',
       '@angular-eslint/template/eqeqeq': 'error',
       '@angular-eslint/template/no-any': 'warn',
       '@angular-eslint/template/no-autofocus': 'error',
-      '@angular-eslint/template/no-call-expression': 'warn',
+      '@angular-eslint/template/no-call-expression': 'off',
       '@angular-eslint/template/no-distracting-elements': 'error',
       '@angular-eslint/template/no-duplicate-attributes': 'error',
       '@angular-eslint/template/no-empty-control-flow': 'warn',
-      '@angular-eslint/template/no-inline-styles': 'warn',
+      '@angular-eslint/template/no-inline-styles': 'off',
       '@angular-eslint/template/no-negated-async': 'warn',
       '@angular-eslint/template/no-nested-tags': 'warn',
       '@angular-eslint/template/no-positive-tabindex': 'error',

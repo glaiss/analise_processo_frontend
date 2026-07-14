@@ -151,7 +151,7 @@ describe('ProcessDetailsComponent', () => {
 
   it('should handle preview download error', () => {
     documentoService.download.mockReturnValue(of(createMockBlob())); // success by default
-    const fixture = createComponent();
+    createComponent();
     expect(notification.error).not.toHaveBeenCalled();
   });
 
@@ -757,7 +757,7 @@ describe('ProcessDetailsComponent', () => {
 
   it('should handle preview error notification', () => {
     documentoService.download = vi.fn(() => throwError(() => new Error('preview fail')));
-    const fixture = createComponent();
+    createComponent();
     expect(notification.error).toHaveBeenCalledWith('Erro ao carregar pré-visualização', 3000);
   });
 });

@@ -72,7 +72,7 @@ export class AlterarSenhaComponent {
       error: (err) => {
         this.loading.set(false);
         if (err.status === 400) {
-          this.error.set(err.error?.detail || 'Senha atual incorreta.');
+          this.error.set(err.error?.detail ?? 'Senha atual incorreta.');
         } else if (err.status === 0) {
           this.error.set('Sistema indisponível. Verifique sua conexão.');
         } else {

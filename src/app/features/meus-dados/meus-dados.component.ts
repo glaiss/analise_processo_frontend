@@ -36,8 +36,8 @@ export class MeusDadosComponent {
 
   currentUser = this.auth.currentUser;
 
-  readonly nome = signal(this.currentUser()?.nome || '');
-  readonly email = signal(this.currentUser()?.username || '');
+  readonly nome = signal(this.currentUser()?.nome ?? '');
+  readonly email = signal(this.currentUser()?.username ?? '');
 
   readonly loadingNome = signal(false);
   readonly loadingEmail = signal(false);
@@ -95,7 +95,7 @@ export class MeusDadosComponent {
 
   private handleError(err: any, defaultMsg: string, errorSignal: ReturnType<typeof signal<string | null>>) {
     if (err.status === 409) {
-      errorSignal.set(err.error?.detail || 'Este email já está em uso.');
+      errorSignal.set(err.error?.detail ?? 'Este email já está em uso.');
     } else if (err.status === 0) {
       errorSignal.set('Sistema indisponível. Verifique sua conexão.');
     } else {

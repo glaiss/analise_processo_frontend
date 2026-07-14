@@ -2,7 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { ProcessoSituacao, SITUACAO_DISPLAY } from '../../core/models/processo/enums.model';
 
 @Pipe({
-  name: 'situacaoDisplay',
+  name: 'appSituacaoDisplay',
   standalone: true,
 })
 export class SituacaoDisplayPipe implements PipeTransform {

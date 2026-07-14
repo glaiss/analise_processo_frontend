@@ -44,32 +44,33 @@ export class DistributionService {
     return this.http.get<Page<AtribuicaoProcessoResumoDTO>>(`${this.apiUrl}/equipe`, { params });
   }
   private appendFilterParams(params: HttpParams, filter?: ProcessoFilterParams): HttpParams {
-    if (!filter) return params;
+    let result = params;
+    if (!filter) return result;
     if (filter.numero) {
-      params = params.set('numero', filter.numero);
+      result = result.set('numero', filter.numero);
     }
     if (filter.niveis) {
       filter.niveis.forEach((n) => {
-        params = params.append('niveis', n);
+        result = result.append('niveis', n);
       });
     }
     if (filter.status) {
       filter.status.forEach((s) => {
-        params = params.append('status', s);
+        result = result.append('status', s);
       });
     }
     if (filter.tribunal) {
-      params = params.set('tribunal', filter.tribunal);
+      result = result.set('tribunal', filter.tribunal);
     }
     if (filter.assunto) {
-      params = params.set('assunto', filter.assunto);
+      result = result.set('assunto', filter.assunto);
     }
     if (filter.situacao) {
       filter.situacao.forEach((s) => {
-        params = params.append('situacao', s);
+        result = result.append('situacao', s);
       });
     }
-    return params;
+    return result;
   }
   executarDistribuicao(): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/executar`, {});

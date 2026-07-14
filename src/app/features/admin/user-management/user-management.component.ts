@@ -104,7 +104,7 @@ export class UserManagementComponent {
           void this.router.navigate(['/admin']);
           this.loading.set(false);
         },
-        error: (err: any) => {
+        error: () => {
           this.notification.error('Erro ao criar usuário');
           this.loading.set(false);
         }

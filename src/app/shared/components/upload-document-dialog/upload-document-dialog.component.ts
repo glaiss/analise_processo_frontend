@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -17,14 +17,14 @@ interface DialogData {
   styleUrl: './upload-document-dialog.component.scss'
 })
 export class UploadDocumentDialogComponent {
+  dialogRef = inject(MatDialogRef<UploadDocumentDialogComponent>);
+  data: DialogData = inject(MAT_DIALOG_DATA);
+
   fileName: string;
   isContrato = false;
 
-  constructor(
-    public dialogRef: MatDialogRef<UploadDocumentDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData
-  ) {
-    this.fileName = data.fileName;
+  constructor() {
+    this.fileName = this.data.fileName;
   }
 
   onCancel(): void {

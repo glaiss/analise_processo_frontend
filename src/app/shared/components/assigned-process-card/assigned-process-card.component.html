@@ -57,7 +57,7 @@
       </div>
       <div class="info-row">
         <span class="label">Situação:</span>
-        <span>{{ atribuicao.processoSituacao | situacaoDisplay }}</span>
+        <span>{{ atribuicao.processoSituacao | appSituacaoDisplay }}</span>
       </div>
     </div>
   </mat-card-content>
@@ -72,7 +72,7 @@
       @if (atribuicao.equipeNome) {
         <span><strong>Equipe:</strong> {{ atribuicao.equipeNome }}</span>
       }
-      <button mat-flat-button color="primary" class="details-button" (click)="openDetails($event)">VER DETALHES</button>
+      <button type="button" mat-flat-button color="primary" class="details-button" (click)="openDetails($event)">VER DETALHES</button>
     </div>
   </mat-card-footer>
 </mat-card>

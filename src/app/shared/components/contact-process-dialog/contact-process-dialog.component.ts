@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -77,15 +77,13 @@ export interface ContactProcessDialogData {
   `
 })
 export class ContactProcessDialogComponent {
+  dialogRef = inject(MatDialogRef<ContactProcessDialogComponent, { tipo: string; valor: string; nome: string; principal: boolean } | null>);
+  data: ContactProcessDialogData = inject(MAT_DIALOG_DATA);
+
   tipo: string = 'WHATSAPP';
   valor: string = '';
   nome: string = '';
   principal: boolean = false;
-
-  constructor(
-    public dialogRef: MatDialogRef<ContactProcessDialogComponent, { tipo: string; valor: string; nome: string; principal: boolean } | null>,
-    @Inject(MAT_DIALOG_DATA) public data: ContactProcessDialogData,
-  ) {}
 
   podeSalvar(): boolean {
     return this.valor.trim().length > 0 && this.tipo.length > 0;

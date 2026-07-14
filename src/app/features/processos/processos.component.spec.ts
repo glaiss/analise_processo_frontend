@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter, Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { ProcessosComponent } from './processos.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
 import { StatusAtribuicao } from '../../core/models/processo/enums.model';
