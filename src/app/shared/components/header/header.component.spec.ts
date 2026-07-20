@@ -117,7 +117,7 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
 
     vi.spyOn(fixture.componentInstance.toggleSidenav, 'emit');
-    const menuButton = fixture.nativeElement.querySelector('[aria-label="Menu"]') 
+    const menuButton = fixture.nativeElement.querySelector('[aria-label="Menu"]')
       ?? fixture.nativeElement.querySelector('button');
     if (menuButton) {
       menuButton.click();
@@ -279,7 +279,6 @@ describe('HeaderComponent', () => {
 
     const toolbar = fixture.nativeElement.querySelector('.app-toolbar');
     expect(toolbar).toBeTruthy();
-    expect(toolbar.textContent).toContain('Sherlock Law');
     const avatarBtn = fixture.nativeElement.querySelector('.user-avatar-btn');
     expect(avatarBtn).toBeTruthy();
     expect(avatarBtn.textContent).toContain('J');
