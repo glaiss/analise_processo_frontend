@@ -18,9 +18,9 @@ export class ProcessCardComponent {
 
   get scoreColor(): string {
     const score = this.processo().scoreFinal;
-    if (score > 100) return 'accent';
-    if (score > 50) return 'primary';
-    return '';
+    if (score >= 80) return '';
+    if (score >= 50) return 'primary';
+    return 'accent';
   }
 
   get deadlineColor(): string {

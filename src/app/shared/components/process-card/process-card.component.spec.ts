@@ -37,10 +37,10 @@ describe('ProcessCardComponent', () => {
   });
 
   describe('scoreColor', () => {
-    it('should return accent for score > 100', () => {
+    it('should return empty for score > 100', () => {
       const fixture = TestBed.createComponent(ProcessCardComponent);
       fixture.componentRef.setInput('processo', createProcesso({ scoreFinal: 150 }));
-      expect(fixture.componentInstance.scoreColor).toBe('accent');
+      expect(fixture.componentInstance.scoreColor).toBe('');
     });
 
     it('should return primary for score between 51 and 100', () => {
@@ -49,10 +49,10 @@ describe('ProcessCardComponent', () => {
       expect(fixture.componentInstance.scoreColor).toBe('primary');
     });
 
-    it('should return empty for score <= 50', () => {
+    it('should return accent for score <= 50', () => {
       const fixture = TestBed.createComponent(ProcessCardComponent);
       fixture.componentRef.setInput('processo', createProcesso({ scoreFinal: 30 }));
-      expect(fixture.componentInstance.scoreColor).toBe('');
+      expect(fixture.componentInstance.scoreColor).toBe('accent');
     });
   });
 
@@ -86,12 +86,12 @@ describe('ProcessCardComponent', () => {
 
   it('should render score avatar with text', () => {
     const fixture = TestBed.createComponent(ProcessCardComponent);
-    fixture.componentRef.setInput('processo', createProcesso({ scoreFinal: 85 }));
+    fixture.componentRef.setInput('processo', createProcesso({ scoreFinal: 75 }));
     fixture.detectChanges();
 
     const avatar = fixture.nativeElement.querySelector('.score-avatar');
     expect(avatar).toBeTruthy();
-    expect(avatar.textContent).toContain('85');
+    expect(avatar.textContent).toContain('75');
     expect(avatar.classList).toContain('primary');
   });
 

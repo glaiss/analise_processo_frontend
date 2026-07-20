@@ -24,6 +24,28 @@
 .spacer { flex: 1 1 auto; }
 .user-toolbar-info { display: flex; align-items: center; gap: 8px; }
 
+.brand {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.brand-logo {
+  height: 64px;
+  width: auto;
+  max-width: 160px;
+  object-fit: contain;
+}
+
+.brand-equipe {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: inherit;
+  opacity: 0.9;
+}
+
 .user-avatar-btn {
   background: none;
   border: none;

@@ -25,6 +25,9 @@ export class ThemeService {
   private applyTheme(dark: boolean) {
     if (isPlatformBrowser(this.platformId)) {
       document.documentElement.classList.toggle('dark-mode', dark);
+      document.querySelectorAll<HTMLLinkElement>('[data-favicon-theme]').forEach(link => {
+        link.media = dark === (link.dataset['faviconTheme'] === 'dark') ? 'all' : 'not all';
+      });
     }
   }
 }

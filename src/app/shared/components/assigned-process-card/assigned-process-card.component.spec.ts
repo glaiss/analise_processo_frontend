@@ -105,10 +105,10 @@ describe('AssignedProcessCardComponent', () => {
   });
 
   describe('scoreColor', () => {
-    it('should return accent for score > 100', () => {
+    it('should return empty for score > 100', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
       fixture.componentRef.setInput('atribuicao', createAtribuicao({ processoScoreFinal: 150 }));
-      expect(fixture.componentInstance.scoreColor).toBe('accent');
+      expect(fixture.componentInstance.scoreColor).toBe('');
     });
 
     it('should return primary for score between 51 and 100', () => {
@@ -117,10 +117,10 @@ describe('AssignedProcessCardComponent', () => {
       expect(fixture.componentInstance.scoreColor).toBe('primary');
     });
 
-    it('should return empty for score <= 50', () => {
+    it('should return accent for score <= 50', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
       fixture.componentRef.setInput('atribuicao', createAtribuicao({ processoScoreFinal: 30 }));
-      expect(fixture.componentInstance.scoreColor).toBe('');
+      expect(fixture.componentInstance.scoreColor).toBe('accent');
     });
   });
 

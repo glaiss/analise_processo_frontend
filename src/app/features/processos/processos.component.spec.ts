@@ -142,9 +142,9 @@ describe('ProcessosComponent', () => {
 
   it('should return correct score color', () => {
     const fixture = TestBed.createComponent(ProcessosComponent);
-    expect(fixture.componentInstance.getScoreColor(150)).toBe('high');
+    expect(fixture.componentInstance.getScoreColor(150)).toBe('low');
     expect(fixture.componentInstance.getScoreColor(75)).toBe('medium');
-    expect(fixture.componentInstance.getScoreColor(25)).toBe('low');
+    expect(fixture.componentInstance.getScoreColor(25)).toBe('high');
   });
 
   it('should call alternarMonitoramento with stopPropagation', () => {

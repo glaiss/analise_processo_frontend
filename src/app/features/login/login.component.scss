@@ -18,20 +18,34 @@
     text-align: center;
     padding: 40px 40px 0;
 
-    mat-card-title {
-      font-size: 24px;
-      font-weight: 600;
-      color: var(--mat-sys-primary);
-    }
-
     mat-card-subtitle {
       color: var(--mat-sys-on-surface-variant);
+      margin-top: 4px;
     }
   }
 
   mat-card-content {
     padding: 24px 40px 40px;
   }
+}
+
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.login-logo {
+  height: 96px;
+  width: auto;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--mat-sys-primary);
 }
 
 .full-width {

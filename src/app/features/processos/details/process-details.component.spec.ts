@@ -336,9 +336,9 @@ describe('ProcessDetailsComponent', () => {
 
   it('should return correct score color', () => {
     const fixture = createComponent();
-    expect(fixture.componentInstance.getScoreColor(150)).toBe('high');
+    expect(fixture.componentInstance.getScoreColor(150)).toBe('low');
     expect(fixture.componentInstance.getScoreColor(75)).toBe('medium');
-    expect(fixture.componentInstance.getScoreColor(25)).toBe('low');
+    expect(fixture.componentInstance.getScoreColor(25)).toBe('high');
   });
 
   it('should return correct doc icon per content type', () => {

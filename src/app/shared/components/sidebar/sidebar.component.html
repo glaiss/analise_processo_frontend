@@ -1,5 +1,11 @@
 <div class="logo-container">
-  <mat-icon class="logo-icon">balance</mat-icon>
+  <img
+    class="sidebar-logo"
+    alt="Logotipo"
+    width="64"
+    height="64"
+    [ngSrc]="theme.isDark() ? 'logo-tema-escuro.png' : 'logo-tema-claro.png'"
+  />
   <span class="logo-text">Sherlock Law</span>
 </div>
 

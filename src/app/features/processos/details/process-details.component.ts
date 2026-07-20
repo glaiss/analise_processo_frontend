@@ -528,9 +528,9 @@ export class ProcessDetailsComponent implements OnInit {
   }
 
   getScoreColor(score: number): string {
-    if (score > 100) return 'high';
-    if (score > 50) return 'medium';
-    return 'low';
+    if (score >= 80) return 'low';
+    if (score >= 50) return 'medium';
+    return 'high';
   }
 
   getDocIcon(contentType: string): string {

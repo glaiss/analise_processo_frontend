@@ -74,9 +74,9 @@ export class AssignedProcessCardComponent {
   }
 
   get scoreColor(): string {
-    if (this.atribuicao.processoScoreFinal > 100) return 'accent';
-    if (this.atribuicao.processoScoreFinal > 50) return 'primary';
-    return '';
+    if (this.atribuicao.processoScoreFinal >= 80) return '';
+    if (this.atribuicao.processoScoreFinal >= 50) return 'primary';
+    return 'accent';
   }
 
   get situationColorClass(): string {
