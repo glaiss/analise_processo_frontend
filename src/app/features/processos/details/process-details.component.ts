@@ -2,6 +2,7 @@ import { Component, OnInit, PLATFORM_ID, computed, inject, signal } from '@angul
 import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Observable, catchError, concatMap, from, map, of } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
@@ -128,13 +129,8 @@ export class ProcessDetailsComponent implements OnInit {
     if (!this.numero() || !isPlatformBrowser(this.platformId)) return;
 
     this.carregandoPreview.set(true);
-    if (this.previewUrl()) {
-      window.URL.revokeObjectURL(this.previewUrl()!);
-    }
-
-    this.documentoService.download(this.numero()!, doc.id).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
+    this.documentoService.getPreviewUrl(this.numero()!, doc.id).subscribe({
+      next: ({ url }) => {
         this.previewUrl.set(url);
         this.carregandoPreview.set(false);
       },
@@ -147,21 +143,26 @@ export class ProcessDetailsComponent implements OnInit {
   }
 
   baixarDocumento(doc: Documento) {
-    if (this.numero() && isPlatformBrowser(this.platformId)) {
-      this.documentoService.download(this.numero()!, doc.id).subscribe({
-        next: (blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = doc.nomeArquivo;
-          a.click();
-          if (url !== this.previewUrl()) {
-            window.URL.revokeObjectURL(url);
-          }
-        },
-        error: () => {}
-      });
+    this.baixarDownload(doc).subscribe({
+      error: () => this.notification.error(`Erro ao baixar "${doc.nomeArquivo}"`, 3000)
+    });
+  }
+
+  private baixarDownload(doc: Documento): Observable<void> {
+    if (!this.numero() || !isPlatformBrowser(this.platformId)) {
+      return of(undefined);
     }
+    return this.documentoService.getDownloadUrl(this.numero()!, doc.id).pipe(
+      map(({ url }) => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = doc.nomeArquivo;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }),
+      catchError(() => of(undefined))
+    );
   }
 
   onDeleteDocument(doc: Documento) {
@@ -180,6 +181,7 @@ export class ProcessDetailsComponent implements OnInit {
           this.documentoService.deletar(this.numero()!, doc.id).subscribe({
             next: () => {
               this.notification.success('Documento excluído com sucesso', 3000);
+              this.documentoService.invalidatePreviewUrl(this.numero()!, doc.id);
               if (this.documentoSelecionado()?.id === doc.id) {
                 this.documentoSelecionado.set(null);
                 this.previewUrl.set(null);
@@ -196,7 +198,13 @@ export class ProcessDetailsComponent implements OnInit {
 
   downloadTodosDocumentos() {
     this.notification.info('Iniciando download de todos os documentos...', 2000);
-    this.documentos().content.forEach(doc => this.baixarDocumento(doc));
+    const docs = this.documentos().content;
+    if (docs.length === 0) return;
+    from(docs).pipe(
+      concatMap(doc => this.baixarDownload(doc))
+    ).subscribe({
+      error: () => this.notification.error('Erro ao baixar documentos', 3000)
+    });
   }
 
   // Removido getDocumentUrl pois agora usamos previewUrl()

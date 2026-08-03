@@ -12,10 +12,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
 
-function createMockBlob(): Blob {
-  return new Blob(['fake'], { type: 'application/pdf' });
-}
-
 function mockProcesso(overrides: any = {}) {
   return {
     numero: '123456',
@@ -74,11 +70,11 @@ describe('ProcessDetailsComponent', () => {
         ],
         totalElements: 1, totalPages: 1, size: 20, number: 0, last: true, first: true, empty: false,
       })),
-      download: vi.fn().mockReturnValue(of(createMockBlob())),
+      getPreviewUrl: vi.fn().mockReturnValue(of({ url: 'https://d123.cloudfront.net/processos/x.pdf?sig=1' })),
       deletar: vi.fn().mockReturnValue(of(undefined)),
       upload: vi.fn().mockReturnValue(of({ id: 'newDoc' })),
-      getDownloadUrl: vi.fn().mockReturnValue('/download/url'),
-      limparCache: vi.fn(),
+      getDownloadUrl: vi.fn().mockReturnValue(of({ url: '/download/url' })),
+      invalidatePreviewUrl: vi.fn(),
     };
 
     notification = {
@@ -137,26 +133,26 @@ describe('ProcessDetailsComponent', () => {
     const fixture = createComponent();
     expect(fixture.componentInstance.documentoSelecionado()).toBeTruthy();
     expect(fixture.componentInstance.documentoSelecionado()!.id).toBe('doc1');
-    expect(documentoService.download).toHaveBeenCalledWith('123456', 'doc1');
+    expect(documentoService.getPreviewUrl).toHaveBeenCalledWith('123456', 'doc1');
   });
 
   it('should select a different documento on selecionarDocumento', () => {
     const fixture = createComponent();
-    documentoService.download.mockClear();
+    documentoService.getPreviewUrl.mockClear();
     const doc2 = { id: 'doc2', nomeArquivo: 'other.pdf', contentType: 'application/pdf', tamanho: 2048, createdDate: '2024-02-01' };
     fixture.componentInstance.selecionarDocumento(doc2);
     expect(fixture.componentInstance.documentoSelecionado()!.id).toBe('doc2');
-    expect(documentoService.download).toHaveBeenCalledWith('123456', 'doc2');
+    expect(documentoService.getPreviewUrl).toHaveBeenCalledWith('123456', 'doc2');
   });
 
-  it('should handle preview download error', () => {
-    documentoService.download.mockReturnValue(of(createMockBlob())); // success by default
-    createComponent();
+  it('should handle preview success', () => {
+    const fixture = createComponent();
+    expect(fixture.componentInstance.previewUrl()).toBe('https://d123.cloudfront.net/processos/x.pdf?sig=1');
     expect(notification.error).not.toHaveBeenCalled();
   });
 
   it('should show error notification on preview failure', () => {
-    documentoService.download.mockReturnValue(new Subject()); // never emits
+    documentoService.getPreviewUrl.mockReturnValue(new Subject()); // never emits
     const fixture = createComponent();
     expect(fixture.componentInstance.carregandoPreview()).toBe(true);
   });
@@ -165,7 +161,7 @@ describe('ProcessDetailsComponent', () => {
     const fixture = createComponent();
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     fixture.componentInstance.baixarDocumento({ id: 'doc1', nomeArquivo: 'test.pdf', contentType: 'application/pdf', tamanho: 1024, createdDate: '2024-01-01' });
-    expect(documentoService.download).toHaveBeenCalledWith('123456', 'doc1');
+    expect(documentoService.getDownloadUrl).toHaveBeenCalledWith('123456', 'doc1');
     expect(clickSpy).toHaveBeenCalled();
   });
 
@@ -177,6 +173,7 @@ describe('ProcessDetailsComponent', () => {
     expect(dialog.open).toHaveBeenCalled();
     afterClosed$.next(true);
     expect(documentoService.deletar).toHaveBeenCalledWith('123456', 'doc1');
+    expect(documentoService.invalidatePreviewUrl).toHaveBeenCalledWith('123456', 'doc1');
     expect(notification.success).toHaveBeenCalledWith('Documento excluído com sucesso', 3000);
   });
 
@@ -756,7 +753,7 @@ describe('ProcessDetailsComponent', () => {
   });
 
   it('should handle preview error notification', () => {
-    documentoService.download = vi.fn(() => throwError(() => new Error('preview fail')));
+    documentoService.getPreviewUrl = vi.fn(() => throwError(() => new Error('preview fail')));
     createComponent();
     expect(notification.error).toHaveBeenCalledWith('Erro ao carregar pré-visualização', 3000);
   });

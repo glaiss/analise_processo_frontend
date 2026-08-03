@@ -15,7 +15,8 @@ export interface Documento {
 export class DocumentoService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/v1/analise/processos`;
-  private readonly blobCache = new Map<string, Blob>();
+  private readonly previewCache = new Map<string, { url: string; expiresAt: number }>();
+  private readonly PREVIEW_CACHE_MARGIN_MS = 60_000;
   upload(numero: string, file: File, isContrato: boolean = false): Observable<Documento> {
     const formData = new FormData();
     formData.append('file', file);
@@ -25,22 +26,30 @@ export class DocumentoService {
   listar(numero: string): Observable<Page<Documento>> {
     return this.http.get<Page<Documento>>(`${this.apiUrl}/${numero}/documentos`);
   }
-  download(numero: string, documentoId: string): Observable<Blob> {
-    const cacheKey = `${numero}_${documentoId}`;
-    if (this.blobCache.has(cacheKey)) {
-      return of(this.blobCache.get(cacheKey)!);
+  getPreviewUrl(numero: string, documentoId: string): Observable<{ url: string }> {
+    const key = `${numero}/${documentoId}`;
+    const cached = this.previewCache.get(key);
+    if (cached && cached.expiresAt > Date.now()) {
+      return of({ url: cached.url });
     }
-    return this.http
-      .get(`${this.apiUrl}/${numero}/documentos/${documentoId}/download`, { responseType: 'blob' })
-      .pipe(tap((blob) => this.blobCache.set(cacheKey, blob)));
+    return this.http.get<{ url: string }>(`${this.apiUrl}/${numero}/documentos/${documentoId}/preview-url`).pipe(
+      tap(({ url }) => this.previewCache.set(key, { url, expiresAt: this.extractExpiry(url) }))
+    );
   }
-  getDownloadUrl(numero: string, documentoId: string): string {
-    return `${this.apiUrl}/${numero}/documentos/${documentoId}/download`;
+  getDownloadUrl(numero: string, documentoId: string): Observable<{ url: string }> {
+    return this.http.get<{ url: string }>(`${this.apiUrl}/${numero}/documentos/${documentoId}/download-url`);
+  }
+  invalidatePreviewUrl(numero: string, documentoId: string): void {
+    this.previewCache.delete(`${numero}/${documentoId}`);
   }
   deletar(numero: string, documentoId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${numero}/documentos/${documentoId}`);
   }
-  limparCache() {
-    this.blobCache.clear();
+  private extractExpiry(url: string): number {
+    const match = /[?&]Expires=(\d+)/u.exec(url);
+    if (match) {
+      return Number(match[1]) * 1000 - this.PREVIEW_CACHE_MARGIN_MS;
+    }
+    return Date.now() + 10 * 60 * 1000;
   }
 }

@@ -16,7 +16,6 @@ describe('DocumentoService', () => {
   });
   afterEach(() => {
     httpMock.verify();
-    service.limparCache();
   });
   it('should be created', () => {
     expect(service).toBeTruthy();
@@ -46,38 +45,48 @@ describe('DocumentoService', () => {
       req.flush({ content: [] });
     });
   });
-  describe('download', () => {
-    it('should GET blob with responseType blob', () => {
-      const blob = new Blob(['pdf content'], { type: 'application/pdf' });
-      service.download('123', 'doc1').subscribe((result) => {
-        expect(result).toEqual(blob);
+  describe('getPreviewUrl', () => {
+    it('should GET preview url for documento', () => {
+      service.getPreviewUrl('123', 'doc1').subscribe((result) => {
+        expect(result).toEqual({ url: 'https://d123.cloudfront.net/processos/x.pdf?Expires=123&Signature=abc&Key-Pair-Id=K1' });
       });
-      const req = httpMock.expectOne(`${API_URL}/123/documentos/doc1/download`);
+      const req = httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`);
       expect(req.request.method).toBe('GET');
-      req.flush(blob);
+      req.flush({ url: 'https://d123.cloudfront.net/processos/x.pdf?Expires=123&Signature=abc&Key-Pair-Id=K1' });
     });
-    it('should cache blob and return cached on second call', () => {
-      const blob = new Blob(['pdf content'], { type: 'application/pdf' });
-      service.download('123', 'doc1').subscribe();
-      httpMock.expectOne(`${API_URL}/123/documentos/doc1/download`).flush(blob);
-      service.download('123', 'doc1').subscribe((result) => {
-        expect(result).toEqual(blob);
+    it('should reuse cached preview url while valid', () => {
+      const url = `https://d123.cloudfront.net/processos/x.pdf?Expires=${Math.floor(Date.now() / 1000) + 600}&Signature=abc&Key-Pair-Id=K1`;
+      service.getPreviewUrl('123', 'doc1').subscribe();
+      httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`).flush({ url });
+      service.getPreviewUrl('123', 'doc1').subscribe((result) => {
+        expect(result).toEqual({ url });
       });
-      httpMock.expectNone(`${API_URL}/123/documentos/doc1/download`);
+      httpMock.expectNone(`${API_URL}/123/documentos/doc1/preview-url`);
     });
-    it('should clear cache', () => {
-      const blob = new Blob(['pdf content'], { type: 'application/pdf' });
-      service.download('123', 'doc1').subscribe();
-      httpMock.expectOne(`${API_URL}/123/documentos/doc1/download`).flush(blob);
-      service.limparCache();
-      service.download('123', 'doc1').subscribe();
-      httpMock.expectOne(`${API_URL}/123/documentos/doc1/download`).flush(blob);
+    it('should refetch preview url after expiry', () => {
+      const url = `https://d123.cloudfront.net/processos/x.pdf?Expires=${Math.floor(Date.now() / 1000) + 60}&Signature=abc&Key-Pair-Id=K1`;
+      service.getPreviewUrl('123', 'doc1').subscribe();
+      httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`).flush({ url });
+      service.getPreviewUrl('123', 'doc1').subscribe();
+      httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`).flush({ url });
+    });
+    it('should refetch preview url after invalidatePreviewUrl', () => {
+      const url = `https://d123.cloudfront.net/processos/x.pdf?Expires=${Math.floor(Date.now() / 1000) + 600}&Signature=abc&Key-Pair-Id=K1`;
+      service.getPreviewUrl('123', 'doc1').subscribe();
+      httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`).flush({ url });
+      service.invalidatePreviewUrl('123', 'doc1');
+      service.getPreviewUrl('123', 'doc1').subscribe();
+      httpMock.expectOne(`${API_URL}/123/documentos/doc1/preview-url`).flush({ url });
     });
   });
   describe('getDownloadUrl', () => {
-    it('should return the download URL string', () => {
-      const url = service.getDownloadUrl('123', 'doc1');
-      expect(url).toBe(`${API_URL}/123/documentos/doc1/download`);
+    it('should GET signed download url for documento', () => {
+      service.getDownloadUrl('123', 'doc1').subscribe((result) => {
+        expect(result).toEqual({ url: 'https://d123.cloudfront.net/processos/x.pdf?Expires=123&Signature=abc&Key-Pair-Id=K1' });
+      });
+      const req = httpMock.expectOne(`${API_URL}/123/documentos/doc1/download-url`);
+      expect(req.request.method).toBe('GET');
+      req.flush({ url: 'https://d123.cloudfront.net/processos/x.pdf?Expires=123&Signature=abc&Key-Pair-Id=K1' });
     });
   });
   describe('deletar', () => {
