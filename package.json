@@ -1,6 +1,6 @@
 {
   "name": "analise-processo-frontend",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "scripts": {
     "ng": "ng",
     "config": "node scripts/set-env.cjs",
