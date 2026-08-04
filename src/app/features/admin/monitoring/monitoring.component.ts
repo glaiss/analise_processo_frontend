@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +43,7 @@ interface GcPause {
   templateUrl: './monitoring.component.html',
   styleUrl: './monitoring.component.scss'
 })
-export class MonitoringComponent implements OnInit {
+export class MonitoringComponent implements OnInit, OnDestroy {
   private readonly actuator = inject(ActuatorService);
 
   readonly appInfo = signal<AppInfo | null>(null);
@@ -82,6 +82,13 @@ export class MonitoringComponent implements OnInit {
   ngOnInit() {
     this.loadAll();
     this.autoRefreshHandle = setInterval(() => this.loadAll(), 15000);
+  }
+
+  ngOnDestroy() {
+    if (this.autoRefreshHandle !== null) {
+      clearInterval(this.autoRefreshHandle);
+      this.autoRefreshHandle = null;
+    }
   }
 
   loadAll() {

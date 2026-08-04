@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,7 +36,7 @@ interface CacheItem {
   templateUrl: './cache-monitor.component.html',
   styleUrl: './cache-monitor.component.scss'
 })
-export class CacheMonitorComponent implements OnInit {
+export class CacheMonitorComponent implements OnInit, OnDestroy {
   private readonly cacheService = inject(CacheService);
 
   readonly todosCaches = signal<CacheItem[]>([]);
@@ -55,6 +55,13 @@ export class CacheMonitorComponent implements OnInit {
   ngOnInit() {
     this.carregar();
     this.autoRefreshHandle = setInterval(() => this.carregar(), 10000);
+  }
+
+  ngOnDestroy() {
+    if (this.autoRefreshHandle !== null) {
+      clearInterval(this.autoRefreshHandle);
+      this.autoRefreshHandle = null;
+    }
   }
 
   carregar() {
