@@ -1,0 +1,95 @@
+<app-page-header
+  title="Situação Financeira"
+  backRouterLink="/financeiro/contratos"
+  [subtitle]="situacao() ? 'Contrato ' + situacao()!.numeroContrato : 'Carregando...'"
+  [backButton]="true"
+/>
+
+<div class="detalhe-container">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40" />
+    </div>
+  }
+
+  @if (!loading() && situacao(); as s) {
+      <mat-card class="resumo-card">
+        <mat-card-content>
+          <div class="resumo-grid">
+            <div>
+              <span class="resumo-label">Valor contratado</span>
+              <span class="resumo-value">{{ formatCurrency(s.valorContratado) }}</span>
+            </div>
+            <div>
+              <span class="resumo-label">Valor recebido</span>
+              <span class="resumo-value success">{{ formatCurrency(s.valorRecebido) }}</span>
+            </div>
+            <div>
+              <span class="resumo-label">Valor pendente</span>
+              <span class="resumo-value" [class.warn]="s.valorPendente > 0">{{ formatCurrency(s.valorPendente) }}</span>
+            </div>
+            <div>
+              <span class="resumo-label">Situação</span>
+              <span class="status-chip status-{{ s.situacao | lowercase }}">{{ statusContratoLabels[s.situacao] }}</span>
+            </div>
+            <div>
+              <span class="resumo-label">Parcelas pagas</span>
+              <span class="resumo-value">{{ s.parcelasPagas }} / {{ s.quantidadeParcelas }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card>
+        <mat-card-title class="table-title">Parcelas</mat-card-title>
+        <table mat-table [dataSource]="s.parcelas">
+          <ng-container matColumnDef="numero">
+            <th *matHeaderCellDef mat-header-cell>#</th>
+            <td *matCellDef="let p" mat-cell>{{ p.numero }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="vencimento">
+            <th *matHeaderCellDef mat-header-cell>Vencimento</th>
+            <td *matCellDef="let p" mat-cell>{{ formatDate(p.dataVencimento) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorPrevisto">
+            <th *matHeaderCellDef mat-header-cell>Previsto</th>
+            <td *matCellDef="let p" mat-cell>{{ formatCurrency(p.valorPrevisto) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorRecebido">
+            <th *matHeaderCellDef mat-header-cell>Recebido</th>
+            <td *matCellDef="let p" mat-cell>{{ formatCurrency(p.valorRecebido) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="valorPendente">
+            <th *matHeaderCellDef mat-header-cell>Pendente</th>
+            <td *matCellDef="let p" mat-cell>{{ formatCurrency(p.valorPendente) }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <th *matHeaderCellDef mat-header-cell>Status</th>
+            <td *matCellDef="let p" mat-cell>
+              <span class="status-chip status-{{ p.status | lowercase }}">
+                {{ statusParcelaLabel(p.status) }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acoes">
+            <th *matHeaderCellDef mat-header-cell>Ações</th>
+            <td *matCellDef="let p" mat-cell>
+              <button mat-stroked-button type="button" [disabled]="p.valorPendente <= 0" (click)="registrarRecebimento(p.id)">
+                <mat-icon>payments</mat-icon>
+                Receber
+              </button>
+            </td>
+          </ng-container>
+
+          <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+          <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+        </table>
+      </mat-card>
+    }
+</div>

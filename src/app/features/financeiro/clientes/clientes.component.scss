@@ -1,0 +1,46 @@
+.clientes-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.form-card {
+  margin-bottom: 24px;
+
+  .form-title {
+    padding: 16px 16px 0;
+    font-size: 16px;
+  }
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+table {
+  width: 100%;
+}

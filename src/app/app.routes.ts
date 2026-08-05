@@ -108,6 +108,31 @@ export const routes: Routes = [
     loadComponent: async () => import('./features/enriquecimento/reprocessar.component').then(m => m.ReprocessarComponent)
   },
   {
+    path: 'financeiro',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/dashboard/financeiro-dashboard.component').then(m => m.FinanceiroDashboardComponent)
+  },
+  {
+    path: 'financeiro/contratos',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/contrato-lista/contrato-lista.component').then(m => m.ContratoListaComponent)
+  },
+  {
+    path: 'financeiro/contratos/novo',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/contrato-novo/contrato-novo.component').then(m => m.ContratoNovoComponent)
+  },
+  {
+    path: 'financeiro/contratos/:id',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/contrato-detalhe/contrato-detalhe.component').then(m => m.ContratoDetalheComponent)
+  },
+  {
+    path: 'financeiro/clientes',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/clientes/clientes.component').then(m => m.ClientesComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'

@@ -1,0 +1,87 @@
+<app-page-header
+  title="Contratos"
+  subtitle="Acompanhamento dos contratos e situação financeira"
+/>
+
+<div class="lista-container">
+  <div class="topbar">
+    <button mat-flat-button color="primary" type="button" (click)="novoContrato()">
+      <mat-icon>add_circle</mat-icon>
+      Fechar contrato
+    </button>
+  </div>
+
+  <mat-card>
+    @if (loading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="40" />
+      </div>
+    }
+
+    @if (!loading() && contratos().length > 0) {
+      <table mat-table [dataSource]="contratos()">
+        <ng-container matColumnDef="numero">
+          <th *matHeaderCellDef mat-header-cell>Número</th>
+          <td *matCellDef="let c" mat-cell>{{ c.numeroContrato }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cliente">
+          <th *matHeaderCellDef mat-header-cell>Cliente</th>
+          <td *matCellDef="let c" mat-cell>{{ c.clienteNome || '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="modalidade">
+          <th *matHeaderCellDef mat-header-cell>Modalidade</th>
+          <td *matCellDef="let c" mat-cell>{{ c.modalidade }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valorTotal">
+          <th *matHeaderCellDef mat-header-cell>Valor</th>
+          <td *matCellDef="let c" mat-cell>{{ formatCurrency(c.valorTotal) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="valorPendente">
+          <th *matHeaderCellDef mat-header-cell>Pendente</th>
+          <td *matCellDef="let c" mat-cell>{{ formatCurrency(c.valorPendente) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th *matHeaderCellDef mat-header-cell>Status</th>
+          <td *matCellDef="let c" mat-cell>
+            <span class="status-chip status-{{ c.status | lowercase }}">{{ statusLabel(c.status) }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acoes">
+          <th *matHeaderCellDef mat-header-cell>Ações</th>
+          <td *matCellDef="let c" mat-cell>
+            <button mat-stroked-button type="button" (click)="abrirSituacao(c.id)">
+              <mat-icon>account_balance_wallet</mat-icon>
+              Situação
+            </button>
+          </td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedColumns" mat-row class="clickable-row" (click)="abrirSituacao(row.id)"></tr>
+      </table>
+    }
+
+    @if (!loading() && contratos().length === 0) {
+      <app-empty-state
+        icon="description"
+        message="Nenhum contrato encontrado. Clique em Fechar contrato para registrar o primeiro contrato."
+      />
+    }
+  </mat-card>
+
+  @if (total() > pageSize()) {
+    <mat-paginator
+      showFirstLastButtons
+      [length]="total()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[10, 20, 50]"
+      (page)="onPage($event)"
+    />
+  }
+</div>

@@ -1,0 +1,137 @@
+<app-page-header
+  title="Fechar Contrato"
+  backRouterLink="/financeiro/contratos"
+  [subtitle]="numeroProcesso ? 'Vincular contrato ao processo ' + numeroProcesso : 'Registrar novo contrato e parcelas'"
+  [backButton]="true"
+/>
+
+<div class="contrato-container">
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="fechar()">
+
+        <span class="section-label">Dados do contrato</span>
+        <div class="grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Número do contrato</mat-label>
+            <input matInput formControlName="numeroContrato" placeholder="EX. 2026-001" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modalidade</mat-label>
+            <mat-select formControlName="modalidade">
+              @for (m of modalidades; track m) {
+                <mat-option [value]="m">{{ modalidadeLabels[m] }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descrição</mat-label>
+          <textarea matInput formControlName="descricao" rows="2" placeholder="Descrição do objeto do contrato"></textarea>
+        </mat-form-field>
+
+        <div class="grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Data de assinatura</mat-label>
+            <input matInput formControlName="dataAssinatura" [matDatepicker]="pickerAssinatura" />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerAssinatura" />
+            <mat-datepicker #pickerAssinatura />
+          </mat-form-field>
+        </div>
+
+        <span class="section-label">Cliente</span>
+        <div class="grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Cliente existente</mat-label>
+            <mat-select formControlName="clienteId">
+              <mat-option [value]="null">— Criar novo abaixo —</mat-option>
+              @for (c of clientes(); track c.id) {
+                <mat-option [value]="c.id">{{ c.nome }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div formGroupName="novoCliente" class="grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome do cliente</mat-label>
+            <input matInput formControlName="nome" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>CPF/CNPJ</mat-label>
+            <input matInput formControlName="cpfCnpj" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="telefone" />
+          </mat-form-field>
+        </div>
+
+        <span class="section-label">Valores</span>
+        <div class="grid-2">
+          <mat-form-field appearance="outline">
+            <mat-label>Valor total</mat-label>
+            <input matInput formControlName="valorTotal" type="number" min="0" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Desconto</mat-label>
+            <input matInput formControlName="valorDesconto" type="number" min="0" />
+          </mat-form-field>
+        </div>
+
+        <mat-card class="parcelas-card" [class.invalid]="!parcelasConferem">
+          <mat-card-title class="parcelas-title">
+            <span>Parcelas</span>
+            <button mat-mini-fab color="primary" type="button" [attr.aria-label]="'Adicionar parcela'" (click)="addParcela()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </mat-card-title>
+          <mat-card-content>
+            <div formArrayName="parcelas">
+              @for (p of parcelas.controls; track p; let i = $index) {
+                <div class="parcela-row" [formGroupName]="i">
+                  <span class="parcela-numero">{{ i + 1 }}</span>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Valor</mat-label>
+                    <input matInput formControlName="valor" type="number" min="0" />
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Vencimento</mat-label>
+                    <input matInput formControlName="dataVencimento" [matDatepicker]="picker" />
+                    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+                    <mat-datepicker #picker />
+                  </mat-form-field>
+                  <button mat-icon-button type="button" [disabled]="parcelas.length === 1" [attr.aria-label]="'Remover parcela'" (click)="removeParcela(i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              }
+            </div>
+
+            <div class="resumo">
+              <span>Soma das parcelas: <strong>{{ somaParcelas | currency: 'BRL' }}</strong></span>
+              <span>Valor líquido: <strong>{{ valorLiquido | currency: 'BRL' }}</strong></span>
+              @if (!parcelasConferem) {
+                <span class="erro">A soma deve igualar o valor líquido (total − desconto).</span>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <div class="actions">
+          <button mat-stroked-button type="button" (click)="voltar()">Cancelar</button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading()">
+            <mat-icon>check_circle</mat-icon>
+            {{ loading() ? 'Salvando...' : 'Fechar contrato' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

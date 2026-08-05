@@ -1,0 +1,51 @@
+.lista-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+table {
+  width: 100%;
+}
+
+.clickable-row {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--mat-sys-surface-variant);
+  }
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-pago { background: #c8e6c9; color: #1b5e20; }
+.status-parcial { background: #fff3e0; color: #e65100; }
+.status-vencido { background: #ffcdd2; color: #b71c1c; }
+.status-ativo { background: #b3e5fc; color: #01579b; }
+.status-rascunho { background: #e0e0e0; color: #424242; }
+.status-cancelado { background: #eeeeee; color: #616161; }
+.status-renegociado { background: #e1bee7; color: #6a1b9a; }

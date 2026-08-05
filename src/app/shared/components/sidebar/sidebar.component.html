@@ -31,6 +31,10 @@
     <mat-icon matListItemIcon>analytics</mat-icon>
     <span matListItemTitle>Relatórios</span>
   </a>
+  <a mat-list-item routerLinkActive="active" (click)="navigate('/financeiro')">
+    <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+    <span matListItemTitle>Financeiro</span>
+  </a>
   <mat-divider />
 
   @if (auth.hasRole('ADMIN')) {

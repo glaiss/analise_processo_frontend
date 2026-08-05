@@ -1,0 +1,95 @@
+.contrato-container {
+  padding: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.section-label {
+  display: block;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin: 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.parcelas-card {
+  margin-top: 16px;
+
+  &.invalid {
+    border-color: var(--mat-sys-error);
+  }
+
+  .parcelas-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 0;
+    font-size: 16px;
+  }
+}
+
+.parcela-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+.parcela-numero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+  font-weight: 600;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 14px;
+
+  .erro {
+    color: var(--mat-sys-error);
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
