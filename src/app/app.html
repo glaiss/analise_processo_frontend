@@ -1,6 +1,10 @@
 <mat-sidenav-container class="app-container">
   @if (showMenu && auth.isAuthenticated()) {
-    <mat-sidenav #sidenav mode="side" opened class="app-sidenav">
+    <mat-sidenav
+      class="app-sidenav"
+      [mode]="isMobile() ? 'over' : 'side'"
+      [opened]="isSidenavOpen()"
+    >
       <app-sidebar />
     </mat-sidenav>
   }

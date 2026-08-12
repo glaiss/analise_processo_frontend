@@ -1,6 +1,7 @@
 .impersonation-banner {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 8px 16px;
   background-color: var(--primary-color, #3f51b5);
@@ -13,6 +14,10 @@
     height: 1.25rem;
   }
 
+  span {
+    flex: 1 1 auto;
+  }
+
   button {
     margin-left: auto;
     font-size: 0.75rem;
@@ -20,7 +25,14 @@
   }
 }
 
-.app-toolbar { display: flex; align-items: center; }
+.app-toolbar {
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.08);
+}
 .spacer { flex: 1 1 auto; }
 .user-toolbar-info { display: flex; align-items: center; gap: 8px; }
 
@@ -37,6 +49,11 @@
   width: auto;
   max-width: 160px;
   object-fit: contain;
+
+  @media (max-width: 768px) {
+    height: 48px;
+    max-width: 120px;
+  }
 }
 
 .brand-equipe {

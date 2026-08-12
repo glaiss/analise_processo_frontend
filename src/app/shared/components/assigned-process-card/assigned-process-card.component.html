@@ -7,72 +7,40 @@
       </mat-icon>
       <span class="process-number font-mono" matTooltip="Copiar número do processo" (click)="copyProcessNumber($event)">{{ atribuicao.processoNumero }}</span>
     </mat-card-title>
-    <mat-card-subtitle>
-      {{ atribuicao.processoTribunal }} - {{ atribuicao.processoOrgaoJulgadorNome }}
-    </mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content class="card-content-grid">
-    <div class="left-column">
-      <div class="info-row">
-        <span class="label">Score Final:</span>
-        <mat-chip-listbox>
-          <mat-chip selected class="font-mono" [color]="scoreColor">{{ atribuicao.processoScoreFinal }}</mat-chip>
-        </mat-chip-listbox>
-      </div>
-      <div class="info-row">
-        <span class="label">Data Ajuizamento:</span>
-        <span>{{ atribuicao.processoDataAjuizamento | date: 'dd/MM/yyyy' }}</span>
-      </div>
-      <div class="info-row">
-        <span class="label">Valor Causa:</span>
-        <span class="font-mono">{{ atribuicao.processoValorCausa | currency: 'BRL' }}</span>
-      </div>
-      <div class="info-row">
-        <span class="label">Tipologia:</span>
-        <span>{{ atribuicao.processoTipologia }}</span>
-      </div>
-    </div>
 
-    <div class="right-column">
-      <div class="info-row">
-        <span class="label">Status Atribuição:</span>
+  <mat-card-content class="card-content">
+    <div class="info-row">
+      <span class="label">Score Final</span>
+      <mat-chip-listbox>
+        <mat-chip selected class="font-mono" [color]="scoreColor">{{ atribuicao.processoScoreFinal }}</mat-chip>
+      </mat-chip-listbox>
+    </div>
+    <div class="info-row">
+      <span class="label">Tipologia</span>
+      <span class="value">{{ tipologiaLabel }}</span>
+    </div>
+    <div class="info-row">
+      <span class="label">Prazo</span>
+      @if (atribuicao.statusPrazo) {
         <mat-chip-listbox>
-          <mat-chip selected [color]="statusColor">{{ atribuicao.status }}</mat-chip>
+          <mat-chip selected [color]="statusPrazoColor">
+            {{ atribuicao.statusPrazo }}
+            @if (atribuicao.isVencendoPrazo) {
+              <mat-icon matChipTrailingIcon>warning</mat-icon>
+            }
+          </mat-chip>
         </mat-chip-listbox>
-      </div>
-      <div class="info-row">
-        <span class="label">Status Prazo:</span>
-        @if (atribuicao.statusPrazo) {
-          <mat-chip-listbox>
-            <mat-chip selected [color]="statusPrazoColor">
-              {{ atribuicao.statusPrazo }}
-              @if (atribuicao.isVencendoPrazo) {
-                <mat-icon matChipTrailingIcon>warning</mat-icon>
-              }
-            </mat-chip>
-          </mat-chip-listbox>
-        } @else {
-          <span>Sem prazo</span>
-        }
-      </div>
-      <div class="info-row">
-        <span class="label">Situação:</span>
-        <span>{{ atribuicao.processoSituacao | appSituacaoDisplay }}</span>
-      </div>
+      } @else {
+        <span class="value">Sem prazo</span>
+      }
     </div>
   </mat-card-content>
 
-  <mat-divider />
-
-  <mat-card-footer class="footer-info">
-    <div class="footer-row">
-      @if (atribuicao.usuarioNome) {
-        <span><strong>Responsável:</strong> {{ atribuicao.usuarioNome }}</span>
-      }
-      @if (atribuicao.equipeNome) {
-        <span><strong>Equipe:</strong> {{ atribuicao.equipeNome }}</span>
-      }
-      <button type="button" mat-flat-button color="primary" class="details-button" (click)="openDetails($event)">VER DETALHES</button>
-    </div>
-  </mat-card-footer>
+  <mat-card-actions>
+    <button type="button" mat-flat-button color="primary" class="details-button" (click)="openDetails($event)">
+      <mat-icon>info</mat-icon>
+      Ver detalhes
+    </button>
+  </mat-card-actions>
 </mat-card>

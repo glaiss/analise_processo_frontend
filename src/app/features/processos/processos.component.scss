@@ -28,7 +28,8 @@
 
 .table-card {
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
   border: none;
 
@@ -82,6 +83,14 @@
         background-color: var(--bg-monitored-hover) !important;
       }
     }
+
+    &.unread-row {
+      background-color: var(--bg-unread);
+
+      &:hover {
+        background-color: var(--bg-unread-hover);
+      }
+    }
   }
 
   .mat-mdc-cell {
@@ -99,6 +108,20 @@
 
 .monitored {
   color: var(--accent-gold) !important;
+}
+
+.numero-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-blue, #3b82f6);
+  flex-shrink: 0;
 }
 
 .font-mono { font-family: 'JetBrains Mono', monospace; }

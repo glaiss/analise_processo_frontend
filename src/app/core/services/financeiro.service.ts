@@ -8,6 +8,7 @@ import { ContratoRequest } from '../models/financeiro/contrato.model';
 import { Contrato, SituacaoFinanceira } from '../models/financeiro/parcela.model';
 import { Recebimento, RecebimentoRequest } from '../models/financeiro/recebimento.model';
 import { IndicadoresFinanceiros } from '../models/financeiro/indicadores.model';
+import { RelatorioFinanceiro } from '../models/financeiro/relatorio.model';
 
 @Injectable({ providedIn: 'root' })
 export class FinanceiroService {
@@ -59,5 +60,14 @@ export class FinanceiroService {
       params = params.set('fim', fim);
     }
     return this.http.get<IndicadoresFinanceiros>(`${this.baseUrl}/indicadores`, { params });
+  }
+
+  // Relatórios
+  relatorioFinanceiro(inicio: string, fim?: string): Observable<RelatorioFinanceiro> {
+    let params = new HttpParams().set('inicio', inicio);
+    if (fim) {
+      params = params.set('fim', fim);
+    }
+    return this.http.get<RelatorioFinanceiro>(`${this.baseUrl}/relatorios`, { params });
   }
 }

@@ -6,7 +6,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AtribuicaoProcessoResumoDTO, ProcessoSituacao, StatusAtribuicao } from '../../../core/models/processo/index';
+import { AtribuicaoProcessoResumoDTO, ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/index';
 import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
@@ -77,6 +77,10 @@ export class AssignedProcessCardComponent {
     if (this.atribuicao.processoScoreFinal >= 80) return '';
     if (this.atribuicao.processoScoreFinal >= 50) return 'primary';
     return 'accent';
+  }
+
+  get tipologiaLabel(): string {
+    return this.atribuicao.processoTipologia === TipologiaProcesso.ADMINISTRATIVO ? 'Administrativo' : 'Judicial';
   }
 
   get situationColorClass(): string {

@@ -2,6 +2,10 @@
   padding: 24px;
   max-width: 900px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .section-label {
@@ -22,10 +26,44 @@
   mat-form-field {
     width: 100%;
   }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .full-width {
   width: 100%;
+}
+
+.documento-card {
+  margin-top: 4px;
+
+  .documento-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    @media (max-width: 768px) {
+      flex-wrap: wrap;
+    }
+  }
+
+  .doc-icon {
+    flex-shrink: 0;
+  }
+
+  .doc-name {
+    font-weight: 500;
+  }
+
+  .doc-hint {
+    color: var(--text-secondary);
+  }
+
+  .spacer {
+    flex: 1;
+  }
 }
 
 .parcelas-card {
@@ -52,6 +90,14 @@
 
   mat-form-field {
     flex: 1;
+  }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+
+    mat-form-field {
+      flex: 1 1 100%;
+    }
   }
 }
 

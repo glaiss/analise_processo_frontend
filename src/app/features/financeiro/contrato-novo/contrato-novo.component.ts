@@ -11,11 +11,18 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FinanceiroService } from '../../../core/services/financeiro.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { DocumentoService } from '../../../core/services/documento.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { Cliente } from '../../../core/models/financeiro/cliente.model';
 import { ModalidadeContrato } from '../../../core/models/financeiro/contrato.model';
+import { Contrato } from '../../../core/models/financeiro/parcela.model';
+import {
+  ContratoConcluidoDialogComponent,
+  DadosCliente,
+} from '../contrato-concluido-dialog/contrato-concluido-dialog.component';
 
 @Component({
   selector: 'app-contrato-novo',
@@ -33,6 +40,7 @@ import { ModalidadeContrato } from '../../../core/models/financeiro/contrato.mod
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatDialogModule,
     PageHeaderComponent,
   ],
   templateUrl: './contrato-novo.component.html',
@@ -44,10 +52,14 @@ export class ContratoNovoComponent implements OnInit {
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly dialog = inject(MatDialog);
+  private readonly documentoService = inject(DocumentoService);
 
   readonly loading = signal(false);
   readonly loadingClientes = signal(false);
   readonly clientes = signal<Cliente[]>([]);
+  readonly documentoSelecionado = signal<{ nome: string; id: string } | null>(null);
+  readonly enviandoDocumento = signal(false);
 
   readonly modalidades: ModalidadeContrato[] = ['FIXA', 'HONORARIOS', 'EXITO', 'RECORRENTE'];
   readonly modalidadeLabels: Record<string, string> = {
@@ -137,6 +149,30 @@ export class ContratoNovoComponent implements OnInit {
     return Math.abs(this.somaParcelas - liquido) < 0.01;
   }
 
+  escolherDocumento(event: any) {
+    const file: File = event.target.files?.[0];
+    if (!file || !this.numeroProcesso) {
+      return;
+    }
+    if (file.type !== 'application/pdf') {
+      this.notification.error('Apenas arquivos PDF são permitidos para o contrato.');
+      return;
+    }
+    this.enviandoDocumento.set(true);
+    this.documentoService.upload(this.numeroProcesso, file, true).subscribe({
+      next: (doc) => {
+        this.documentoSelecionado.set({ nome: doc.nomeArquivo, id: doc.id });
+        this.notification.success('Documento do contrato anexado com sucesso!');
+        this.enviandoDocumento.set(false);
+      },
+      error: (err: any) => {
+        const message = err?.error?.message ?? 'Erro ao anexar documento';
+        this.notification.error(message);
+        this.enviandoDocumento.set(false);
+      },
+    });
+  }
+
   fechar() {
     if (this.form.invalid) {
       this.notification.warn('Preencha todos os campos obrigatórios');
@@ -165,6 +201,7 @@ export class ContratoNovoComponent implements OnInit {
             tipo: 'PJ',
           }
         : null,
+      documentoId: this.documentoSelecionado()?.id || null,
       valorTotal: v.valorTotal,
       valorDesconto: v.valorDesconto || 0,
       dataAssinatura: v.dataAssinatura ? this.toIso(v.dataAssinatura) : null,
@@ -181,16 +218,40 @@ export class ContratoNovoComponent implements OnInit {
       : this.financeiroService.fecharContrato(dto);
 
     request.subscribe({
-      next: () => {
+      next: (contrato: Contrato) => {
         this.notification.success('Contrato fechado com sucesso!');
         this.loading.set(false);
-        void this.router.navigate(['/financeiro/contratos']);
+        this.abrirModalConclusao(contrato, temClienteNovo ? clienteNovo : null);
       },
       error: (err: any) => {
         const message = err?.error?.message ?? 'Erro ao fechar contrato';
         this.notification.error(message);
         this.loading.set(false);
       },
+    });
+  }
+
+  private abrirModalConclusao(contrato: Contrato, clienteNovo: any) {
+    const dadosCliente: DadosCliente | undefined = clienteNovo?.nome
+      ? {
+          nome: clienteNovo.nome,
+          cpfCnpj: clienteNovo.cpfCnpj,
+          email: clienteNovo.email,
+          telefone: clienteNovo.telefone,
+        }
+      : undefined;
+
+    const dialogRef = this.dialog.open(ContratoConcluidoDialogComponent, {
+      width: '520px',
+      data: { contrato, cliente: dadosCliente },
+    });
+
+    dialogRef.afterClosed().subscribe((acao: any) => {
+      if (acao === 'verContrato') {
+        void this.router.navigate(['/financeiro/contratos', contrato.id]);
+      } else {
+        void this.router.navigate(['/financeiro/contratos']);
+      }
     });
   }
 

@@ -4,38 +4,22 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-
-  .card-content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    padding: 16px;
-  }
-
-  .footer-info {
-    padding: 16px;
-    .footer-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-  }
+  border-radius: 12px;
 
   mat-card-header {
     flex-shrink: 0;
+    padding: 10px 16px 0;
   }
 
   mat-card-content {
     flex-grow: 1;
-    overflow-y: auto;
-    padding-bottom: 0;
+    padding: 8px 16px 0;
   }
 
   mat-card-actions {
     flex-shrink: 0;
     margin-top: auto;
-    padding: 0 16px 8px 16px;
+    padding: 8px 16px 12px;
     display: flex;
     justify-content: flex-end;
   }
@@ -43,12 +27,22 @@
   mat-card-title {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1.2em;
-    font-weight: bold;
+    gap: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    min-width: 0;
+
+    mat-checkbox {
+      flex-shrink: 0;
+    }
 
     mat-icon {
-      color: var(--text-primary);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      cursor: pointer;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
 
       &.monitored {
         color: var(--accent-gold);
@@ -58,6 +52,11 @@
     .process-number {
       color: var(--text-primary);
       cursor: copy;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.8125rem;
 
       &:hover {
         text-decoration: underline;
@@ -65,17 +64,14 @@
     }
   }
 
-  mat-card-subtitle {
-    color: var(--text-secondary);
-    font-size: 0.9em;
-  }
-
   .info-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 4px 0;
+    gap: 12px;
+    padding: 5px 0;
     border-bottom: 1px dotted var(--border-color);
+    font-size: 0.8125rem;
 
     &:last-child {
       border-bottom: none;
@@ -84,39 +80,59 @@
     .label {
       font-weight: 500;
       color: var(--text-secondary);
+      flex-shrink: 0;
     }
 
-    &.error-message {
-      color: var(--urgency-red);
-      font-weight: bold;
+    .value {
+      color: var(--text-primary);
+      font-weight: 500;
+      text-align: right;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    mat-chip-listbox {
+      .mat-chip {
+        height: 22px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      .mat-chip-basic {
+        background-color: var(--border-strong);
+        color: var(--text-primary);
+      }
+      .mat-chip-primary {
+        background-color: var(--primary-navy);
+        color: white;
+      }
+      .mat-chip-accent {
+        background-color: var(--accent-gold);
+        color: white;
+      }
+      .mat-chip-warn {
+        background-color: var(--urgency-red);
+        color: white;
+      }
+      .mat-chip-success {
+        background-color: var(--green-500);
+        color: white;
+      }
     }
   }
 
-  mat-chip-listbox {
-    .mat-chip {
-      height: 24px;
-      font-size: 0.8em;
-      font-weight: 500;
-    }
-    .mat-chip-basic {
-      background-color: var(--border-strong);
-      color: var(--text-primary);
-    }
-    .mat-chip-primary {
-      background-color: var(--primary-navy);
-      color: white;
-    }
-    .mat-chip-accent {
-      background-color: var(--accent-gold);
-      color: white;
-    }
-    .mat-chip-warn {
-      background-color: var(--urgency-red);
-      color: white;
-    }
-    .mat-chip-success { /* Custom success color */
-      background-color: var(--green-500); /* Green */
-      color: white;
+  .details-button {
+    min-height: 32px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
     }
   }
 
@@ -151,4 +167,3 @@
     background-color: rgba(0, 0, 0, 0.03);
   }
 }
-

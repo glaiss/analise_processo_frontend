@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationEnd, Router, provideRouter } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { AuthService } from './core/services/auth.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -34,6 +35,7 @@ describe('AppComponent', () => {
         provideHttpClient(),
         provideHttpClientTesting(),
         { provide: AuthService, useValue: authService },
+        { provide: BreakpointObserver, useValue: { observe: vi.fn(() => of({ matches: false })) } },
       ],
     }).compileComponents();
   });
@@ -84,20 +86,14 @@ describe('AppComponent', () => {
     expect(authService.checkImpersonation).toHaveBeenCalled();
   });
 
-  it('should call toggleSidenav when toggled', () => {
+  it('should toggle sidenav open state when toggled', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const component = fixture.componentInstance;
-    const sidenavSpy = { toggle: vi.fn() };
-    component.sidenav = sidenavSpy as any;
+    component.isSidenavOpen.set(false);
     component.toggleSidenav();
-    expect(sidenavSpy.toggle).toHaveBeenCalled();
-  });
-
-  it('should not throw when toggleSidenav is called without sidenav', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const component = fixture.componentInstance;
-    component.sidenav = undefined as any;
-    expect(() => component.toggleSidenav()).not.toThrow();
+    expect(component.isSidenavOpen()).toBe(true);
+    component.toggleSidenav();
+    expect(component.isSidenavOpen()).toBe(false);
   });
 
   it('should render sidenav and header when authenticated and menu is shown', () => {

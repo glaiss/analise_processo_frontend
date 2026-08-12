@@ -20,6 +20,7 @@ export interface ContratoRequest {
     tipo?: string | null;
     origemCaptacao?: string | null;
   } | null;
+  documentoId?: string | null;
   valorTotal: number;
   valorDesconto?: number | null;
   dataAssinatura?: string | null;

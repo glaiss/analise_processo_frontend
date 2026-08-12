@@ -4,8 +4,8 @@
 
 .app-sidenav {
   width: 260px;
-  background-color: var(--mat-sys-surface-container);
-  border-right: 1px solid var(--mat-sys-outline-variant);
+  background-color: var(--mat-sidenav-container-background-color);
+  border-right: 1px solid var(--border-strong);
   display: flex;
   flex-direction: column;
 
@@ -66,5 +66,9 @@
 
 .content-wrapper {
   background-color: var(--bg-page);
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - var(--mat-toolbar-standard-height, 64px));
+
+  @media (max-width: 599px) {
+    min-height: calc(100vh - var(--mat-toolbar-mobile-height, 56px));
+  }
 }

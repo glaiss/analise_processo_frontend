@@ -27,6 +27,16 @@
   mat-card-content {
     padding: 24px 40px 40px;
   }
+
+  @media (max-width: 480px) {
+    mat-card-header {
+      padding: 24px 20px 0;
+    }
+
+    mat-card-content {
+      padding: 16px 20px 24px;
+    }
+  }
 }
 
 .login-brand {
@@ -40,6 +50,10 @@
 .login-logo {
   height: 96px;
   width: auto;
+
+  @media (max-width: 480px) {
+    height: 72px;
+  }
 }
 
 .login-title {

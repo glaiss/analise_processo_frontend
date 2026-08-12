@@ -1,6 +1,6 @@
 import { Component, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Observable, catchError, concatMap, from, map, of } from 'rxjs';
 import { MatCardModule } from '@angular/material/card';
@@ -67,6 +67,7 @@ import { ProcessoContatoDTO } from '../../../core/models/processo/processo-conta
 })
 export class ProcessDetailsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly processState = inject(ProcessStateService);
   private readonly documentoService = inject(DocumentoService);
   private readonly notification = inject(NotificationService);
@@ -532,6 +533,13 @@ export class ProcessDetailsComponent implements OnInit {
       void navigator.clipboard.writeText(numero).then(() => {
         this.notification.success('Número do processo copiado!', 2000);
       });
+    }
+  }
+
+  fecharContrato() {
+    const numero = this.processo()?.numero;
+    if (numero) {
+      void this.router.navigate(['/financeiro/contratos/novo', numero]);
     }
   }
 

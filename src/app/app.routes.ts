@@ -118,6 +118,11 @@ export const routes: Routes = [
     loadComponent: async () => import('./features/financeiro/contrato-lista/contrato-lista.component').then(m => m.ContratoListaComponent)
   },
   {
+    path: 'financeiro/contratos/novo/:numeroProcesso',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/financeiro/contrato-novo/contrato-novo.component').then(m => m.ContratoNovoComponent)
+  },
+  {
     path: 'financeiro/contratos/novo',
     canActivate: [authGuard],
     loadComponent: async () => import('./features/financeiro/contrato-novo/contrato-novo.component').then(m => m.ContratoNovoComponent)
@@ -131,6 +136,11 @@ export const routes: Routes = [
     path: 'financeiro/clientes',
     canActivate: [authGuard],
     loadComponent: async () => import('./features/financeiro/clientes/clientes.component').then(m => m.ClientesComponent)
+  },
+  {
+    path: 'relatorios',
+    canActivate: [authGuard],
+    loadComponent: async () => import('./features/relatorios/relatorios.component').then(m => m.RelatoriosComponent)
   },
   {
     path: '',

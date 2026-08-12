@@ -20,6 +20,8 @@ export interface Contrato {
   numeroProcesso?: string | null;
   clienteId?: string | null;
   clienteNome?: string | null;
+  documentoId?: string | null;
+  documentoNomeArquivo?: string | null;
   descricao?: string | null;
   valorTotal: number;
   valorDesconto: number;

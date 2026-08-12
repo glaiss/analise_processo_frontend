@@ -1,0 +1,75 @@
+.relatorios-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+
+.filtro-card {
+  margin-bottom: 24px;
+
+  .filtro-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+}
+
+.loading-overlay {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.secao {
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: 16px;
+}
+
+.kpi-card {
+  .kpi-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+.accent-primary { color: var(--mat-sys-primary); }
+.accent-success { color: #2e7d32; }
+.accent-warn { color: var(--mat-sys-error); }
+.accent-info { color: #0277bd; }
+
+.resumo-tabela {
+  width: 100%;
+
+  .col-valor {
+    text-align: right;
+    width: 200px;
+  }
+}

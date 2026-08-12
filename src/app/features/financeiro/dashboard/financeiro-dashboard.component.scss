@@ -2,6 +2,10 @@
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
 }
 
 .filtro-card {
@@ -13,6 +17,13 @@
     gap: 16px;
     flex-wrap: wrap;
   }
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
 .alerta-card {
@@ -33,13 +44,6 @@
   display: flex;
   justify-content: center;
   padding: 40px;
-}
-
-.kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
 }
 
 .kpi-card {
@@ -74,5 +78,14 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+
+    button {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
   }
 }
