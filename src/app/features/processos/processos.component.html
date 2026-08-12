@@ -52,16 +52,16 @@
 
             <!-- Nível -->
             <ng-container matColumnDef="nivel">
-              <th *matHeaderCellDef mat-header-cell>Nível</th>
-              <td *matCellDef="let p" mat-cell>
+              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Nível</th>
+              <td *matCellDef="let p" mat-cell class="col-hide-sm">
                 <span class="risk-badge" [ngClass]="p.nivel?.toLowerCase()">{{ p.nivel | appScoreDisplay }}</span>
               </td>
             </ng-container>
 
             <!-- Score -->
             <ng-container matColumnDef="score">
-              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Score</th>
-              <td *matCellDef="let p" mat-cell class="font-mono text-center col-hide-sm">
+              <th *matHeaderCellDef mat-header-cell>Score</th>
+              <td *matCellDef="let p" mat-cell class="font-mono text-center">
                 <span class="score-value" [ngClass]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>
               </td>
             </ng-container>

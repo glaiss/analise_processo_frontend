@@ -212,4 +212,8 @@ export class ProcessStateService {
       params: new HttpParams().set('novoStatus', novoStatus)
     });
   }
+
+  marcarComoLido(numero: string) {
+    return this.http.put<void>(`${this.apiUrl}/${numero}/marcar-como-lido`, {});
+  }
 }

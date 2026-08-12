@@ -1,11 +1,37 @@
-<mat-card class="assigned-process-card" [ngClass]="[situationColorClass, selected ? 'selected' : '']">
+<mat-card
+  class="assigned-process-card"
+  [ngClass]="[situationColorClass, selected ? 'selected' : '']"
+>
   <mat-card-header>
     <mat-card-title>
-      <mat-checkbox matTooltip="Selecionar para reprocessar" [checked]="selected" (click)="toggleSelection($event)" />
-      <mat-icon matTooltip="Alternar Monitoramento" [class.monitored]="atribuicao.monitorado" (click)="toggleMonitoramento($event)">
-        {{ atribuicao.monitorado ? 'star' : 'star_border' }}
-      </mat-icon>
-      <span class="process-number font-mono" matTooltip="Copiar número do processo" (click)="copyProcessNumber($event)">{{ atribuicao.processoNumero }}</span>
+      <div class="box-header">
+        <div>
+          <mat-checkbox
+            matTooltip="Selecionar para reprocessar"
+            [checked]="selected"
+            (click)="toggleSelection($event)"
+          />
+          <span
+            class="process-number font-mono"
+            matTooltip="Copiar número do processo"
+            (click)="copyProcessNumber($event)"
+            >{{ atribuicao.processoNumero }}</span
+          >
+            <mat-icon
+            matTooltip="Alternar Monitoramento"
+            [class.monitored]="atribuicao.monitorado"
+            (click)="toggleMonitoramento($event)"
+          >
+            {{ atribuicao.monitorado ? 'star' : 'star_border' }}
+          </mat-icon>
+        </div>
+        <div>
+
+          @if (!atribuicao.isLido) {
+            <mat-icon class="status-dot"> circle </mat-icon>
+          }
+        </div>
+      </div>
     </mat-card-title>
   </mat-card-header>
 
@@ -13,12 +39,14 @@
     <div class="info-row">
       <span class="label">Score Final</span>
       <mat-chip-listbox>
-        <mat-chip selected class="font-mono" [color]="scoreColor">{{ atribuicao.processoScoreFinal }}</mat-chip>
+        <mat-chip selected class="font-mono" [color]="scoreColor">{{
+          atribuicao.processoScoreFinal
+        }}</mat-chip>
       </mat-chip-listbox>
     </div>
     <div class="info-row">
       <span class="label">Tipologia</span>
-      <span class="value">{{ tipologiaLabel }}</span>
+      <span class="value">{{ atribuicao.processoTipologia }}</span>
     </div>
     <div class="info-row">
       <span class="label">Prazo</span>
@@ -38,7 +66,13 @@
   </mat-card-content>
 
   <mat-card-actions>
-    <button type="button" mat-flat-button color="primary" class="details-button" (click)="openDetails($event)">
+    <button
+      type="button"
+      mat-flat-button
+      color="primary"
+      class="details-button"
+      (click)="openDetails($event)"
+    >
       <mat-icon>info</mat-icon>
       Ver detalhes
     </button>

@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8081/analise-processos',
-  version: '0.1.20'
+  version: '0.4.0'
 };

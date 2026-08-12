@@ -1,4 +1,4 @@
-import { Component, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { Component, Input, OnInit, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { CommonModule, Location, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +17,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { ProcessStateService } from '../../../core/services/process-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
@@ -76,6 +77,9 @@ export class ProcessDetailsComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly enriquecimentoService = inject(EnriquecimentoService);
   private readonly contatoService = inject(ContatoService);
+
+  readonly isAdmin = computed(() => this.authService.hasRole('ADMIN'));
+  private readonly authService = inject(AuthService);
 
   readonly numero = signal<string | null>(null);
   readonly processo = signal<ProcessoDetalheDTO | null>(null);

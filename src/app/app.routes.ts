@@ -109,32 +109,32 @@ export const routes: Routes = [
   },
   {
     path: 'financeiro',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/dashboard/financeiro-dashboard.component').then(m => m.FinanceiroDashboardComponent)
   },
   {
     path: 'financeiro/contratos',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/contrato-lista/contrato-lista.component').then(m => m.ContratoListaComponent)
   },
   {
     path: 'financeiro/contratos/novo/:numeroProcesso',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/contrato-novo/contrato-novo.component').then(m => m.ContratoNovoComponent)
   },
   {
     path: 'financeiro/contratos/novo',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/contrato-novo/contrato-novo.component').then(m => m.ContratoNovoComponent)
   },
   {
     path: 'financeiro/contratos/:id',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/contrato-detalhe/contrato-detalhe.component').then(m => m.ContratoDetalheComponent)
   },
   {
     path: 'financeiro/clientes',
-    canActivate: [authGuard],
+    canActivate: [authGuard, adminGuard],
     loadComponent: async () => import('./features/financeiro/clientes/clientes.component').then(m => m.ClientesComponent)
   },
   {

@@ -6,8 +6,13 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AtribuicaoProcessoResumoDTO, ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/index';
-import { MatDividerModule } from "@angular/material/divider";
+import {
+  AtribuicaoProcessoResumoDTO,
+  ProcessoSituacao,
+  StatusAtribuicao,
+  TipologiaProcesso,
+} from '../../../core/models/processo/index';
+import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -15,9 +20,18 @@ import { NotificationService } from '../../../core/services/notification.service
 @Component({
   selector: 'app-assigned-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltipModule,
+    MatDividerModule,
+  ],
   templateUrl: './assigned-process-card.component.html',
-  styleUrl: './assigned-process-card.component.scss'
+  styleUrl: './assigned-process-card.component.scss',
 })
 export class AssignedProcessCardComponent {
   private readonly router = inject(Router);
@@ -43,7 +57,7 @@ export class AssignedProcessCardComponent {
     this.processState.alternarMonitoramento(this.atribuicao.processoNumero).subscribe({
       error: () => {
         this.atribuicao.monitorado = previous;
-      }
+      },
     });
   }
 
@@ -56,14 +70,22 @@ export class AssignedProcessCardComponent {
 
   get statusColor(): string {
     switch (this.atribuicao.status) {
-      case StatusAtribuicao.NAO_DISPONIVEL: return 'basic';
-      case StatusAtribuicao.DISPONIVEL: return 'primary';
-      case StatusAtribuicao.ATRIBUIDO: return 'accent';
-      case StatusAtribuicao.EM_CONVERSA: return 'accent';
-      case StatusAtribuicao.EM_NEGOCIACAO: return 'accent';
-      case StatusAtribuicao.CONCLUIDO_SUCESSO: return 'success';
-      case StatusAtribuicao.CONCLUIDO_RECUSADO: return 'warn';
-      default: return 'basic';
+      case StatusAtribuicao.NAO_DISPONIVEL:
+        return 'basic';
+      case StatusAtribuicao.DISPONIVEL:
+        return 'primary';
+      case StatusAtribuicao.ATRIBUIDO:
+        return 'accent';
+      case StatusAtribuicao.EM_CONVERSA:
+        return 'accent';
+      case StatusAtribuicao.EM_NEGOCIACAO:
+        return 'accent';
+      case StatusAtribuicao.CONCLUIDO_SUCESSO:
+        return 'success';
+      case StatusAtribuicao.CONCLUIDO_RECUSADO:
+        return 'warn';
+      default:
+        return 'basic';
     }
   }
 
@@ -76,10 +98,6 @@ export class AssignedProcessCardComponent {
     if (this.atribuicao.processoScoreFinal >= 80) return '';
     if (this.atribuicao.processoScoreFinal >= 50) return 'primary';
     return 'accent';
-  }
-
-  get tipologiaLabel(): string {
-    return this.atribuicao.processoTipologia === TipologiaProcesso.ADMINISTRATIVO ? 'Administrativo' : 'Judicial';
   }
 
   get situationColorClass(): string {
@@ -101,12 +119,25 @@ export class AssignedProcessCardComponent {
         return 'situation-finished';
       case ProcessoSituacao.ERRO_PROCESSAMENTO:
         return 'situation-error';
-      default: return '';
+      default:
+        return '';
     }
   }
 
-  openDetails(event: Event) {
+  async openDetails(event: Event) {
     event.stopPropagation();
     void this.router.navigate(['/processos', this.atribuicao.processoNumero]);
+    if(!this.atribuicao.isLido){
+      await this.markAsRead();
+    }
+  }
+
+  async markAsRead() {
+    this.processState.marcarComoLido(this.atribuicao.processoNumero).subscribe({
+      next: () => {},
+      error: () => {
+        this.notification.error('Erro ao atualizar processo', 3000);
+      },
+    });
   }
 }
