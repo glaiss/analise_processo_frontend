@@ -117,4 +117,50 @@ describe('ContactProcessDialogComponent', () => {
       principal: true,
     });
   });
+
+  it('should open dialog and close via cancel button click', () => {
+    const fixture = createFixture();
+    const buttons: HTMLButtonElement[] = fixture.nativeElement.querySelectorAll('button');
+    const cancel = Array.from(buttons).find((b) => b.textContent?.includes('Cancelar'));
+    expect(cancel).toBeTruthy();
+    cancel!.click();
+    expect(dialogRefSpy.close).toHaveBeenCalledWith(null);
+  });
+
+  it('should confirm via button click when form is valid', () => {
+    const fixture = TestBed.createComponent(ContactProcessDialogComponent);
+    const comp = fixture.componentInstance;
+    comp.tipo = 'EMAIL';
+    comp.valor = 'ana@exemplo.com';
+    comp.nome = 'Ana';
+    fixture.detectChanges();
+
+    const buttons: HTMLButtonElement[] = fixture.nativeElement.querySelectorAll('button');
+    const salvar = Array.from(buttons).find((b) => b.textContent?.includes('Salvar'));
+    expect(salvar).toBeTruthy();
+    salvar!.click();
+
+    expect(dialogRefSpy.close).toHaveBeenCalledWith({
+      tipo: 'EMAIL',
+      valor: 'ana@exemplo.com',
+      nome: 'Ana',
+      principal: false,
+    });
+  });
+
+  it('should render WHATSAPP placeholder by default', () => {
+    const fixture = createFixture();
+    const inputs: HTMLInputElement[] = Array.from(fixture.nativeElement.querySelectorAll('input'));
+    const valueInput = inputs.find((i) => i.placeholder === '(11) 99999-9999');
+    expect(valueInput).toBeTruthy();
+  });
+
+  it('should render EMAIL placeholder when tipo is EMAIL', () => {
+    const fixture = TestBed.createComponent(ContactProcessDialogComponent);
+    fixture.componentInstance.tipo = 'EMAIL';
+    fixture.detectChanges();
+    const inputs: HTMLInputElement[] = Array.from(fixture.nativeElement.querySelectorAll('input'));
+    const valueInput = inputs.find((i) => i.placeholder === 'email@exemplo.com');
+    expect(valueInput).toBeTruthy();
+  });
 });

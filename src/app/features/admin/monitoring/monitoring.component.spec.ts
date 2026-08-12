@@ -165,4 +165,71 @@ describe('MonitoringComponent', () => {
     fixture.componentInstance.refresh();
     expect(spy).toHaveBeenCalled();
   });
+
+  it('should call loadAll and clear interval on destroy', () => {
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.autoRefreshHandle).not.toBeNull();
+    const spy = vi.spyOn(globalThis, 'clearInterval');
+    fixture.destroy();
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should handle health without diskSpace details', () => {
+    mockActuator.getHealth = vi.fn().mockReturnValue(of<Health>({ status: 'UP' }));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.health()?.status).toBe('UP');
+    expect(fixture.componentInstance.diskFree()).toBeNull();
+    expect(fixture.componentInstance.diskTotal()).toBeNull();
+  });
+
+  it('should handle diskSpace details with null values', () => {
+    mockActuator.getHealth = vi.fn().mockReturnValue(of<Health>({
+      status: 'UP',
+      components: { diskSpace: { status: 'UP', details: { free: null as any, total: null as any } } },
+    }));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.diskFree()).toBeNull();
+    expect(fixture.componentInstance.diskTotal()).toBeNull();
+  });
+
+  it('should emit heap with fallback to committed when max is empty', () => {
+    mockActuator.getMetric = vi.fn().mockReturnValue(of(createMetric(0)));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+
+    const heap = fixture.componentInstance.heap();
+    expect(heap).toBeTruthy();
+    expect(heap!.max).toBe(1);
+  });
+
+  it('should ignore unknown gcPause statistics', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string) => {
+      if (name.includes('gc.pause')) {
+        return of({
+          name: 'gc.pause',
+          measurements: [
+            { statistic: 'CUSTOM_STAT', value: 10 },
+            { value: 1 },
+          ],
+          availableTags: [],
+        });
+      }
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.gcPause()).toEqual({ count: 0, totalTime: 0, maxTime: 0 });
+  });
+
+  it('getStatusColor should return empty for unknown status', () => {
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    expect(fixture.componentInstance.getStatusColor('MAINTENANCE')).toBe('');
+  });
 });

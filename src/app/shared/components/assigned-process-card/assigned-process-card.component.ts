@@ -11,12 +11,11 @@ import { MatDividerModule } from "@angular/material/divider";
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { SituacaoDisplayPipe } from '../../pipes/situacao-display.pipe';
 
 @Component({
   selector: 'app-assigned-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule, SituacaoDisplayPipe],
+  imports: [CommonModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatIconModule, MatButtonModule, MatTooltipModule, MatDividerModule],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss'
 })

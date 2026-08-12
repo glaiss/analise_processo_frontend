@@ -77,4 +77,57 @@ describe('FinanceiroService', () => {
     expect(req.request.method).toBe('POST');
     req.flush({});
   });
+
+  it('should GET cliente by id', () => {
+    service.buscarCliente('cliente-1').subscribe();
+    const req = httpMock.expectOne(`${API_URL}/clientes/cliente-1`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ id: 'cliente-1' });
+  });
+
+  it('should PUT atualizar cliente', () => {
+    const dto = { nome: 'Empresa Atualizada' };
+    service.atualizarCliente('cliente-1', dto as any).subscribe();
+    const req = httpMock.expectOne(`${API_URL}/clientes/cliente-1`);
+    expect(req.request.method).toBe('PUT');
+    expect(req.request.body).toEqual(dto);
+    req.flush({});
+  });
+
+  it('should GET contratos', () => {
+    service.listarContratos(1, 50).subscribe();
+    const req = httpMock.expectOne(`${API_URL}/contratos?page=1&size=50`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ content: [] });
+  });
+
+  it('should GET contrato by id', () => {
+    service.buscarContrato('contrato-1').subscribe();
+    const req = httpMock.expectOne(`${API_URL}/contratos/contrato-1`);
+    expect(req.request.method).toBe('GET');
+    req.flush({ id: 'contrato-1' });
+  });
+
+  it('should GET indicadores without fim', () => {
+    service.indicadores('2026-01-01').subscribe();
+    const req = httpMock.expectOne(`${API_URL}/indicadores?inicio=2026-01-01`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.has('fim')).toBe(false);
+    req.flush({});
+  });
+
+  it('should GET relatorio financeiro without fim', () => {
+    service.relatorioFinanceiro('2026-01-01').subscribe();
+    const req = httpMock.expectOne(`${API_URL}/relatorios?inicio=2026-01-01`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.params.has('fim')).toBe(false);
+    req.flush({});
+  });
+
+  it('should GET relatorio financeiro with fim', () => {
+    service.relatorioFinanceiro('2026-01-01', '2026-01-31').subscribe();
+    const req = httpMock.expectOne(`${API_URL}/relatorios?inicio=2026-01-01&fim=2026-01-31`);
+    expect(req.request.method).toBe('GET');
+    req.flush({});
+  });
 });

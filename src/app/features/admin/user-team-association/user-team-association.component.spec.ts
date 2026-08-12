@@ -5,7 +5,7 @@ import { EquipeDto, EquipeService } from '../../../core/services/equipe.service'
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('UserTeamAssociationComponent', () => {
   let mockUserService: Partial<UserService>;
@@ -95,5 +95,77 @@ describe('UserTeamAssociationComponent', () => {
 
     fixture.componentInstance.back();
     expect(spy).toHaveBeenCalledWith(['/admin']);
+  });
+
+  it('should notify error when loading usuarios fails', () => {
+    mockUserService.getUsuarios = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    expect(mockNotification.error).toHaveBeenCalledWith('Erro ao carregar usuários');
+    expect(fixture.componentInstance.loadingList()).toBe(false);
+  });
+
+  it('should notify error when loading equipes fails', () => {
+    mockEquipeService.getEquipes = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    expect(mockNotification.error).toHaveBeenCalledWith('Erro ao carregar equipes');
+  });
+
+  it('should filter only active equipes', () => {
+    mockEquipeService.getEquipes = vi.fn().mockReturnValue(of({
+      content: [
+        { id: 'e1', nome: 'Ativa', ativo: true } as EquipeDto,
+        { id: 'e2', nome: 'Inativa', ativo: false } as EquipeDto,
+      ],
+      totalElements: 2, totalPages: 1, size: 100, number: 0, last: true, first: true, empty: false
+    }));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.equipes()).toEqual([{ id: 'e1', nome: 'Ativa', ativo: true }]);
+  });
+
+  it('should use fallback equipe name when not found on submit', () => {
+    mockUserService.getUsuarios = vi.fn().mockReturnValue(of({
+      content: [
+        { id: 'u1', nome: 'João', username: 'joao', role: 'ANALISTA', equipeId: undefined, equipeNome: undefined },
+        { id: 'u2', nome: 'Maria', username: 'maria', role: 'ANALISTA', equipeId: undefined, equipeNome: undefined },
+      ] as UsuarioResponse[],
+      totalElements: 2, totalPages: 1, size: 100, number: 0, last: true, first: true, empty: false
+    }));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.associationForm.patchValue({ usuarioId: 'u2', equipeId: 'e9' });
+    fixture.componentInstance.onSubmit();
+
+    expect(mockUserService.associarEquipe).toHaveBeenCalledWith('u2', 'e9');
+    const updated = fixture.componentInstance.usuarios().find(u => u.id === 'u2');
+    expect(updated?.equipeNome).toBe('N/A');
+  });
+
+  it('should notify error when association fails', () => {
+    mockUserService.associarEquipe = vi.fn().mockReturnValue(throwError(() => ({ error: { message: 'Falha ao vincular' } })));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.associationForm.patchValue({ usuarioId: 'u1', equipeId: 'e1' });
+    fixture.componentInstance.onSubmit();
+
+    expect(mockNotification.error).toHaveBeenCalledWith('Falha ao vincular');
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('should notify error when desassociating fails', () => {
+    mockUserService.desassociarEquipe = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.desvincular('u1');
+
+    expect(mockNotification.error).toHaveBeenCalledWith('Erro ao desvincular usuário');
   });
 });

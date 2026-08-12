@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute, provideRouter } from '@angular/router';
+import { ActivatedRoute, provideRouter, Router } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
 import { Subject, of, throwError } from 'rxjs';
 import { ProcessDetailsComponent } from './process-details.component';
@@ -11,6 +11,7 @@ import { EnriquecimentoService } from '../../../core/services/enriquecimento.ser
 import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
+import { ContatoService } from '../../../core/services/contato.service';
 
 function mockProcesso(overrides: any = {}) {
   return {
@@ -46,6 +47,7 @@ describe('ProcessDetailsComponent', () => {
   let dialog: any;
   let enriquecimentoService: any;
   let location: any;
+  let contatoService: any;
 
   function createComponent() {
     const fixture = TestBed.createComponent(ProcessDetailsComponent);
@@ -97,6 +99,15 @@ describe('ProcessDetailsComponent', () => {
       subscribe: vi.fn().mockReturnValue({ unsubscribe: vi.fn() }),
     };
 
+    contatoService = {
+      listar: vi.fn().mockReturnValue(of([
+        { id: 'c1', tipo: 'EMAIL', valor: 'teste@test.com', nome: 'Contato 1', principal: true },
+      ])),
+      salvar: vi.fn().mockReturnValue(of({ id: 'c2' })),
+      atualizar: vi.fn().mockReturnValue(of({ id: 'c1' })),
+      deletar: vi.fn().mockReturnValue(of(undefined)),
+    };
+
     await TestBed.configureTestingModule({
       imports: [ProcessDetailsComponent, NoopAnimationsModule],
       providers: [
@@ -107,14 +118,17 @@ describe('ProcessDetailsComponent', () => {
         { provide: NotificationService, useValue: notification },
         { provide: EnriquecimentoService, useValue: enriquecimentoService },
         { provide: Location, useValue: location },
+        { provide: ContatoService, useValue: contatoService },
         { provide: PLATFORM_ID, useValue: 'browser' },
       ],
-    })
-      .overrideComponent(ProcessDetailsComponent, {
-        set: { providers: [{ provide: MatDialog, useValue: dialog }] },
-      })
-      .compileComponents();
+    }).compileComponents();
   });
+
+  function overrideDialog() {
+    TestBed.overrideComponent(ProcessDetailsComponent, {
+      set: { providers: [{ provide: MatDialog, useValue: dialog }] },
+    });
+  }
 
   it('should create', () => {
     const fixture = createComponent();
@@ -168,6 +182,7 @@ describe('ProcessDetailsComponent', () => {
   it('should open confirm dialog and delete document on confirmation', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.onDeleteDocument({ id: 'doc1', nomeArquivo: 'test.pdf', contentType: 'application/pdf', tamanho: 1024, createdDate: '2024-01-01' });
     expect(dialog.open).toHaveBeenCalled();
@@ -180,6 +195,7 @@ describe('ProcessDetailsComponent', () => {
   it('should not delete document when dialog is cancelled', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.onDeleteDocument({ id: 'doc1', nomeArquivo: 'test.pdf', contentType: 'application/pdf', tamanho: 1024, createdDate: '2024-01-01' });
     afterClosed$.next(false);
@@ -197,6 +213,7 @@ describe('ProcessDetailsComponent', () => {
   it('should open upload dialog and upload file', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     const event = { target: { files: [new File(['test'], 'doc.pdf', { type: 'application/pdf' })] } };
     fixture.componentInstance.onFileSelected(event);
@@ -208,6 +225,7 @@ describe('ProcessDetailsComponent', () => {
   it('should upload file with isContrato false when dialog returns no data', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     const event = { target: { files: [new File(['test'], 'doc.pdf', { type: 'application/pdf' })] } };
     fixture.componentInstance.onFileSelected(event);
@@ -247,6 +265,7 @@ describe('ProcessDetailsComponent', () => {
   it('should open confirm dialog and discard process', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.onDiscard();
     expect(dialog.open).toHaveBeenCalled();
@@ -259,6 +278,7 @@ describe('ProcessDetailsComponent', () => {
   it('should not discard process when dialog is cancelled', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.onDiscard();
     afterClosed$.next(false);
@@ -298,6 +318,7 @@ describe('ProcessDetailsComponent', () => {
     processState.discardProcess = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.onDiscard();
     afterClosed$.next(true);
@@ -383,6 +404,7 @@ describe('ProcessDetailsComponent', () => {
   it('should delete annotation after confirm', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.deletarAnotacao('ann1');
     expect(dialog.open).toHaveBeenCalled();
@@ -393,6 +415,7 @@ describe('ProcessDetailsComponent', () => {
   it('should not delete annotation if dialog cancelled', () => {
     const afterClosed$ = new Subject<any>();
     dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
     const fixture = createComponent();
     fixture.componentInstance.deletarAnotacao('ann1');
     afterClosed$.next(false);
@@ -756,5 +779,200 @@ describe('ProcessDetailsComponent', () => {
     documentoService.getPreviewUrl = vi.fn(() => throwError(() => new Error('preview fail')));
     createComponent();
     expect(notification.error).toHaveBeenCalledWith('Erro ao carregar pré-visualização', 3000);
+  });
+
+  it('should show contatos tab only after step 1', () => {
+    const fixture = createComponent();
+    expect(fixture.componentInstance.mostrarAbaContatos()).toBe(false);
+    fixture.componentInstance.processo.set(mockProcesso({ statusAtribuicao: StatusAtribuicao.EM_CONVERSA }));
+    expect(fixture.componentInstance.mostrarAbaContatos()).toBe(true);
+    fixture.componentInstance.processo.set(null);
+    expect(fixture.componentInstance.mostrarAbaContatos()).toBe(false);
+  });
+
+  it('should format contato values for phone and email', () => {
+    const fixture = createComponent();
+    expect(fixture.componentInstance.formatContatoValor({ tipo: 'EMAIL', valor: 'a@b.com' } as any)).toBe('a@b.com');
+    expect(fixture.componentInstance.formatContatoValor({ tipo: 'WHATSAPP', valor: '11999999999' } as any)).toBe('(11) 99999-9999');
+    expect(fixture.componentInstance.formatContatoValor({ tipo: 'WHATSAPP', valor: '1199999999' } as any)).toBe('(11) 9999-9999');
+    expect(fixture.componentInstance.formatContatoValor({ tipo: 'WHATSAPP', valor: 'xyz' } as any)).toBe('xyz');
+  });
+
+  it('should start and cancel editing contato', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.startEditContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    expect(fixture.componentInstance.editandoContatoId()).toBe('c1');
+    expect(fixture.componentInstance.editFormNome()).toBe('Contato');
+    expect(fixture.componentInstance.editFormValor()).toBe('a@b.com');
+
+    fixture.componentInstance.cancelEditContato();
+    expect(fixture.componentInstance.editandoContatoId()).toBeNull();
+    expect(fixture.componentInstance.editFormNome()).toBe('');
+    expect(fixture.componentInstance.editFormValor()).toBe('');
+  });
+
+  it('should delete contato after confirm', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.deletarContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    afterClosed$.next(true);
+    expect(contatoService.deletar).toHaveBeenCalledWith('123456', 'c1');
+    expect(notification.success).toHaveBeenCalledWith('Contato excluído com sucesso', 3000);
+    expect(contatoService.listar).toHaveBeenCalled();
+  });
+
+  it('should not delete contato when dialog is cancelled', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.deletarContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    afterClosed$.next(false);
+    expect(contatoService.deletar).not.toHaveBeenCalled();
+  });
+
+  it('should notify error when deleting contato fails', () => {
+    contatoService.deletar = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.deletarContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    afterClosed$.next(true);
+    expect(notification.error).toHaveBeenCalledWith('Erro ao excluir contato', 3000);
+  });
+
+  it('should set contato as principal', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.definirComoPrincipal({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: false } as any);
+    expect(contatoService.atualizar).toHaveBeenCalledWith('123456', 'c1', {
+      tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true,
+    });
+    expect(notification.success).toHaveBeenCalledWith('Contato definido como principal', 3000);
+  });
+
+  it('should notify error when setting principal contato fails', () => {
+    contatoService.atualizar = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = createComponent();
+    fixture.componentInstance.definirComoPrincipal({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: false } as any);
+    expect(notification.error).toHaveBeenCalledWith('Erro ao definir contato como principal', 3000);
+  });
+
+  it('should add contato from dialog result', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.adicionarContato();
+    afterClosed$.next({ tipo: 'EMAIL', valor: 'novo@test.com', nome: 'Novo', principal: false });
+    expect(contatoService.salvar).toHaveBeenCalledWith('123456', {
+      tipo: 'EMAIL', valor: 'novo@test.com', nome: 'Novo', principal: false,
+    });
+    expect(notification.success).toHaveBeenCalledWith('Contato adicionado com sucesso', 3000);
+    expect(fixture.componentInstance.salvandoContato()).toBe(false);
+  });
+
+  it('should not add contato when dialog is cancelled', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.adicionarContato();
+    afterClosed$.next(null);
+    expect(contatoService.salvar).not.toHaveBeenCalled();
+  });
+
+  it('should notify error when adding contato fails', () => {
+    contatoService.salvar = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.adicionarContato();
+    afterClosed$.next({ tipo: 'EMAIL', valor: 'novo@test.com', principal: false });
+    expect(notification.error).toHaveBeenCalledWith('Erro ao adicionar contato', 3000);
+    expect(fixture.componentInstance.salvandoContato()).toBe(false);
+  });
+
+  it('should save edited contato', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.startEditContato({ id: 'c1', tipo: 'EMAIL', valor: 'antigo@test.com', nome: 'Contato', principal: true } as any);
+    fixture.componentInstance.editFormNome.set('Contato Atualizado');
+    fixture.componentInstance.editFormValor.set('novo@test.com');
+
+    fixture.componentInstance.salvarEditContato({ id: 'c1', tipo: 'EMAIL', valor: 'antigo@test.com', nome: 'Contato', principal: true } as any);
+
+    expect(contatoService.atualizar).toHaveBeenCalledWith('123456', 'c1', {
+      tipo: 'EMAIL', valor: 'novo@test.com', nome: 'Contato Atualizado',
+    });
+    expect(notification.success).toHaveBeenCalledWith('Contato atualizado com sucesso', 3000);
+    expect(fixture.componentInstance.editandoContatoId()).toBeNull();
+  });
+
+  it('should not save edit contato when fields are empty', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.editFormNome.set('');
+    fixture.componentInstance.editFormValor.set('');
+    fixture.componentInstance.salvarEditContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    expect(contatoService.atualizar).not.toHaveBeenCalled();
+  });
+
+  it('should notify error when updating contato fails', () => {
+    contatoService.atualizar = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = createComponent();
+    fixture.componentInstance.editFormNome.set('Contato');
+    fixture.componentInstance.editFormValor.set('novo@test.com');
+    fixture.componentInstance.salvarEditContato({ id: 'c1', tipo: 'EMAIL', valor: 'a@b.com', nome: 'Contato', principal: true } as any);
+    expect(notification.error).toHaveBeenCalledWith('Erro ao atualizar contato', 3000);
+    expect(fixture.componentInstance.salvandoContato()).toBe(false);
+  });
+
+  it('should navigate to new contract on fecharContrato', () => {
+    const fixture = createComponent();
+    const router = TestBed.inject(Router);
+    const spy = vi.spyOn(router, 'navigate');
+
+    fixture.componentInstance.fecharContrato();
+    expect(spy).toHaveBeenCalledWith(['/financeiro/contratos/novo', '123456']);
+  });
+
+  it('should advance status from atribuido via contact dialog', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.avancarStatus(1);
+    expect(dialog.open).toHaveBeenCalled();
+    afterClosed$.next({ tipo: 'WHATSAPP', valor: '5511999999999', nome: 'Cliente', principal: true });
+    expect(contatoService.salvar).toHaveBeenCalledWith('123456', {
+      tipo: 'WHATSAPP', valor: '5511999999999', nome: 'Cliente', principal: true,
+    });
+    expect(processState.atualizarStatus).toHaveBeenCalledWith('123456', StatusAtribuicao.EM_CONVERSA);
+  });
+
+  it('should do nothing when contact dialog returns nothing', () => {
+    const afterClosed$ = new Subject<any>();
+    dialog.open.mockReturnValue({ afterClosed: () => afterClosed$ });
+    overrideDialog();
+    const fixture = createComponent();
+
+    fixture.componentInstance.avancarStatus(1);
+    afterClosed$.next(null);
+    expect(contatoService.salvar).not.toHaveBeenCalled();
+  });
+
+  it('should not upload when no file selected', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.onFileSelected({ target: { files: [] } });
+    expect(documentoService.upload).not.toHaveBeenCalled();
   });
 });
