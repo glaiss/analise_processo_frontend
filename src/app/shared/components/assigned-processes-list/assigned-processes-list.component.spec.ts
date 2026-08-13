@@ -73,8 +73,10 @@ describe('AssignedProcessesListComponent', () => {
             equipeNome: 'Equipe A',
             usuarioNome: 'João',
             monitorado: false,
-            statusPrazo: 'NORMAL',
-            isVencendoPrazo: false,
+            statusPrazo: 'PENDENTE',
+            prazoFinal: null,
+            diasPendentes: null,
+            prazoVencendo: false,
             resultadoAtendimento: null,
           }
         ],

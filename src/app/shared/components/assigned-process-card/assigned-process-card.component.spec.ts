@@ -7,6 +7,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { DistributionService } from '../../../core/services/distribution.service';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
 import { ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/enums.model';
 import { of, throwError } from 'rxjs';
@@ -16,8 +17,10 @@ function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): Atr
     id: '1',
     status: StatusAtribuicao.ATRIBUIDO,
     resultadoAtendimento: null,
-    statusPrazo: 'NORMAL',
-    isVencendoPrazo: false,
+    statusPrazo: 'PENDENTE',
+    prazoFinal: null,
+    diasPendentes: null,
+    prazoVencendo: false,
     processoNumero: '0000001-12.2023.8.26.0100',
     processoTribunal: 'TJSP',
     processoOrgaoJulgadorNome: '1ª Vara Cível',
@@ -40,11 +43,13 @@ describe('AssignedProcessCardComponent', () => {
   let processState: any;
   let notification: any;
   let router: any;
+  let distribution: any;
 
   beforeEach(async () => {
     processState = { alternarMonitoramento: vi.fn(), marcarComoLido: vi.fn().mockReturnValue(of(void 0)) };
-    notification = { success: vi.fn() };
+    notification = { success: vi.fn(), error: vi.fn() };
     router = { navigate: vi.fn() };
+    distribution = { definirPrazo: vi.fn().mockReturnValue(of(void 0)) };
     Object.defineProperty(navigator, 'clipboard', {
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
       writable: true,
@@ -60,6 +65,7 @@ describe('AssignedProcessCardComponent', () => {
         { provide: ProcessStateService, useValue: processState },
         { provide: NotificationService, useValue: notification },
         { provide: Router, useValue: router },
+        { provide: DistributionService, useValue: distribution },
       ],
     }).compileComponents();
   });
@@ -148,17 +154,108 @@ describe('AssignedProcessCardComponent', () => {
     });
   });
 
-  describe('statusPrazoColor', () => {
-    it('should return warn for URGENTE', () => {
+  describe('prazoDisplayText', () => {
+    it('should return empty when there is no prazo', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'URGENTE' }));
-      expect(fixture.componentInstance.statusPrazoColor).toBe('warn');
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: null }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('');
     });
 
-    it('should return primary for other status', () => {
+    it('should return Cumprido when status is CUMPRIDO', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'NORMAL' }));
-      expect(fixture.componentInstance.statusPrazoColor).toBe('primary');
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'CUMPRIDO', prazoFinal: '2026-09-10T00:00:00' }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Cumprido');
+    });
+
+    it('should return overdue for negative diasPendentes', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-01-01T00:00:00', diasPendentes: -3 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('3 dia(s) em atraso');
+    });
+
+    it('should return Vence hoje for zero', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-13T00:00:00', diasPendentes: 0 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence hoje');
+    });
+
+    it('should return Vence em 1 dia for one', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-14T00:00:00', diasPendentes: 1 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence em 1 dia');
+    });
+
+    it('should return Vence em X dias for two or more', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-20T00:00:00', diasPendentes: 7 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence em 7 dias');
+    });
+  });
+
+  describe('prazoDaysColor', () => {
+    it('should return success for CUMPRIDO', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'CUMPRIDO', prazoFinal: '2026-09-10T00:00:00' }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('success');
+    });
+
+    it('should return warn for zero or negative days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-13T00:00:00', diasPendentes: 0 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+    });
+
+    it('should return warn for one day', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-14T00:00:00', diasPendentes: 1 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+    });
+
+    it('should return accent for two days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-15T00:00:00', diasPendentes: 2 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('accent');
+    });
+
+    it('should return neutral for three or more days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-16T00:00:00', diasPendentes: 3 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('neutral');
+    });
+
+    it('should return neutral when diasPendentes is null', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-16T00:00:00', diasPendentes: null }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('neutral');
+    });
+  });
+
+  describe('onPrazoDateChange', () => {
+    it('should call definirPrazo and update the atribuicao on success', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      const atribuicao = createAtribuicao();
+      fixture.componentRef.setInput('atribuicao', atribuicao);
+
+      const date = new Date();
+      date.setHours(0, 0, 0, 0);
+      date.setDate(date.getDate() + 10);
+
+      fixture.componentInstance.onPrazoDateChange(date);
+
+      expect(distribution.definirPrazo).toHaveBeenCalledWith('1', expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
+      expect(atribuicao.prazoFinal).toBe(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`);
+      expect(atribuicao.diasPendentes).toBe(10);
+      expect(atribuicao.statusPrazo).toBe('PENDENTE');
+      expect(notification.success).toHaveBeenCalled();
+    });
+
+    it('should do nothing when value is null', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao());
+
+      fixture.componentInstance.onPrazoDateChange(null);
+
+      expect(distribution.definirPrazo).not.toHaveBeenCalled();
     });
   });
 

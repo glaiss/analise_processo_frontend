@@ -81,4 +81,7 @@ export class DistributionService {
   redirecionarProcessos(request: RedirecionarProcessoRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/redirecionar`, request);
   }
+  definirPrazo(id: string, prazoFinal: string | null): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/prazo`, { prazoFinal });
+  }
 }

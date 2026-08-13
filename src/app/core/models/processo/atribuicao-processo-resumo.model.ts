@@ -5,7 +5,9 @@ export interface AtribuicaoProcessoResumoDTO {
     status: StatusAtribuicao;
     resultadoAtendimento: ResultadoAtendimento | null;
     statusPrazo: string;
-    isVencendoPrazo: boolean;
+    prazoFinal: string | null;
+    diasPendentes: number | null;
+    prazoVencendo: boolean;
 
     processoNumero: string;
     processoTribunal: string;

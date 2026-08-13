@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Location } from '@angular/common';
 import { StatusAtribuicao } from '../../../core/models/processo/enums.model';
 import { ContatoService } from '../../../core/services/contato.service';
+import { DistributionService } from '../../../core/services/distribution.service';
 
 function mockProcesso(overrides: any = {}) {
   return {
@@ -31,6 +32,10 @@ function mockProcesso(overrides: any = {}) {
     usuarioResponsavel: 'João',
     equipeNome: 'Equipe A',
     monitorado: false,
+    atribuicaoId: 'attr-1',
+    prazoFinal: null,
+    diasPendentes: null,
+    statusPrazo: null,
     anotacoes: [],
     historicoContatos: [],
     movimentacoes: [],
@@ -48,6 +53,7 @@ describe('ProcessDetailsComponent', () => {
   let enriquecimentoService: any;
   let location: any;
   let contatoService: any;
+  let distributionService: any;
 
   function createComponent() {
     const fixture = TestBed.createComponent(ProcessDetailsComponent);
@@ -108,6 +114,10 @@ describe('ProcessDetailsComponent', () => {
       deletar: vi.fn().mockReturnValue(of(undefined)),
     };
 
+    distributionService = {
+      definirPrazo: vi.fn().mockReturnValue(of(undefined)),
+    };
+
     await TestBed.configureTestingModule({
       imports: [ProcessDetailsComponent, NoopAnimationsModule],
       providers: [
@@ -119,6 +129,7 @@ describe('ProcessDetailsComponent', () => {
         { provide: EnriquecimentoService, useValue: enriquecimentoService },
         { provide: Location, useValue: location },
         { provide: ContatoService, useValue: contatoService },
+        { provide: DistributionService, useValue: distributionService },
         { provide: PLATFORM_ID, useValue: 'browser' },
       ],
     }).compileComponents();
@@ -470,11 +481,12 @@ describe('ProcessDetailsComponent', () => {
     const fixture = createComponent();
     const compiled = fixture.nativeElement;
     const items = compiled.querySelectorAll('.summary-item');
-    expect(items.length).toBe(5);
+    expect(items.length).toBe(6);
     expect(items[0].textContent).toContain('TJSP');
     expect(items[1].textContent).toContain('Sistema X');
     expect(items[2].textContent).toContain('1');
-    expect(items[4].textContent).toContain('80');
+    expect(items[4].textContent).toContain('Sem prazo');
+    expect(items[5].textContent).toContain('80');
   });
 
   it('should render side card info items', () => {
@@ -974,5 +986,37 @@ describe('ProcessDetailsComponent', () => {
     const fixture = createComponent();
     fixture.componentInstance.onFileSelected({ target: { files: [] } });
     expect(documentoService.upload).not.toHaveBeenCalled();
+  });
+
+  it('should compute prazo display text and colors', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.processo.set(mockProcesso({
+      prazoFinal: '2026-08-15',
+      diasPendentes: 2,
+      statusPrazo: 'PENDENTE',
+    }));
+    expect(fixture.componentInstance.prazoDisplayText).toBe('Vence em 2 dias');
+    expect(fixture.componentInstance.prazoDaysColor).toBe('accent');
+    expect(fixture.componentInstance.prazoFinalLabel).toBe('15/08/2026');
+
+    fixture.componentInstance.processo.set(mockProcesso({ prazoFinal: '2026-08-13', diasPendentes: 0 }));
+    expect(fixture.componentInstance.prazoDisplayText).toBe('Vence hoje');
+    expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+
+    fixture.componentInstance.processo.set(mockProcesso({ prazoFinal: '2026-08-10', diasPendentes: -3 }));
+    expect(fixture.componentInstance.prazoDisplayText).toBe('3 dia(s) em atraso');
+    expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+
+    fixture.componentInstance.processo.set(mockProcesso({ prazoFinal: '2026-08-20', diasPendentes: 7, statusPrazo: 'CUMPRIDO' }));
+    expect(fixture.componentInstance.prazoDisplayText).toBe('Cumprido');
+    expect(fixture.componentInstance.prazoDaysColor).toBe('success');
+  });
+
+  it('should define prazo via DistributionService and refresh', () => {
+    const fixture = createComponent();
+    fixture.componentInstance.processo.set(mockProcesso({ atribuicaoId: 'attr-1' }));
+    fixture.componentInstance.onPrazoDateChange(new Date(2026, 7, 20));
+    expect(distributionService.definirPrazo).toHaveBeenCalledWith('attr-1', '2026-08-20');
+    expect(notification.success).toHaveBeenCalled();
   });
 });

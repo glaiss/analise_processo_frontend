@@ -104,6 +104,31 @@
           <span class="label">Valor da Causa</span>
           <span class="value">{{ p.valorCausa | currency:'BRL' }}</span>
         </div>
+        <div class="summary-item prazo-summary" [class.highlight]="!!p.prazoFinal">
+          <span class="label">Prazo</span>
+          <div class="prazo-value">
+            @if (p.prazoFinal) {
+              <span class="prazo-pill" [ngClass]="prazoDaysColor">{{ prazoDisplayText }}</span>
+              <span class="value prazo-date">{{ prazoFinalLabel }}</span>
+            } @else {
+              <span class="value">Sem prazo</span>
+            }
+            <div class="prazo-actions">
+              <mat-datepicker-toggle
+                matIconButton
+                matTooltip="Definir prazo"
+                [for]="prazoPicker"
+              />
+            </div>
+          </div>
+          <input
+            class="prazo-datepicker-anchor"
+            [matDatepicker]="prazoPicker"
+            [min]="today"
+            (dateChange)="onPrazoDateChange($event.value)"
+          />
+          <mat-datepicker #prazoPicker />
+        </div>
         <div class="summary-item highlight">
           <span class="label">Score Final</span>
           <span class="value" [ngClass]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>

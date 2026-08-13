@@ -17,6 +17,11 @@ export interface ProcessoDetalheDTO {
   usuarioResponsavel: string;
   equipeNome: string;
 
+  atribuicaoId: string;
+  prazoFinal: string | null;
+  diasPendentes: number | null;
+  statusPrazo: string | null;
+
   // Novos campos de contexto
   valorCausa: number;
   ultimaMovimentacao: string;
