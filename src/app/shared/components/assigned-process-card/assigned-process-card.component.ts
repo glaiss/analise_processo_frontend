@@ -106,6 +106,7 @@ export class AssignedProcessCardComponent {
     if (dias === null || dias === undefined) return '';
     if (dias < 0) return `${-dias} dia(s) em atraso`;
     if (dias === 0) return 'Vence hoje';
+    if (dias === 1) return 'Vence em 1 dia';
     return `Vence em ${dias} dias`;
   }
 
