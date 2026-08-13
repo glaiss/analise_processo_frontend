@@ -1,9 +1,9 @@
-name: Frontend Develop CI/CD
+name: Frontend Production CI/CD
 
 on:
   push:
     branches:
-      - release
+      - 'release'
   workflow_dispatch:
     inputs:
       version:
@@ -13,20 +13,22 @@ on:
         description: 'Somente re-disparar o deploy da versão atual'
         type: boolean
         default: false
-  repository_dispatch:
-    types: [deploy-frontend]
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   deploy:
-    name: Deploy to Netlify
     uses: ./.github/workflows/deploy.yml
     with:
-      environment: dev
+      environment: prod
       deploy_only: ${{ inputs.deploy_only || false }}
       version: ${{ inputs.version || '' }}
+      bump_version: ${{ github.event_name == 'workflow_dispatch' && inputs.version != '' }}
       netlify-site-id: ${{ vars.NETLIFY_SITE_ID }}
     secrets:
       GH_PAT: ${{ secrets.GH_PAT }}
