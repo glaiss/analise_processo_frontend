@@ -17,6 +17,25 @@ class StubComponent {}
 describe('HeaderComponent', () => {
   let authService: any;
   let notificationService: any;
+  const originalLocation = window.location;
+
+  function stubLocation() {
+    const assignSpy = vi.fn();
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      configurable: true,
+      value: { assign: assignSpy },
+    });
+    return assignSpy;
+  }
+
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      configurable: true,
+      value: originalLocation,
+    });
+  });
 
   beforeEach(async () => {
     authService = {
@@ -156,16 +175,15 @@ describe('HeaderComponent', () => {
     expect(navigateSpy).not.toHaveBeenCalled();
   });
 
-  it('should call stopImpersonating and navigate to login', () => {
+  it('should call stopImpersonating and navigate to dashboard', () => {
     authService.stopImpersonating.mockReturnValue(of(null));
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate');
+    const assignSpy = stubLocation();
 
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.componentInstance.stopImpersonating();
 
     expect(authService.stopImpersonating).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+    expect(assignSpy).toHaveBeenCalledWith('/dashboard');
   });
 
   it('should navigate to alterar-senha on alterarSenha', () => {
@@ -200,15 +218,14 @@ describe('HeaderComponent', () => {
     fixture.detectChanges();
 
     authService.impersonate = vi.fn(() => of(null));
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate');
+    const assignSpy = stubLocation();
 
     fixture.componentInstance.openImpersonateDialog();
 
     expect(dialogMock.open).toHaveBeenCalled();
     expect(authService.impersonate).toHaveBeenCalledWith('admin@test.com');
     expect(notificationService.success).toHaveBeenCalledWith('Você entrou como admin@test.com');
-    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+    expect(assignSpy).toHaveBeenCalledWith('/dashboard');
   });
 
   it('should show error notification when impersonate fails', () => {
@@ -249,28 +266,49 @@ describe('HeaderComponent', () => {
 
   it('should show success notification on stop impersonating', () => {
     authService.stopImpersonating.mockReturnValue(of(null));
-    const router = TestBed.inject(Router);
-    const navigateSpy = vi.spyOn(router, 'navigate');
+    const assignSpy = stubLocation();
 
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.componentInstance.stopImpersonating();
 
     expect(notificationService.success).toHaveBeenCalledWith('Voltou para seu usuário administrador');
     expect(authService.stopImpersonating).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/dashboard']);
+    expect(assignSpy).toHaveBeenCalledWith('/dashboard');
   });
 
-  it('should render impersonation banner when impersonating', () => {
+  it('should show stop-impersonation item and hide impersonate item in menu when impersonating', () => {
     authService.isImpersonating = vi.fn(() => true);
     authService.impersonatingAdmin = vi.fn(() => 'admin@original.com');
 
     const fixture = TestBed.createComponent(HeaderComponent);
     fixture.detectChanges();
 
-    const banner = fixture.nativeElement.querySelector('.impersonation-banner');
-    expect(banner).toBeTruthy();
-    expect(banner.textContent).toContain('joao');
-    expect(banner.textContent).toContain('admin@original.com');
+    const avatarBtn = fixture.nativeElement.querySelector('.user-avatar-btn');
+    avatarBtn.click();
+    fixture.detectChanges();
+
+    const items = Array.from(document.querySelectorAll('.mat-mdc-menu-item')).map(
+      el => el.textContent?.trim(),
+    );
+    expect(items.some(text => text?.includes('Voltar para meu usuário'))).toBeTruthy();
+    expect(items.some(text => text?.includes('Entrar como outro usuário'))).toBeFalsy();
+  });
+
+  it('should hide stop-impersonation item and show impersonate item in menu when not impersonating', () => {
+    authService.isImpersonating = vi.fn(() => false);
+
+    const fixture = TestBed.createComponent(HeaderComponent);
+    fixture.detectChanges();
+
+    const avatarBtn = fixture.nativeElement.querySelector('.user-avatar-btn');
+    avatarBtn.click();
+    fixture.detectChanges();
+
+    const items = Array.from(document.querySelectorAll('.mat-mdc-menu-item')).map(
+      el => el.textContent?.trim(),
+    );
+    expect(items.some(text => text?.includes('Entrar como outro usuário'))).toBeTruthy();
+    expect(items.some(text => text?.includes('Voltar para meu usuário'))).toBeFalsy();
   });
 
   it('should render toolbar with menu button and user avatar', () => {

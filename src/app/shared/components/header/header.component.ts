@@ -46,7 +46,10 @@ export class HeaderComponent {
 
   openImpersonateDialog() {
     const dialogRef = this.dialog.open(ImpersonateDialogComponent, {
-      width: '450px'
+      width: '450px',
+      maxWidth: '92vw',
+      maxHeight: '88vh',
+      enterAnimationDuration: '0ms'
     });
 
     dialogRef.afterClosed().subscribe(targetEmail => {
@@ -55,7 +58,7 @@ export class HeaderComponent {
       this.auth.impersonate(targetEmail).subscribe({
         next: () => {
           this.notification.success(`Você entrou como ${targetEmail}`);
-          void this.router.navigate(['/dashboard']);
+          window.location.assign('/dashboard');
         },
         error: () => {
           this.notification.error('Erro ao entrar como usuário. Verifique o e-mail.');
@@ -68,7 +71,7 @@ export class HeaderComponent {
     this.auth.stopImpersonating().subscribe({
       next: () => {
         this.notification.success('Voltou para seu usuário administrador');
-        void this.router.navigate(['/dashboard']);
+        window.location.assign('/dashboard');
       }
     });
   }

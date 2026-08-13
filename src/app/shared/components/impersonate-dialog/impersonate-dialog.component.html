@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Entrar como outro usuário</h2>
+<mat-dialog-content>
+  <p class="dialog-subtitle">Selecione ou digite o e-mail do usuário no qual deseja entrar:</p>
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Buscar usuário</mat-label>
+    <input
+      matInput
+      [(ngModel)]="searchTerm"
+      [matAutocomplete]="auto"
+      (input)="onSearchInput()"
+      placeholder="Digite nome ou e-mail..."
+      autocomplete="off"
+    >
+    @if (loading()) {
+      <mat-spinner matSuffix diameter="20"></mat-spinner>
+    } @else {
+      <mat-icon matSuffix>person_search</mat-icon>
+    }
+  </mat-form-field>
+
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
+    @for (user of filteredUsers(); track user.id) {
+      <mat-option [value]="user.username">
+        <div class="user-option">
+          <span class="user-option-name">{{ user.nome }}</span>
+          <span class="user-option-email">{{ user.username }}</span>
+        </div>
+      </mat-option>
+    }
+    @if (noResults() && !loading()) {
+      <mat-option disabled class="no-results">Nenhum usuário encontrado</mat-option>
+    }
+  </mat-autocomplete>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="dialogRef.close()">Cancelar</button>
+  <button mat-flat-button color="primary" [disabled]="!selectedEmail && !searchTerm" (click)="confirm()">
+    <mat-icon>visibility</mat-icon> Entrar
+  </button>
+</mat-dialog-actions>

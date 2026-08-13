@@ -1,16 +1,3 @@
-@if (auth.isImpersonating()) {
-  <div class="impersonation-banner">
-    <mat-icon>visibility</mat-icon>
-    <span>
-      Visualizando como <strong>{{ auth.currentUser()?.username }}</strong>
-      (admin: {{ auth.impersonatingAdmin() }})
-    </span>
-    <button type="button" mat-raised-button color="primary" (click)="stopImpersonating()">
-      <mat-icon>arrow_back</mat-icon> Voltar para meu usuário
-    </button>
-  </div>
-}
-
 <mat-toolbar color="primary" class="app-toolbar">
   <button type="button" mat-icon-button (click)="toggleSidenav.emit()">
     <mat-icon>menu</mat-icon>
@@ -54,6 +41,12 @@
     <button type="button" mat-menu-item (click)="openImpersonateDialog()">
       <mat-icon>visibility</mat-icon>
       <span>Entrar como outro usuário</span>
+    </button>
+  }
+  @if (auth.isImpersonating()) {
+    <button type="button" mat-menu-item (click)="stopImpersonating()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Voltar para meu usuário</span>
     </button>
   }
   <mat-divider />

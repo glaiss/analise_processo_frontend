@@ -30,6 +30,7 @@
           <app-assigned-process-card
             [atribuicao]="atribuicao"
             [selected]="selectedNumeros().has(atribuicao.processoNumero)"
+            [showUsuario]="mode === 'equipe'"
             (selectedChange)="toggleSelection(atribuicao.processoNumero, $event)"
           />
         </div>

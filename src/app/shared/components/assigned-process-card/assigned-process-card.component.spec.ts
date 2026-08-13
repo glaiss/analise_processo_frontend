@@ -31,6 +31,7 @@ function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): Atr
     equipeNome: 'Equipe A',
     usuarioNome: 'João Silva',
     monitorado: false,
+    isLido: false,
     ...overrides,
   };
 }
@@ -41,7 +42,7 @@ describe('AssignedProcessCardComponent', () => {
   let router: any;
 
   beforeEach(async () => {
-    processState = { alternarMonitoramento: vi.fn() };
+    processState = { alternarMonitoramento: vi.fn(), marcarComoLido: vi.fn().mockReturnValue(of(void 0)) };
     notification = { success: vi.fn() };
     router = { navigate: vi.fn() };
     Object.defineProperty(navigator, 'clipboard', {
@@ -67,6 +68,29 @@ describe('AssignedProcessCardComponent', () => {
     const fixture = TestBed.createComponent(AssignedProcessCardComponent);
     fixture.componentRef.setInput('atribuicao', createAtribuicao());
     expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  describe('showUsuario', () => {
+    it('should render responsible user when true', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ usuarioNome: 'Maria Souza' }));
+      fixture.componentRef.setInput('showUsuario', true);
+      fixture.detectChanges();
+
+      const text = fixture.nativeElement.textContent;
+      expect(text).toContain('Responsável');
+      expect(text).toContain('Maria Souza');
+    });
+
+    it('should not render responsible user when false', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ usuarioNome: 'Maria Souza' }));
+      fixture.componentRef.setInput('showUsuario', false);
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).not.toContain('Responsável');
+      expect(fixture.nativeElement.textContent).not.toContain('Maria Souza');
+    });
   });
 
   describe('toggleMonitoramento', () => {
@@ -143,7 +167,7 @@ describe('AssignedProcessCardComponent', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
       fixture.componentRef.setInput('atribuicao', createAtribuicao());
 
-      fixture.componentInstance.openDetails(new MouseEvent('click'));
+      void fixture.componentInstance.openDetails(new MouseEvent('click'));
       expect(router.navigate).toHaveBeenCalledWith(['/processos', '0000001-12.2023.8.26.0100']);
     });
   });

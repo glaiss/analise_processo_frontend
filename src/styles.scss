@@ -183,6 +183,26 @@ html.dark-mode {
   font-family: 'JetBrains Mono', monospace;
 }
 
+/* Remove a animação de deslizar/escalar dos diálogos */
+.mat-mdc-dialog-container {
+  transition: none !important;
+}
+
+.mat-mdc-dialog-surface {
+  transform: none !important;
+  transition: none !important;
+}
+
+.mat-mdc-dialog-inner-container {
+  opacity: 1 !important;
+  transition: none !important;
+}
+
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  max-width: 92vw;
+  max-height: 88vh;
+}
+
 .error-snackbar {
   background-color: #B00020 !important;
   color: white !important;

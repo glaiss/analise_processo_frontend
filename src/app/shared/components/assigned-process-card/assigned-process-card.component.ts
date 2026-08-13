@@ -40,6 +40,7 @@ export class AssignedProcessCardComponent {
 
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Input() selected: boolean = false;
+  @Input() showUsuario: boolean = false;
 
   readonly selectedChange = output<boolean>();
   readonly viewDetails = output<string>();

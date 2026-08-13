@@ -36,6 +36,12 @@
   </mat-card-header>
 
   <mat-card-content class="card-content">
+    @if (showUsuario) {
+      <div class="info-row">
+        <span class="label">Responsável</span>
+        <span class="value">{{ atribuicao.usuarioNome }}</span>
+      </div>
+    }
     <div class="info-row">
       <span class="label">Score Final</span>
       <mat-chip-listbox>

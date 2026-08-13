@@ -18,60 +18,8 @@ import { UserService, UsuarioResponse } from '../../../core/services/user.servic
     MatFormFieldModule, MatInputModule, MatIconModule,
     MatAutocompleteModule, MatProgressSpinnerModule
   ],
-  template: `
-    <h2 mat-dialog-title>Entrar como outro usuário</h2>
-    <mat-dialog-content>
-      <p>Selecione ou digite o e-mail do usuário no qual deseja entrar:</p>
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Buscar usuário</mat-label>
-        <input
-          matInput
-          [(ngModel)]="searchTerm"
-          [matAutocomplete]="auto"
-          (input)="onSearchInput()"
-          placeholder="Digite nome ou e-mail..."
-          autocomplete="off"
-        >
-        @if (loading()) {
-          <mat-spinner matSuffix diameter="20"></mat-spinner>
-        } @else {
-          <mat-icon matSuffix>person_search</mat-icon>
-        }
-      </mat-form-field>
-
-      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onUserSelected($event)">
-        @for (user of filteredUsers(); track user.id) {
-          <mat-option [value]="user.username">
-            <div class="user-option">
-              <span class="user-option-name">{{ user.nome }}</span>
-              <span class="user-option-email">{{ user.username }}</span>
-            </div>
-          </mat-option>
-        }
-        @if (noResults() && !loading()) {
-          <mat-option disabled class="no-results">Nenhum usuário encontrado</mat-option>
-        }
-      </mat-autocomplete>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="dialogRef.close()">Cancelar</button>
-      <button mat-flat-button color="primary" [disabled]="!selectedEmail && !searchTerm" (click)="confirm()">
-        <mat-icon>visibility</mat-icon> Entrar
-      </button>
-    </mat-dialog-actions>
-  `,
-  styles: `
-    .full-width { width: 100%; }
-    mat-dialog-content { min-width: 400px; }
-    .user-option {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.3;
-    }
-    .user-option-name { font-weight: 500; font-size: 0.9rem; }
-    .user-option-email { font-size: 0.75rem; color: var(--text-tertiary, #888); }
-    .no-results { font-size: 0.85rem; color: var(--text-tertiary, #888); padding: 12px 16px; }
-  `
+  templateUrl: './impersonate-dialog.component.html',
+  styleUrl: './impersonate-dialog.component.scss'
 })
 export class ImpersonateDialogComponent implements OnInit {
   dialogRef = inject(MatDialogRef<ImpersonateDialogComponent>);
