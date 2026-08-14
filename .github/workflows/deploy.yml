@@ -45,8 +45,7 @@ jobs:
       version: ${{ inputs.version }}
       deploy_only: ${{ inputs.deploy_only }}
 
-  build-test:
-    needs: version
+  lint:
     runs-on: ubuntu-latest
     env:
       API_URL: ${{ secrets.CLOUDFRONT_URL }}
@@ -72,6 +71,29 @@ jobs:
       - name: Lint Code
         run: npm run lint
 
+  test:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.CLOUDFRONT_URL }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Fetch version bump
+        run: git pull --ff-only origin "$GITHUB_REF_NAME" || true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
       - name: Run Tests
         run: npm test -- --watch=false
 
@@ -83,31 +105,33 @@ jobs:
           path: coverage/
           if-no-files-found: ignore
 
-      - name: Build Project
-        run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-dist
-          path: dist/analise_processo_frontend/browser
-          if-no-files-found: error
-
   deploy:
-    needs: [version, build-test]
+    needs: [version, lint, test]
     if: ${{ !cancelled() && !failure() }}
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.CLOUDFRONT_URL }}
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Fetch version bump
+        run: git pull --ff-only origin "$GITHUB_REF_NAME" || true
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: dist/analise_processo_frontend/browser
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build Project
+        run: npm run build
 
       - name: Deploy to Netlify (com retry)
         env:
@@ -143,18 +167,19 @@ jobs:
 
   notify:
     if: always()
-    needs: [version, build-test, deploy]
+    needs: [version, lint, test, deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Report pipeline result
         run: |
           echo "version: ${{ needs.version.result }}"
-          echo "build-test: ${{ needs.build-test.result }}"
+          echo "lint: ${{ needs.lint.result }}"
+          echo "test: ${{ needs.test.result }}"
           echo "deploy: ${{ needs.deploy.result }}"
           echo "deployed version: ${{ needs.version.outputs.new_version }}"
 
       - name: Marcar pipeline como falho
-        if: ${{ needs.deploy.result == 'failure' || needs.build-test.result == 'failure' }}
+        if: ${{ needs.deploy.result == 'failure' || needs.test.result == 'failure' || needs.lint.result == 'failure' }}
         run: |
           echo "::error::Pipeline falhou. Consulte os logs dos jobs acima."
           exit 1
