@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './dashboard.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
+import { TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 describe('DashboardComponent', () => {
   beforeEach(async () => {
@@ -71,6 +72,12 @@ describe('DashboardComponent', () => {
       fixture.componentInstance.selectedAssunto.set('tributário');
       expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
     });
+
+    it('should return true when selectedTipologia has items', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
+      expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+    });
   });
 
   describe('filterParams', () => {
@@ -109,6 +116,12 @@ describe('DashboardComponent', () => {
       expect(fixture.componentInstance.filterParams()?.assunto).toBe('tributário');
     });
 
+    it('should include processosTipologia when selectedTipologia has items', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
+      expect(fixture.componentInstance.filterParams()?.processosTipologia).toEqual([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
+    });
+
     it('should omit numero when searchQuery is empty string', () => {
       const fixture = TestBed.createComponent(DashboardComponent);
       fixture.componentInstance.selectedNiveis.set(['ALTO']);
@@ -127,12 +140,14 @@ describe('DashboardComponent', () => {
         selectedStatus: ['ATRIBUIDO'],
         selectedSituacao: ['ENRIQUECIDO'],
         selectedAssunto: 'tributário',
+        selectedTipologia: [TipologiaProcesso.JEC],
       });
       expect(fixture.componentInstance.searchQuery()).toBe('123');
       expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO']);
       expect(fixture.componentInstance.selectedStatus()).toEqual(['ATRIBUIDO']);
       expect(fixture.componentInstance.selectedSituacao()).toEqual(['ENRIQUECIDO']);
       expect(fixture.componentInstance.selectedAssunto()).toBe('tributário');
+      expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC]);
     });
   });
 
@@ -144,12 +159,14 @@ describe('DashboardComponent', () => {
       fixture.componentInstance.selectedStatus.set(['ATRIBUIDO']);
       fixture.componentInstance.selectedSituacao.set(['ENRIQUECIDO']);
       fixture.componentInstance.selectedAssunto.set('tributário');
+      fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
       fixture.componentInstance.onClearFilters();
       expect(fixture.componentInstance.searchQuery()).toBe('');
       expect(fixture.componentInstance.selectedNiveis()).toEqual([]);
       expect(fixture.componentInstance.selectedStatus()).toEqual([]);
       expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
       expect(fixture.componentInstance.selectedAssunto()).toBe('');
+      expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     });
   });
 });

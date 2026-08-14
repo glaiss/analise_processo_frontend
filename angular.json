@@ -86,7 +86,7 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
-            "runnerConfig": true,
+            "runnerConfig": "./vitest.config.ts",
             "coverage": true,
             "coverageThresholds": {
               "lines": 80

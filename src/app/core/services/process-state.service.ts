@@ -2,7 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
-import { StatusAtribuicao } from '../models/processo/enums.model';
+import { StatusAtribuicao, TipologiaProcesso } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
 import { catchError, of, tap } from 'rxjs';
 
@@ -26,6 +26,7 @@ export class ProcessStateService {
   private readonly filterSituacao = signal<string[]>([]);
   private readonly filterAssunto = signal<string>('');
   private readonly searchQuery = signal<string>('');
+  private readonly filterTipologia = signal<TipologiaProcesso[]>([]);
   private readonly groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
 
   // Computed
@@ -58,6 +59,9 @@ export class ProcessStateService {
     if (this.filterAssunto()) {
       params = params.set('assunto', this.filterAssunto());
     }
+    this.filterTipologia().forEach(tipologia => {
+      params = params.append('processosTipologia', tipologia);
+    });
     this.filterNivel().forEach(nivel => {
       params = params.append('niveis', nivel);
     });
@@ -125,12 +129,14 @@ export class ProcessStateService {
     status: StatusAtribuicao[];
     situacao: string[];
     assunto: string;
+    processosTipologia?: TipologiaProcesso[];
   }) {
     this.searchQuery.set(filters.searchQuery);
     this.filterNivel.set(filters.niveis);
     this.filterStatus.set(filters.status);
     this.filterSituacao.set(filters.situacao);
     this.filterAssunto.set(filters.assunto);
+    this.filterTipologia.set(filters.processosTipologia ?? []);
     this.loadProcesses();
   }
 

@@ -16,8 +16,11 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { DistributionService } from '../../../core/services/distribution.service';
 import { Documento, DocumentoService } from '../../../core/services/documento.service';
 import { EnriquecimentoService } from '../../../core/services/enriquecimento.service';
 import { ProcessoDetalheDTO } from '../../../core/models/processo/processo-detalhe.model';
@@ -39,7 +42,7 @@ import { ProcessoContatoDTO } from '../../../core/models/processo/processo-conta
 @Component({
   selector: 'app-process-details',
   standalone: true,
-    imports: [
+  imports: [
       CommonModule,
       FormsModule,
       MatCardModule,
@@ -56,6 +59,8 @@ import { ProcessoContatoDTO } from '../../../core/models/processo/processo-conta
       MatTooltipModule,
       MatSidenavModule,
       MatDialogModule,
+      MatDatepickerModule,
+      MatNativeDateModule,
 
       SafePipe,
       LoadingOverlayComponent,
@@ -77,6 +82,9 @@ export class ProcessDetailsComponent implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly enriquecimentoService = inject(EnriquecimentoService);
   private readonly contatoService = inject(ContatoService);
+  private readonly distributionService = inject(DistributionService);
+
+  readonly today = new Date();
 
   readonly isAdmin = computed(() => this.authService.hasRole('ADMIN'));
   private readonly authService = inject(AuthService);
@@ -538,6 +546,56 @@ export class ProcessDetailsComponent implements OnInit {
         this.notification.success('Número do processo copiado!', 2000);
       });
     }
+  }
+
+  get prazoDisplayText(): string {
+    const p = this.processo();
+    if (!p?.prazoFinal) return '';
+    if (p.statusPrazo === 'CUMPRIDO') return 'Cumprido';
+    const dias = p.diasPendentes;
+    if (dias === null || dias === undefined) return '';
+    if (dias < 0) return `${-dias} dia(s) em atraso`;
+    if (dias === 0) return 'Vence hoje';
+    if (dias === 1) return 'Vence em 1 dia';
+    return `Vence em ${dias} dias`;
+  }
+
+  get prazoDaysColor(): string {
+    const p = this.processo();
+    if (p?.statusPrazo === 'CUMPRIDO') return 'success';
+    const dias = p?.diasPendentes;
+    if (dias === null || dias === undefined) return 'neutral';
+    if (dias <= 1) return 'warn';
+    if (dias === 2) return 'accent';
+    return 'neutral';
+  }
+
+  get prazoFinalLabel(): string {
+    const p = this.processo();
+    if (!p?.prazoFinal) return '';
+    const datePart = p.prazoFinal.substring(0, 10).split('-');
+    if (datePart.length !== 3) return p.prazoFinal;
+    return `${datePart[2]}/${datePart[1]}/${datePart[0]}`;
+  }
+
+  onPrazoDateChange(value: Date | null) {
+    const p = this.processo();
+    if (!value || !p?.atribuicaoId) return;
+    this.distributionService.definirPrazo(p.atribuicaoId, this.toIso(value)).subscribe({
+      next: () => {
+        this.notification.success('Prazo definido com sucesso!');
+        this.refreshDetails();
+      },
+      error: () => this.notification.error('Erro ao definir prazo', 3000),
+    });
+  }
+
+  private toIso(date: Date): string {
+    if (!date) return '';
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   }
 
   fecharContrato() {

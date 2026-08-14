@@ -3,32 +3,53 @@ name: Frontend Develop CI/CD
 on:
   push:
     branches:
-      - develop
+      - 'develop'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Versão a implantar (default: próxima)'
+        description: 'Versão a definir (default: próxima)'
         required: false
-      deploy_only:
-        description: 'Somente re-disparar o deploy da versão atual'
-        type: boolean
-        default: false
-  repository_dispatch:
-    types: [deploy-frontend]
+
+concurrency:
+  group: frontend-develop-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  deploy:
-    name: Deploy to Netlify
-    uses: ./.github/workflows/deploy.yml
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ secrets.CLOUDFRONT_URL }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint Code
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm test -- --watch=false
+
+      - name: Build Project
+        run: npm run build
+
+  bump-version:
+    needs: build-and-test
+    uses: ./.github/workflows/bump-version.yml
+    permissions:
+      contents: write
     with:
-      environment: dev
-      deploy_only: ${{ inputs.deploy_only || false }}
+      bump: true
       version: ${{ inputs.version || '' }}
-      netlify-site-id: ${{ vars.NETLIFY_SITE_ID }}
-    secrets:
-      GH_PAT: ${{ secrets.GH_PAT }}
-      CLOUDFRONT_URL: ${{ secrets.CLOUDFRONT_URL }}
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      deploy_only: false
