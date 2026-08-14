@@ -32,6 +32,10 @@ function createProcessoDetalhe(overrides?: Partial<ProcessoDetalheDTO>): Process
     movimentacoes: [],
     anotacoes: [],
     monitorado: false,
+    atribuicaoId: 'attr-1',
+    prazoFinal: null,
+    diasPendentes: null,
+    statusPrazo: null,
     ...overrides,
   };
 }

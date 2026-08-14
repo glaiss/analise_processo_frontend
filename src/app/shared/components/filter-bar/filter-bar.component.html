@@ -52,12 +52,21 @@
             }
           </mat-select>
         </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Tipologia</mat-label>
+          <mat-select multiple panelClass="filter-select-panel" (selectionChange)="onTipologiaChange($event.value)">
+            @for (tip of tipologiaOptions; track tip) {
+              <mat-option [value]="tip">{{ tipologiaDisplay[tip] }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <div class="filters-extra-row">
         <mat-form-field appearance="outline" class="filter-field full-width">
           <mat-label>Assunto</mat-label>
-          <input matInput placeholder="Ex: tribut&aacute;rio, c&iacute;vel..." [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()">
+          <input matInput placeholder="Ex: tribut&aacute;rio, c&iacute;vel..." [ngModel]="selectedAssunto()" (ngModelChange)="onAssuntoInput($event)" (keyup.enter)="onAssuntoSearch()">
           <button type="button" mat-icon-button matSuffix matTooltip="Filtrar" (click)="onAssuntoSearch()">
             <mat-icon>search</mat-icon>
           </button>

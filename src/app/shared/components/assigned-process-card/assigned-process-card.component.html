@@ -17,7 +17,7 @@
             (click)="copyProcessNumber($event)"
             >{{ atribuicao.processoNumero }}</span
           >
-            <mat-icon
+          <mat-icon
             matTooltip="Alternar Monitoramento"
             [class.monitored]="atribuicao.monitorado"
             (click)="toggleMonitoramento($event)"
@@ -26,7 +26,6 @@
           </mat-icon>
         </div>
         <div>
-
           @if (!atribuicao.isLido) {
             <mat-icon class="status-dot"> circle </mat-icon>
           }
@@ -54,20 +53,18 @@
       <span class="label">Tipologia</span>
       <span class="value">{{ atribuicao.processoTipologia }}</span>
     </div>
-    <div class="info-row">
+    <div class="info-row prazo-row">
       <span class="label">Prazo</span>
-      @if (atribuicao.statusPrazo) {
-        <mat-chip-listbox>
-          <mat-chip selected [color]="statusPrazoColor">
-            {{ atribuicao.statusPrazo }}
-            @if (atribuicao.isVencendoPrazo) {
-              <mat-icon matChipTrailingIcon>warning</mat-icon>
-            }
-          </mat-chip>
-        </mat-chip-listbox>
-      } @else {
-        <span class="value">Sem prazo</span>
-      }
+      <div class="prazo-group">
+        @if (atribuicao.prazoFinal) {
+          <div class="prazo-info">
+            <span class="prazo-pill" [ngClass]="prazoDaysColor">{{ prazoDisplayText }}</span>
+            <span class="value prazo-date">{{ prazoFinalLabel }}</span>
+          </div>
+        } @else {
+          <span class="value">Sem prazo</span>
+        }
+      </div>
     </div>
   </mat-card-content>
 

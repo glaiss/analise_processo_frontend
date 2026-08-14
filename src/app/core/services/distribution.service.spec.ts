@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { DistributionService } from './distribution.service';
-import { StatusAtribuicao } from '../models/processo/enums.model';
+import { StatusAtribuicao, TipologiaProcesso } from '../models/processo/enums.model';
 import { environment } from '../../../environments/environment';
 const API_URL = `${environment.apiUrl}/distribuicao`;
 describe('DistributionService', () => {
@@ -66,6 +66,14 @@ describe('DistributionService', () => {
       expect(req.request.params.getAll('situacao')).toEqual(['EM_ENRIQUECIMENTO', 'ENRIQUECIDO']);
       req.flush({ content: [] });
     });
+    it('should append processosTipologia filter', () => {
+      service.getMeusProcessos(0, 20, {
+        processosTipologia: [TipologiaProcesso.JEC, TipologiaProcesso.PENAL],
+      }).subscribe();
+      const req = httpMock.expectOne((r) => r.url === `${API_URL}/meus-processos`);
+      expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC', 'PENAL']);
+      req.flush({ content: [] });
+    });
     it('should append all filters together', () => {
       service.getMeusProcessos(0, 20, {
         numero: '123',
@@ -74,6 +82,7 @@ describe('DistributionService', () => {
         tribunal: 'TJSP',
         assunto: 'Civil',
         situacao: ['ENRIQUECIDO'],
+        processosTipologia: [TipologiaProcesso.JEC],
       }).subscribe();
       const req = httpMock.expectOne((r) => r.url === `${API_URL}/meus-processos`);
       expect(req.request.params.get('numero')).toBe('123');
@@ -82,6 +91,7 @@ describe('DistributionService', () => {
       expect(req.request.params.get('tribunal')).toBe('TJSP');
       expect(req.request.params.get('assunto')).toBe('Civil');
       expect(req.request.params.getAll('situacao')).toEqual(['ENRIQUECIDO']);
+      expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC']);
       req.flush({ content: [] });
     });
   });

@@ -21,8 +21,13 @@ describe('ResultadoAtendimento', () => {
 
 describe('TipologiaProcesso', () => {
   it('should have all expected values', () => {
-    expect(TipologiaProcesso.JUDICIAL).toBe('JUDICIAL');
-    expect(TipologiaProcesso.ADMINISTRATIVO).toBe('ADMINISTRATIVO');
+    expect(TipologiaProcesso.TRABALHISTA_BASE).toBe('TRABALHISTA_BASE');
+    expect(TipologiaProcesso.TRABALHISTA_RECLAMANTE).toBe('TRABALHISTA_RECLAMANTE');
+    expect(TipologiaProcesso.TRABALHISTA_RECLAMADA).toBe('TRABALHISTA_RECLAMADA');
+    expect(TipologiaProcesso.JEC).toBe('JEC');
+    expect(TipologiaProcesso.PENAL).toBe('PENAL');
+    expect(TipologiaProcesso.JEFAZ).toBe('JEFAZ');
+    expect(TipologiaProcesso.GENERICO).toBe('GENERICO');
   });
 });
 

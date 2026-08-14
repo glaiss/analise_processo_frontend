@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FilterBarComponent } from './filter-bar.component';
+import { TipologiaProcesso } from '../../../core/models/processo/enums.model';
 
 describe('FilterBarComponent', () => {
   beforeEach(async () => {
@@ -21,6 +22,7 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);
   });
 
@@ -38,6 +40,7 @@ describe('FilterBarComponent', () => {
     fixture.componentInstance.selectedStatus.set(['ATRIBUIDO']);
     fixture.componentInstance.selectedSituacao.set(['ENRIQUECIDO']);
     fixture.componentInstance.selectedAssunto.set('tributário');
+    fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
     fixture.componentInstance.showAdvanced.set(true);
 
     const emitSpy = vi.spyOn(fixture.componentInstance.clearFilters, 'emit');
@@ -48,6 +51,7 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);
     expect(emitSpy).toHaveBeenCalled();
   });
@@ -70,11 +74,75 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO', 'INTERMEDIARIO_BAIXO']);
   });
 
+  it('should update selectedTipologia on onTipologiaChange', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.onTipologiaChange([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
+  });
+
   it('should emit search on onAssuntoSearch', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
     fixture.componentInstance.onAssuntoSearch();
     expect(emitSpy).toHaveBeenCalled();
+  });
+
+  it('should debounce assunto search until 3s after typing stops', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('trib');
+      expect(fixture.componentInstance.selectedAssunto()).toBe('trib');
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(2000);
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1000);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+      expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedAssunto: 'trib' }));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should reset debounce timer when user keeps typing', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('tri');
+      vi.advanceTimersByTime(2500);
+      fixture.componentInstance.onAssuntoInput('trib');
+      vi.advanceTimersByTime(2500);
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(500);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+      expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedAssunto: 'trib' }));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should emit immediately on onAssuntoSearch and cancel pending debounce', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('trib');
+      fixture.componentInstance.onAssuntoSearch();
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(3000);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('should toggle showAdvanced', () => {
@@ -94,6 +162,11 @@ describe('FilterBarComponent', () => {
   it('should expose situacao enum values', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     expect(fixture.componentInstance.situacaoOptions.length).toBeGreaterThan(0);
+  });
+
+  it('should expose tipologia enum values', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    expect(fixture.componentInstance.tipologiaOptions).toEqual(['TRABALHISTA_BASE', 'TRABALHISTA_RECLAMANTE', 'TRABALHISTA_RECLAMADA', 'JEC', 'PENAL', 'JEFAZ', 'GENERICO']);
   });
 
   it('should expose all score types', () => {

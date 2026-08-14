@@ -16,15 +16,17 @@ function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): Atr
     id: '1',
     status: StatusAtribuicao.ATRIBUIDO,
     resultadoAtendimento: null,
-    statusPrazo: 'NORMAL',
-    isVencendoPrazo: false,
+    statusPrazo: 'PENDENTE',
+    prazoFinal: null,
+    diasPendentes: null,
+    prazoVencendo: false,
     processoNumero: '0000001-12.2023.8.26.0100',
     processoTribunal: 'TJSP',
     processoOrgaoJulgadorNome: '1ª Vara Cível',
     processoDataAjuizamento: '2023-01-15T10:00:00',
     processoValorCausa: 50000,
     processoSituacao: ProcessoSituacao.ENRIQUECIDO,
-    processoTipologia: TipologiaProcesso.JUDICIAL,
+    processoTipologia: TipologiaProcesso.JEC,
     processoScoreFinal: 85,
     processoEnriquecimentoStatus: 'CONCLUIDO',
     processoEnriquecimentoErro: '',
@@ -43,7 +45,7 @@ describe('AssignedProcessCardComponent', () => {
 
   beforeEach(async () => {
     processState = { alternarMonitoramento: vi.fn(), marcarComoLido: vi.fn().mockReturnValue(of(void 0)) };
-    notification = { success: vi.fn() };
+    notification = { success: vi.fn(), error: vi.fn() };
     router = { navigate: vi.fn() };
     Object.defineProperty(navigator, 'clipboard', {
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
@@ -148,17 +150,79 @@ describe('AssignedProcessCardComponent', () => {
     });
   });
 
-  describe('statusPrazoColor', () => {
-    it('should return warn for URGENTE', () => {
+  describe('prazoDisplayText', () => {
+    it('should return empty when there is no prazo', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'URGENTE' }));
-      expect(fixture.componentInstance.statusPrazoColor).toBe('warn');
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: null }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('');
     });
 
-    it('should return primary for other status', () => {
+    it('should return Cumprido when status is CUMPRIDO', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'NORMAL' }));
-      expect(fixture.componentInstance.statusPrazoColor).toBe('primary');
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'CUMPRIDO', prazoFinal: '2026-09-10T00:00:00' }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Cumprido');
+    });
+
+    it('should return overdue for negative diasPendentes', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-01-01T00:00:00', diasPendentes: -3 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('3 dia(s) em atraso');
+    });
+
+    it('should return Vence hoje for zero', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-13T00:00:00', diasPendentes: 0 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence hoje');
+    });
+
+    it('should return Vence em 1 dia for one', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-14T00:00:00', diasPendentes: 1 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence em 1 dia');
+    });
+
+    it('should return Vence em X dias for two or more', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-20T00:00:00', diasPendentes: 7 }));
+      expect(fixture.componentInstance.prazoDisplayText).toBe('Vence em 7 dias');
+    });
+  });
+
+  describe('prazoDaysColor', () => {
+    it('should return success for CUMPRIDO', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ statusPrazo: 'CUMPRIDO', prazoFinal: '2026-09-10T00:00:00' }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('success');
+    });
+
+    it('should return warn for zero or negative days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-13T00:00:00', diasPendentes: 0 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+    });
+
+    it('should return warn for one day', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-14T00:00:00', diasPendentes: 1 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('warn');
+    });
+
+    it('should return accent for two days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-15T00:00:00', diasPendentes: 2 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('accent');
+    });
+
+    it('should return neutral for three or more days', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-16T00:00:00', diasPendentes: 3 }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('neutral');
+    });
+
+    it('should return neutral when diasPendentes is null', () => {
+      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
+      fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-16T00:00:00', diasPendentes: null }));
+      expect(fixture.componentInstance.prazoDaysColor).toBe('neutral');
     });
   });
 
