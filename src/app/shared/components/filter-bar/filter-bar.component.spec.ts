@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FilterBarComponent } from './filter-bar.component';
+import { TipologiaProcesso } from '../../../core/models/processo/enums.model';
 
 describe('FilterBarComponent', () => {
   beforeEach(async () => {
@@ -21,6 +22,7 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);
   });
 
@@ -38,6 +40,7 @@ describe('FilterBarComponent', () => {
     fixture.componentInstance.selectedStatus.set(['ATRIBUIDO']);
     fixture.componentInstance.selectedSituacao.set(['ENRIQUECIDO']);
     fixture.componentInstance.selectedAssunto.set('tributário');
+    fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
     fixture.componentInstance.showAdvanced.set(true);
 
     const emitSpy = vi.spyOn(fixture.componentInstance.clearFilters, 'emit');
@@ -48,6 +51,7 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);
     expect(emitSpy).toHaveBeenCalled();
   });
@@ -68,6 +72,12 @@ describe('FilterBarComponent', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     fixture.componentInstance.onScoreChange(['ALTO', 'INTERMEDIARIO_BAIXO']);
     expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO', 'INTERMEDIARIO_BAIXO']);
+  });
+
+  it('should update selectedTipologia on onTipologiaChange', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.onTipologiaChange([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC, TipologiaProcesso.PENAL]);
   });
 
   it('should emit search on onAssuntoSearch', () => {
@@ -94,6 +104,11 @@ describe('FilterBarComponent', () => {
   it('should expose situacao enum values', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     expect(fixture.componentInstance.situacaoOptions.length).toBeGreaterThan(0);
+  });
+
+  it('should expose tipologia enum values', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    expect(fixture.componentInstance.tipologiaOptions).toEqual(['TRABALHISTA_BASE', 'TRABALHISTA_RECLAMANTE', 'TRABALHISTA_RECLAMADA', 'JEC', 'PENAL', 'JEFAZ', 'GENERICO']);
   });
 
   it('should expose all score types', () => {

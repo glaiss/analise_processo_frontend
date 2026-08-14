@@ -7,7 +7,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATUS_DISPLAY, StatusAtribuicao } from '../../../core/models/processo/enums.model';
+import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATUS_DISPLAY, StatusAtribuicao, TIPOLOGIA_DISPLAY, TipologiaProcesso } from '../../../core/models/processo/enums.model';
 
 @Component({
   selector: 'app-filter-bar',
@@ -31,13 +31,16 @@ export class FilterBarComponent {
   readonly selectedStatus = model<(string)[]>([]);
   readonly selectedSituacao = model<string[]>([]);
   readonly selectedAssunto = model<string>('');
+  readonly selectedTipologia = model<TipologiaProcesso[]>([]);
 
   readonly showAdvanced = model(false);
 
   readonly statusOptions = Object.values(StatusAtribuicao);
   readonly situacaoOptions = Object.values(ProcessoSituacao);
+  readonly tipologiaOptions = Object.values(TipologiaProcesso);
   readonly situacaoDisplay = SITUACAO_DISPLAY;
   readonly statusDisplay = STATUS_DISPLAY;
+  readonly tipologiaDisplay = TIPOLOGIA_DISPLAY;
   readonly scoreOptions = [...SCORE_OPTIONS];
   readonly scoreDisplay = SCORE_DISPLAY;
 
@@ -49,6 +52,7 @@ export class FilterBarComponent {
     selectedStatus: string[];
     selectedSituacao: string[];
     selectedAssunto: string;
+    selectedTipologia: TipologiaProcesso[];
   }>();
   readonly clearFilters = output<void>();
 
@@ -59,6 +63,7 @@ export class FilterBarComponent {
       selectedStatus: this.selectedStatus(),
       selectedSituacao: this.selectedSituacao(),
       selectedAssunto: this.selectedAssunto(),
+      selectedTipologia: this.selectedTipologia(),
     });
   }
 
@@ -72,6 +77,7 @@ export class FilterBarComponent {
     this.selectedStatus.set([]);
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
+    this.selectedTipologia.set([]);
     this.showAdvanced.set(false);
     this.clearFilters.emit();
   }
@@ -83,6 +89,11 @@ export class FilterBarComponent {
 
   onSituacaoChange(values: string[]) {
     this.selectedSituacao.set(values);
+    this.emitSearch();
+  }
+
+  onTipologiaChange(values: TipologiaProcesso[]) {
+    this.selectedTipologia.set(values);
     this.emitSearch();
   }
 

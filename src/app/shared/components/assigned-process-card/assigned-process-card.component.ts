@@ -47,7 +47,6 @@ export class AssignedProcessCardComponent {
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Input() selected: boolean = false;
   @Input() showUsuario: boolean = false;
-  @Input() podeEditarPrazo: boolean = false;
 
   readonly today = new Date();
 

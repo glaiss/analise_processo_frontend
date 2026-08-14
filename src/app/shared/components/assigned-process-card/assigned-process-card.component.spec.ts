@@ -27,7 +27,7 @@ function createAtribuicao(overrides?: Partial<AtribuicaoProcessoResumoDTO>): Atr
     processoDataAjuizamento: '2023-01-15T10:00:00',
     processoValorCausa: 50000,
     processoSituacao: ProcessoSituacao.ENRIQUECIDO,
-    processoTipologia: TipologiaProcesso.JUDICIAL,
+    processoTipologia: TipologiaProcesso.JEC,
     processoScoreFinal: 85,
     processoEnriquecimentoStatus: 'CONCLUIDO',
     processoEnriquecimentoErro: '',

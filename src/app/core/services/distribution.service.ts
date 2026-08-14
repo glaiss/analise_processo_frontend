@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../models/processo/pagination.model';
 import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-processo-resumo.model';
-import { StatusAtribuicao } from '../models/processo/enums.model';
+import { StatusAtribuicao, TipologiaProcesso } from '../models/processo/enums.model';
 export interface ProcessoFilterParams {
   numero?: string;
   niveis?: string[];
@@ -12,6 +12,7 @@ export interface ProcessoFilterParams {
   tribunal?: string;
   assunto?: string;
   situacao?: string[];
+  processosTipologia?: TipologiaProcesso[];
 }
 export interface RedirecionarProcessoRequest {
   tipo: 'PESSOA' | 'EQUIPE';
@@ -68,6 +69,11 @@ export class DistributionService {
     if (filter.situacao) {
       filter.situacao.forEach((s) => {
         result = result.append('situacao', s);
+      });
+    }
+    if (filter.processosTipologia) {
+      filter.processosTipologia.forEach((t) => {
+        result = result.append('processosTipologia', t);
       });
     }
     return result;

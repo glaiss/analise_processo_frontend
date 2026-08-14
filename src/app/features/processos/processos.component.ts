@@ -20,6 +20,7 @@ import { ContentLoaderComponent } from '../../shared/components/content-loader/c
 import { SituacaoDisplayPipe } from '../../shared/pipes/situacao-display.pipe';
 import { StatusDisplayPipe } from '../../shared/pipes/status-display.pipe';
 import { ScoreDisplayPipe } from '../../shared/pipes/score-display.pipe';
+import { TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 @Component({
   selector: 'app-processos',
@@ -59,12 +60,14 @@ export class ProcessosComponent implements OnInit {
   readonly selectedStatus = signal<string[]>([]);
   readonly selectedSituacao = signal<string[]>([]);
   readonly selectedAssunto = signal<string>('');
+  readonly selectedTipologia = signal<TipologiaProcesso[]>([]);
 
   readonly hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
     this.selectedStatus().length > 0 ||
     this.selectedSituacao().length > 0 ||
     this.selectedAssunto().length > 0 ||
+    this.selectedTipologia().length > 0 ||
     this.searchQuery().length > 0
   );
 
@@ -95,18 +98,21 @@ export class ProcessosComponent implements OnInit {
     selectedStatus: string[];
     selectedSituacao: string[];
     selectedAssunto: string;
+    selectedTipologia: TipologiaProcesso[];
   }) {
     this.searchQuery.set(filters.searchQuery);
     this.selectedNiveis.set(filters.selectedNiveis);
     this.selectedStatus.set(filters.selectedStatus);
     this.selectedSituacao.set(filters.selectedSituacao);
     this.selectedAssunto.set(filters.selectedAssunto);
+    this.selectedTipologia.set(filters.selectedTipologia);
     this.processState.setAllFilters({
       searchQuery: filters.searchQuery,
       niveis: filters.selectedNiveis,
       status: filters.selectedStatus as any,
       situacao: filters.selectedSituacao,
       assunto: filters.selectedAssunto,
+      processosTipologia: filters.selectedTipologia,
     });
   }
 
@@ -116,12 +122,14 @@ export class ProcessosComponent implements OnInit {
     this.selectedStatus.set([]);
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
+    this.selectedTipologia.set([]);
     this.processState.setAllFilters({
       searchQuery: '',
       niveis: [],
       status: [],
       situacao: [],
       assunto: '',
+      processosTipologia: [],
     });
   }
 

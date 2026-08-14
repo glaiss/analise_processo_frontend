@@ -189,6 +189,12 @@
         align-items: flex-end;
         gap: 4px;
         min-width: 0;
+
+        .prazo-date {
+          white-space: nowrap;
+          overflow: visible;
+          text-overflow: clip;
+        }
       }
     }
   }

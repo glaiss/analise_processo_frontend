@@ -66,7 +66,7 @@ describe('AssignedProcessesListComponent', () => {
             processoDataAjuizamento: '2023-01-01',
             processoValorCausa: 1000,
             processoSituacao: 'ENRIQUECIDO',
-            processoTipologia: 'JUDICIAL',
+            processoTipologia: 'JEC',
             processoScoreFinal: 80,
             processoEnriquecimentoStatus: 'CONCLUIDO',
             processoEnriquecimentoErro: '',

@@ -55,6 +55,16 @@
   --risk-border-medium-high: #fed7aa;
   --risk-border-medium: #fde68a;
 
+  --prazo-warn-bg: #B00020;
+  --prazo-warn-text: #ffffff;
+  --prazo-accent-bg: #C5A059;
+  --prazo-accent-text: #ffffff;
+  --prazo-success-bg: #2e7d32;
+  --prazo-success-text: #ffffff;
+  --prazo-neutral-bg: #e2e8f0;
+  --prazo-neutral-text: #1e293b;
+  --prazo-neutral-border: #e2e8f0;
+
   --table-min-width: 700px;
 }
 
@@ -119,6 +129,16 @@ html {
     --chip-text-intermediario: #fdba74;
     --chip-bg-medio: #451a03;
     --chip-text-medio: #fde68a;
+
+    --prazo-warn-bg: #7f1d1d;
+    --prazo-warn-text: #fecaca;
+    --prazo-accent-bg: #78350f;
+    --prazo-accent-text: #fde68a;
+    --prazo-success-bg: #065f46;
+    --prazo-success-text: #a7f3d0;
+    --prazo-neutral-bg: #334155;
+    --prazo-neutral-text: #f1f5f9;
+    --prazo-neutral-border: #475569;
   }
 }
 
@@ -233,17 +253,17 @@ html.dark-mode {
   flex-shrink: 0;
 
   &.warn {
-    background-color: var(--urgency-red);
-    color: white;
+    background-color: var(--prazo-warn-bg);
+    color: var(--prazo-warn-text);
     animation: prazo-pulse 1.6s ease-in-out infinite;
   }
 
-  &.accent { background-color: var(--accent-gold); color: white; }
-  &.success { background-color: var(--green-500); color: white; }
+  &.accent { background-color: var(--prazo-accent-bg); color: var(--prazo-accent-text); }
+  &.success { background-color: var(--prazo-success-bg); color: var(--prazo-success-text); }
   &.neutral {
-    background-color: var(--border-strong);
-    color: var(--text-primary);
-    border: 1px solid var(--border-strong);
+    background-color: var(--prazo-neutral-bg);
+    color: var(--prazo-neutral-text);
+    border: 1px solid var(--prazo-neutral-border);
   }
 }
 
@@ -251,6 +271,10 @@ html.dark-mode {
   display: flex;
   align-items: center;
   flex-shrink: 0;
+
+  .mat-datepicker-toggle .mat-mdc-icon-button {
+    color: var(--text-secondary);
+  }
 }
 
 .prazo-datepicker-anchor {

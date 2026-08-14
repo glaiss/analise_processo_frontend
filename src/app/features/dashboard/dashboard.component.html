@@ -13,7 +13,8 @@
     [(selectedStatus)]="selectedStatus"
     [(selectedSituacao)]="selectedSituacao"
     [(selectedAssunto)]="selectedAssunto"
-    (filterChange)="onFilterChange({ searchQuery: searchQuery(), selectedNiveis: selectedNiveis(), selectedStatus: selectedStatus(), selectedSituacao: selectedSituacao(), selectedAssunto: selectedAssunto() })"
+    [(selectedTipologia)]="selectedTipologia"
+    (filterChange)="onFilterChange({ searchQuery: searchQuery(), selectedNiveis: selectedNiveis(), selectedStatus: selectedStatus(), selectedSituacao: selectedSituacao(), selectedAssunto: selectedAssunto(), selectedTipologia: selectedTipologia() })"
     (clearFilters)="onClearFilters()"
   />
 

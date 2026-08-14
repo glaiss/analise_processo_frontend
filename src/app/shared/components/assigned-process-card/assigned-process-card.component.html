@@ -64,18 +64,16 @@
         } @else {
           <span class="value">Sem prazo</span>
         }
-        @if (podeEditarPrazo) {
-          <div class="prazo-actions">
-            <mat-datepicker-toggle matIconButton matTooltip="Definir prazo" [for]="prazoPicker" />
-            <input
-              class="prazo-datepicker-anchor"
-              [matDatepicker]="prazoPicker"
-              [min]="today"
-              (dateChange)="onPrazoDateChange($event.value)"
-            />
-            <mat-datepicker #prazoPicker />
-          </div>
-        }
+        <div class="prazo-actions">
+          <mat-datepicker-toggle matIconButton matTooltip="Definir prazo" [for]="prazoPicker" />
+          <input
+            class="prazo-datepicker-anchor"
+            [matDatepicker]="prazoPicker"
+            [min]="today"
+            (dateChange)="onPrazoDateChange($event.value)"
+          />
+          <mat-datepicker #prazoPicker />
+        </div>
       </div>
     </div>
   </mat-card-content>
