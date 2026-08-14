@@ -1,4 +1,4 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model, OnDestroy, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +25,7 @@ import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATU
   templateUrl: './filter-bar.component.html',
   styleUrl: './filter-bar.component.scss',
 })
-export class FilterBarComponent {
+export class FilterBarComponent implements OnDestroy {
   readonly searchQuery = model<string>('');
   readonly selectedNiveis = model<string[]>([]);
   readonly selectedStatus = model<(string)[]>([]);
@@ -67,11 +67,18 @@ export class FilterBarComponent {
     });
   }
 
+  private readonly assuntoDebounceMs = 3000;
+  private assuntoDebounceTimer: ReturnType<typeof setTimeout> | undefined;
+
   onSearch() {
     this.emitSearch();
   }
 
   onClear() {
+    if (this.assuntoDebounceTimer) {
+      clearTimeout(this.assuntoDebounceTimer);
+      this.assuntoDebounceTimer = undefined;
+    }
     this.searchQuery.set('');
     this.selectedNiveis.set([]);
     this.selectedStatus.set([]);
@@ -102,8 +109,29 @@ export class FilterBarComponent {
     this.emitSearch();
   }
 
+  onAssuntoInput(value: string) {
+    this.selectedAssunto.set(value);
+    if (this.assuntoDebounceTimer) {
+      clearTimeout(this.assuntoDebounceTimer);
+    }
+    this.assuntoDebounceTimer = setTimeout(() => {
+      this.assuntoDebounceTimer = undefined;
+      this.emitSearch();
+    }, this.assuntoDebounceMs);
+  }
+
   onAssuntoSearch() {
+    if (this.assuntoDebounceTimer) {
+      clearTimeout(this.assuntoDebounceTimer);
+      this.assuntoDebounceTimer = undefined;
+    }
     this.emitSearch();
+  }
+
+  ngOnDestroy() {
+    if (this.assuntoDebounceTimer) {
+      clearTimeout(this.assuntoDebounceTimer);
+    }
   }
 
   toggleAdvanced() {

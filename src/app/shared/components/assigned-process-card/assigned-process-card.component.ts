@@ -6,19 +6,15 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import {
   AtribuicaoProcessoResumoDTO,
   ProcessoSituacao,
   StatusAtribuicao,
-  TipologiaProcesso,
 } from '../../../core/models/processo/index';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { DistributionService } from '../../../core/services/distribution.service';
 
 @Component({
   selector: 'app-assigned-process-card',
@@ -32,8 +28,6 @@ import { DistributionService } from '../../../core/services/distribution.service
     MatButtonModule,
     MatTooltipModule,
     MatDividerModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
   ],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss',
@@ -42,13 +36,10 @@ export class AssignedProcessCardComponent {
   private readonly router = inject(Router);
   private readonly processState = inject(ProcessStateService);
   private readonly notification = inject(NotificationService);
-  private readonly distributionService = inject(DistributionService);
 
   @Input({ required: true }) atribuicao!: AtribuicaoProcessoResumoDTO;
   @Input() selected: boolean = false;
   @Input() showUsuario: boolean = false;
-
-  readonly today = new Date();
 
   readonly selectedChange = output<boolean>();
   readonly viewDetails = output<string>();
@@ -123,52 +114,6 @@ export class AssignedProcessCardComponent {
     const datePart = this.atribuicao.prazoFinal.substring(0, 10).split('-');
     if (datePart.length !== 3) return this.atribuicao.prazoFinal;
     return `${datePart[2]}/${datePart[1]}/${datePart[0]}`;
-  }
-
-  onPrazoDateChange(value: Date | null) {
-    if (!value) return;
-    const iso = this.toIso(value);
-    this.distributionService.definirPrazo(this.atribuicao.id, iso).subscribe({
-      next: () => {
-        this.atribuicao.prazoFinal = `${iso}T00:00:00`;
-        this.atribuicao.diasPendentes = this.diffDays(value);
-        this.atribuicao.statusPrazo = 'PENDENTE';
-        this.notification.success('Prazo definido com sucesso!');
-      },
-      error: () => {
-        this.notification.error('Erro ao definir prazo', 3000);
-      },
-    });
-  }
-
-  clearPrazo(event: Event) {
-    event.stopPropagation();
-    this.distributionService.definirPrazo(this.atribuicao.id, null).subscribe({
-      next: () => {
-        this.atribuicao.prazoFinal = null;
-        this.atribuicao.diasPendentes = null;
-        this.atribuicao.statusPrazo = '';
-        this.atribuicao.prazoVencendo = false;
-        this.notification.success('Prazo removido!');
-      },
-      error: () => {
-        this.notification.error('Erro ao remover prazo', 3000);
-      },
-    });
-  }
-
-  private diffDays(date: Date): number {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return Math.round((date.getTime() - today.getTime()) / 86400000);
-  }
-
-  private toIso(date: Date): string {
-    if (!date) return '';
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
   }
 
   get scoreColor(): string {

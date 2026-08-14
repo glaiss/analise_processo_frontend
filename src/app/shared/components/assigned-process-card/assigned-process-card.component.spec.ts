@@ -7,7 +7,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { DistributionService } from '../../../core/services/distribution.service';
 import { AtribuicaoProcessoResumoDTO } from '../../../core/models/processo/atribuicao-processo-resumo.model';
 import { ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../../../core/models/processo/enums.model';
 import { of, throwError } from 'rxjs';
@@ -43,13 +42,11 @@ describe('AssignedProcessCardComponent', () => {
   let processState: any;
   let notification: any;
   let router: any;
-  let distribution: any;
 
   beforeEach(async () => {
     processState = { alternarMonitoramento: vi.fn(), marcarComoLido: vi.fn().mockReturnValue(of(void 0)) };
     notification = { success: vi.fn(), error: vi.fn() };
     router = { navigate: vi.fn() };
-    distribution = { definirPrazo: vi.fn().mockReturnValue(of(void 0)) };
     Object.defineProperty(navigator, 'clipboard', {
       value: { writeText: vi.fn().mockResolvedValue(undefined) },
       writable: true,
@@ -65,7 +62,6 @@ describe('AssignedProcessCardComponent', () => {
         { provide: ProcessStateService, useValue: processState },
         { provide: NotificationService, useValue: notification },
         { provide: Router, useValue: router },
-        { provide: DistributionService, useValue: distribution },
       ],
     }).compileComponents();
   });
@@ -227,35 +223,6 @@ describe('AssignedProcessCardComponent', () => {
       const fixture = TestBed.createComponent(AssignedProcessCardComponent);
       fixture.componentRef.setInput('atribuicao', createAtribuicao({ prazoFinal: '2026-08-16T00:00:00', diasPendentes: null }));
       expect(fixture.componentInstance.prazoDaysColor).toBe('neutral');
-    });
-  });
-
-  describe('onPrazoDateChange', () => {
-    it('should call definirPrazo and update the atribuicao on success', () => {
-      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      const atribuicao = createAtribuicao();
-      fixture.componentRef.setInput('atribuicao', atribuicao);
-
-      const date = new Date();
-      date.setHours(0, 0, 0, 0);
-      date.setDate(date.getDate() + 10);
-
-      fixture.componentInstance.onPrazoDateChange(date);
-
-      expect(distribution.definirPrazo).toHaveBeenCalledWith('1', expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/));
-      expect(atribuicao.prazoFinal).toBe(`${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`);
-      expect(atribuicao.diasPendentes).toBe(10);
-      expect(atribuicao.statusPrazo).toBe('PENDENTE');
-      expect(notification.success).toHaveBeenCalled();
-    });
-
-    it('should do nothing when value is null', () => {
-      const fixture = TestBed.createComponent(AssignedProcessCardComponent);
-      fixture.componentRef.setInput('atribuicao', createAtribuicao());
-
-      fixture.componentInstance.onPrazoDateChange(null);
-
-      expect(distribution.definirPrazo).not.toHaveBeenCalled();
     });
   });
 

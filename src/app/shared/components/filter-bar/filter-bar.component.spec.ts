@@ -87,6 +87,64 @@ describe('FilterBarComponent', () => {
     expect(emitSpy).toHaveBeenCalled();
   });
 
+  it('should debounce assunto search until 3s after typing stops', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('trib');
+      expect(fixture.componentInstance.selectedAssunto()).toBe('trib');
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(2000);
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(1000);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+      expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedAssunto: 'trib' }));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should reset debounce timer when user keeps typing', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('tri');
+      vi.advanceTimersByTime(2500);
+      fixture.componentInstance.onAssuntoInput('trib');
+      vi.advanceTimersByTime(2500);
+      expect(emitSpy).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(500);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+      expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedAssunto: 'trib' }));
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('should emit immediately on onAssuntoSearch and cancel pending debounce', () => {
+    vi.useFakeTimers();
+    try {
+      const fixture = TestBed.createComponent(FilterBarComponent);
+      const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+
+      fixture.componentInstance.onAssuntoInput('trib');
+      fixture.componentInstance.onAssuntoSearch();
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+
+      vi.advanceTimersByTime(3000);
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('should toggle showAdvanced', () => {
     const fixture = TestBed.createComponent(FilterBarComponent);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);

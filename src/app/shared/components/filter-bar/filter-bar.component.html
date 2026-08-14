@@ -66,7 +66,7 @@
       <div class="filters-extra-row">
         <mat-form-field appearance="outline" class="filter-field full-width">
           <mat-label>Assunto</mat-label>
-          <input matInput placeholder="Ex: tribut&aacute;rio, c&iacute;vel..." [(ngModel)]="selectedAssunto" (keyup.enter)="onAssuntoSearch()">
+          <input matInput placeholder="Ex: tribut&aacute;rio, c&iacute;vel..." [ngModel]="selectedAssunto()" (ngModelChange)="onAssuntoInput($event)" (keyup.enter)="onAssuntoSearch()">
           <button type="button" mat-icon-button matSuffix matTooltip="Filtrar" (click)="onAssuntoSearch()">
             <mat-icon>search</mat-icon>
           </button>

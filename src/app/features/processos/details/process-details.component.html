@@ -114,16 +114,16 @@
                 <span class="prazo-pill" [ngClass]="prazoDaysColor">{{ prazoDisplayText }}</span>
                 <span class="value prazo-date">{{ prazoFinalLabel }}</span>
               </div>
-              <div class="prazo-actions">
-                <mat-datepicker-toggle
-                  matIconButton
-                  matTooltip="Definir prazo"
-                  [for]="prazoPicker"
-                />
-              </div>
             } @else {
               <span class="value">Sem prazo</span>
             }
+            <div class="prazo-actions">
+              <mat-datepicker-toggle
+                matIconButton
+                matTooltip="Definir prazo"
+                [for]="prazoPicker"
+              />
+            </div>
           </div>
           <input
             class="prazo-datepicker-anchor"
