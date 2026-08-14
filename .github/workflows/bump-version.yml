@@ -1,0 +1,74 @@
+name: Bump Version Frontend (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      bump:
+        type: boolean
+        required: true
+      version:
+        type: string
+        required: false
+        default: ''
+      deploy_only:
+        type: boolean
+        required: false
+        default: false
+    outputs:
+      new_version:
+        description: 'Versão atual do package.json após a execução'
+        value: ${{ jobs.bump.outputs.new_version }}
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      new_version: ${{ steps.compute.outputs.new_version }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Compute e persiste versão (idempotente)
+        id: compute
+        env:
+          INPUT_BUMP: ${{ inputs.bump }}
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_DEPLOY_ONLY: ${{ inputs.deploy_only }}
+        run: |
+          current=$(node -p "require('./package.json').version")
+          new="$current"
+
+          if [ "$INPUT_DEPLOY_ONLY" != "true" ]; then
+            if [ "$INPUT_BUMP" = "true" ]; then
+              if [ -n "$INPUT_VERSION" ]; then
+                new="$INPUT_VERSION"
+              elif [[ "$(git log --oneline -1)" == *"bump version to"* ]]; then
+                new="$current"
+              else
+                IFS='.' read -r -a parts <<< "$current"
+                new="${parts[0]}.$((parts[1] + 1)).${parts[2]}"
+              fi
+            fi
+          fi
+
+          if [ "$new" != "$current" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email 'github-actions[bot]@users.noreply.github.com'
+            npm version "$new" --no-git-tag-version
+            git add package.json package-lock.json
+            git commit -m "chore: bump version to $new [skip ci]"
+            git push
+          fi
+
+          echo "new_version=$new" >> "$GITHUB_OUTPUT"

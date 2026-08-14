@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Page } from '../models/processo/pagination.model';
 import { AtribuicaoProcessoResumoDTO } from '../models/processo/atribuicao-processo-resumo.model';
-import { StatusAtribuicao } from '../models/processo/enums.model';
+import { StatusAtribuicao, TipologiaProcesso } from '../models/processo/enums.model';
 export interface ProcessoFilterParams {
   numero?: string;
   niveis?: string[];
@@ -12,6 +12,7 @@ export interface ProcessoFilterParams {
   tribunal?: string;
   assunto?: string;
   situacao?: string[];
+  processosTipologia?: TipologiaProcesso[];
 }
 export interface RedirecionarProcessoRequest {
   tipo: 'PESSOA' | 'EQUIPE';
@@ -70,6 +71,11 @@ export class DistributionService {
         result = result.append('situacao', s);
       });
     }
+    if (filter.processosTipologia) {
+      filter.processosTipologia.forEach((t) => {
+        result = result.append('processosTipologia', t);
+      });
+    }
     return result;
   }
   executarDistribuicao(): Observable<void> {
@@ -80,5 +86,8 @@ export class DistributionService {
   }
   redirecionarProcessos(request: RedirecionarProcessoRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/redirecionar`, request);
+  }
+  definirPrazo(id: string, prazoFinal: string | null): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/prazo`, { prazoFinal });
   }
 }

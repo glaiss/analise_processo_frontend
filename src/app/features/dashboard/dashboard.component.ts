@@ -6,6 +6,7 @@ import { AssignedProcessesListComponent } from '../../shared/components/assigned
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { FilterBarComponent } from '../../shared/components/filter-bar/filter-bar.component';
 import { ProcessoFilterParams } from '../../core/services/distribution.service';
+import { TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,12 +30,14 @@ export class DashboardComponent {
   readonly selectedStatus = signal<string[]>([]);
   readonly selectedSituacao = signal<string[]>([]);
   readonly selectedAssunto = signal<string>('');
+  readonly selectedTipologia = signal<TipologiaProcesso[]>([]);
 
   readonly hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
     this.selectedStatus().length > 0 ||
     this.selectedSituacao().length > 0 ||
     this.selectedAssunto().length > 0 ||
+    this.selectedTipologia().length > 0 ||
     this.searchQuery().length > 0
   );
 
@@ -46,6 +49,7 @@ export class DashboardComponent {
       status: this.selectedStatus().length > 0 ? this.selectedStatus() as any : undefined,
       situacao: this.selectedSituacao().length > 0 ? this.selectedSituacao() : undefined,
       assunto: this.selectedAssunto() || undefined,
+      processosTipologia: this.selectedTipologia().length > 0 ? this.selectedTipologia() : undefined,
     };
   });
 
@@ -59,12 +63,14 @@ export class DashboardComponent {
     selectedStatus: any[];
     selectedSituacao: string[];
     selectedAssunto: string;
+    selectedTipologia: TipologiaProcesso[];
   }) {
     this.searchQuery.set(filters.searchQuery);
     this.selectedNiveis.set(filters.selectedNiveis);
     this.selectedStatus.set(filters.selectedStatus);
     this.selectedSituacao.set(filters.selectedSituacao);
     this.selectedAssunto.set(filters.selectedAssunto);
+    this.selectedTipologia.set(filters.selectedTipologia);
   }
 
   onClearFilters() {
@@ -73,5 +79,6 @@ export class DashboardComponent {
     this.selectedStatus.set([]);
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
+    this.selectedTipologia.set([]);
   }
 }

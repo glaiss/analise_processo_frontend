@@ -10,7 +10,6 @@ import {
   AtribuicaoProcessoResumoDTO,
   ProcessoSituacao,
   StatusAtribuicao,
-  TipologiaProcesso,
 } from '../../../core/models/processo/index';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
@@ -90,9 +89,31 @@ export class AssignedProcessCardComponent {
     }
   }
 
-  get statusPrazoColor(): string {
-    if (this.atribuicao.statusPrazo === 'URGENTE') return 'warn';
-    return 'primary';
+  get prazoDisplayText(): string {
+    if (!this.atribuicao.prazoFinal) return '';
+    if (this.atribuicao.statusPrazo === 'CUMPRIDO') return 'Cumprido';
+    const dias = this.atribuicao.diasPendentes;
+    if (dias === null || dias === undefined) return '';
+    if (dias < 0) return `${-dias} dia(s) em atraso`;
+    if (dias === 0) return 'Vence hoje';
+    if (dias === 1) return 'Vence em 1 dia';
+    return `Vence em ${dias} dias`;
+  }
+
+  get prazoDaysColor(): string {
+    if (this.atribuicao.statusPrazo === 'CUMPRIDO') return 'success';
+    const dias = this.atribuicao.diasPendentes;
+    if (dias === null || dias === undefined) return 'neutral';
+    if (dias <= 1) return 'warn';
+    if (dias === 2) return 'accent';
+    return 'neutral';
+  }
+
+  get prazoFinalLabel(): string {
+    if (!this.atribuicao.prazoFinal) return '';
+    const datePart = this.atribuicao.prazoFinal.substring(0, 10).split('-');
+    if (datePart.length !== 3) return this.atribuicao.prazoFinal;
+    return `${datePart[2]}/${datePart[1]}/${datePart[0]}`;
   }
 
   get scoreColor(): string {

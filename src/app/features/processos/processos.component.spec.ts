@@ -3,7 +3,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
 import { ProcessosComponent } from './processos.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
-import { StatusAtribuicao } from '../../core/models/processo/enums.model';
+import { StatusAtribuicao, TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 class MockIntersectionObserver {
   readonly root: Element | Document | null = null;
@@ -71,6 +71,7 @@ describe('ProcessosComponent', () => {
         selectedStatus: [StatusAtribuicao.ATRIBUIDO],
         selectedSituacao: ['ATIVO'],
         selectedAssunto: 'tributário',
+        selectedTipologia: [TipologiaProcesso.JEC],
       });
     } catch {
       // If onFilterChange doesn't exist, test passes vacuously
@@ -80,12 +81,14 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([StatusAtribuicao.ATRIBUIDO]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual(['ATIVO']);
     expect(fixture.componentInstance.selectedAssunto()).toBe('tributário');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC]);
     expect(processState.setAllFilters).toHaveBeenCalledWith({
       searchQuery: 'test123',
       niveis: ['ALTO', 'MEDIO'],
       status: [StatusAtribuicao.ATRIBUIDO],
       situacao: ['ATIVO'],
       assunto: 'tributário',
+      processosTipologia: [TipologiaProcesso.JEC],
     });
   });
 
@@ -116,6 +119,7 @@ describe('ProcessosComponent', () => {
     fixture.componentInstance.selectedStatus.set([StatusAtribuicao.ATRIBUIDO]);
     fixture.componentInstance.selectedSituacao.set(['ATIVO']);
     fixture.componentInstance.selectedAssunto.set('trib');
+    fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
 
     fixture.componentInstance.onClearFilters();
 
@@ -124,12 +128,14 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedStatus()).toEqual([]);
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
+    expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
     expect(processState.setAllFilters).toHaveBeenCalledWith({
       searchQuery: '',
       niveis: [],
       status: [],
       situacao: [],
       assunto: '',
+      processosTipologia: [],
     });
   });
 

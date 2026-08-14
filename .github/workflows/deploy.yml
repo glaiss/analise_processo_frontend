@@ -14,6 +14,10 @@ on:
         type: string
         required: false
         default: ''
+      bump_version:
+        type: boolean
+        required: false
+        default: false
       netlify-site-id:
         type: string
         required: false
@@ -35,100 +39,14 @@ permissions:
 
 jobs:
   version:
-    runs-on: ubuntu-latest
-    outputs:
-      new_version: ${{ steps.bump.outputs.new_version }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.GH_PAT }}
+    uses: ./.github/workflows/bump-version.yml
+    with:
+      bump: ${{ inputs.bump_version }}
+      version: ${{ inputs.version }}
+      deploy_only: ${{ inputs.deploy_only }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Compute e persiste versão (idempotente)
-        id: bump
-        env:
-          DEPLOY_ONLY: ${{ inputs.deploy_only }}
-          INPUT_VERSION: ${{ inputs.version }}
-        run: |
-          current=$(node -p "require('./package.json').version")
-          new="$current"
-
-          if [ "$DEPLOY_ONLY" != "true" ]; then
-            if [ -n "$INPUT_VERSION" ]; then
-              new="$INPUT_VERSION"
-            elif [[ "$(git log --oneline -1)" == *"bump version to"* ]]; then
-              new="$current"
-            else
-              IFS='.' read -r -a parts <<< "$current"
-              new="${parts[0]}.$((parts[1] + 1)).${parts[2]}"
-            fi
-          fi
-
-          if [ "$new" != "$current" ]; then
-            git config user.name 'github-actions[bot]'
-            git config user.email 'github-actions[bot]@users.noreply.github.com'
-            npm version "$new" --no-git-tag-version
-            git add package.json package-lock.json
-            git commit -m "chore: bump version to $new [skip ci]"
-            git tag "v$new"
-            git push origin "HEAD:${GITHUB_REF#refs/heads/}" --tags
-          fi
-
-          echo "new_version=$new" >> "$GITHUB_OUTPUT"
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Lint Code
-        run: npm run lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: Install Dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Run Tests with Coverage
-        run: npm test -- --watch=false
-
-      - name: Upload test reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-reports
-          path: coverage/
-          if-no-files-found: ignore
-
-  build:
-    needs: [version, lint, test]
+  build-test:
+    needs: version
     runs-on: ubuntu-latest
     env:
       API_URL: ${{ secrets.CLOUDFRONT_URL }}
@@ -151,6 +69,20 @@ jobs:
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Lint Code
+        run: npm run lint
+
+      - name: Run Tests
+        run: npm test -- --watch=false
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: coverage/
+          if-no-files-found: ignore
+
       - name: Build Project
         run: npm run build
 
@@ -162,12 +94,10 @@ jobs:
           if-no-files-found: error
 
   deploy:
-    needs: [version, build]
+    needs: [version, build-test]
+    if: ${{ !cancelled() && !failure() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -213,14 +143,18 @@ jobs:
 
   notify:
     if: always()
-    needs: [version, lint, test, build, deploy]
+    needs: [version, build-test, deploy]
     runs-on: ubuntu-latest
     steps:
       - name: Report pipeline result
         run: |
           echo "version: ${{ needs.version.result }}"
-          echo "lint: ${{ needs.lint.result }}"
-          echo "test: ${{ needs.test.result }}"
-          echo "build: ${{ needs.build.result }}"
+          echo "build-test: ${{ needs.build-test.result }}"
           echo "deploy: ${{ needs.deploy.result }}"
           echo "deployed version: ${{ needs.version.outputs.new_version }}"
+
+      - name: Marcar pipeline como falho
+        if: ${{ needs.deploy.result == 'failure' || needs.build-test.result == 'failure' }}
+        run: |
+          echo "::error::Pipeline falhou. Consulte os logs dos jobs acima."
+          exit 1

@@ -55,6 +55,16 @@
   --risk-border-medium-high: #fed7aa;
   --risk-border-medium: #fde68a;
 
+  --prazo-warn-bg: #B00020;
+  --prazo-warn-text: #ffffff;
+  --prazo-accent-bg: #C5A059;
+  --prazo-accent-text: #ffffff;
+  --prazo-success-bg: #2e7d32;
+  --prazo-success-text: #ffffff;
+  --prazo-neutral-bg: #e2e8f0;
+  --prazo-neutral-text: #1e293b;
+  --prazo-neutral-border: #e2e8f0;
+
   --table-min-width: 700px;
 }
 
@@ -119,6 +129,16 @@ html {
     --chip-text-intermediario: #fdba74;
     --chip-bg-medio: #451a03;
     --chip-text-medio: #fde68a;
+
+    --prazo-warn-bg: #7f1d1d;
+    --prazo-warn-text: #fecaca;
+    --prazo-accent-bg: #78350f;
+    --prazo-accent-text: #fde68a;
+    --prazo-success-bg: #065f46;
+    --prazo-success-text: #a7f3d0;
+    --prazo-neutral-bg: #334155;
+    --prazo-neutral-text: #f1f5f9;
+    --prazo-neutral-border: #475569;
   }
 }
 
@@ -221,4 +241,53 @@ html.dark-mode {
 .info-snackbar {
   background-color: #1e293b !important;
   color: white !important;
+}
+
+/* Prazo (deadline) shared styles */
+.prazo-pill {
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: .75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &.warn {
+    background-color: var(--prazo-warn-bg);
+    color: var(--prazo-warn-text);
+    animation: prazo-pulse 1.6s ease-in-out infinite;
+  }
+
+  &.accent { background-color: var(--prazo-accent-bg); color: var(--prazo-accent-text); }
+  &.success { background-color: var(--prazo-success-bg); color: var(--prazo-success-text); }
+  &.neutral {
+    background-color: var(--prazo-neutral-bg);
+    color: var(--prazo-neutral-text);
+    border: 1px solid var(--prazo-neutral-border);
+  }
+}
+
+.prazo-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+
+  .mat-datepicker-toggle .mat-mdc-icon-button {
+    color: var(--text-secondary);
+  }
+}
+
+.prazo-datepicker-anchor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prazo-date { font-size: 1rem; }
+
+@keyframes prazo-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+  50% { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
 }

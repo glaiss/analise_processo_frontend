@@ -59,7 +59,7 @@
             <div class="flow-connector" [class.active]="isConnectorActive(i - 1)"></div>
           }
           <div class="flow-step" [class.completed]="isStepCompleted(i)" [class.current]="isStepCurrent(i)" [class.negative]="isStepCurrent(i) && i === 4">
-            <div class="flow-step-indicator" [class.clickable]="isStepAvailable(i)" (click)="isStepAvailable(i) && avancarStatus(i)">
+            <div class="flow-step-indicator">
               @if (isStepCompleted(i)) {
                 <mat-icon class="step-icon completed-icon">check_circle</mat-icon>
               } @else if (isStepCurrent(i)) {
@@ -78,6 +78,8 @@
                 <button type="button" mat-button class="step-action" [color]="i === 4 ? 'warn' : 'primary'" (click)="avancarStatus(i)">
                   {{ i === 4 ? 'Recusar' : 'Avançar' }}
                 </button>
+              } @else {
+                <span class="step-action-spacer" aria-hidden="true"></span>
               }
             </div>
           </div>
@@ -103,6 +105,33 @@
         <div class="summary-item">
           <span class="label">Valor da Causa</span>
           <span class="value">{{ p.valorCausa | currency:'BRL' }}</span>
+        </div>
+        <div class="summary-item prazo-summary" [class.highlight]="!!p.prazoFinal">
+          <span class="label">Prazo</span>
+          <div class="prazo-value">
+            @if (p.prazoFinal) {
+              <div class="prazo-info">
+                <span class="prazo-pill" [ngClass]="prazoDaysColor">{{ prazoDisplayText }}</span>
+                <span class="value prazo-date">{{ prazoFinalLabel }}</span>
+              </div>
+            } @else {
+              <span class="value">Sem prazo</span>
+            }
+            <div class="prazo-actions">
+              <mat-datepicker-toggle
+                matIconButton
+                matTooltip="Definir prazo"
+                [for]="prazoPicker"
+              />
+            </div>
+          </div>
+          <input
+            class="prazo-datepicker-anchor"
+            [matDatepicker]="prazoPicker"
+            [min]="today"
+            (dateChange)="onPrazoDateChange($event.value)"
+          />
+          <mat-datepicker #prazoPicker />
         </div>
         <div class="summary-item highlight">
           <span class="label">Score Final</span>

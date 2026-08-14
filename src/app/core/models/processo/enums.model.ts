@@ -24,9 +24,24 @@ export enum ResultadoAtendimento {
 }
 
 export enum TipologiaProcesso {
-  JUDICIAL = 'JUDICIAL',
-  ADMINISTRATIVO = 'ADMINISTRATIVO',
+  TRABALHISTA_BASE = 'TRABALHISTA_BASE',
+  TRABALHISTA_RECLAMANTE = 'TRABALHISTA_RECLAMANTE',
+  TRABALHISTA_RECLAMADA = 'TRABALHISTA_RECLAMADA',
+  JEC = 'JEC',
+  PENAL = 'PENAL',
+  JEFAZ = 'JEFAZ',
+  GENERICO = 'GENERICO',
 }
+
+export const TIPOLOGIA_DISPLAY: Record<TipologiaProcesso, string> = {
+  [TipologiaProcesso.TRABALHISTA_BASE]: 'Trabalhista',
+  [TipologiaProcesso.TRABALHISTA_RECLAMANTE]: 'Trabalhista Reclamante',
+  [TipologiaProcesso.TRABALHISTA_RECLAMADA]: 'Trabalhista Reclamada',
+  [TipologiaProcesso.JEC]: 'JEC',
+  [TipologiaProcesso.PENAL]: 'Penal',
+  [TipologiaProcesso.JEFAZ]: 'JEFAZ',
+  [TipologiaProcesso.GENERICO]: 'Genérico',
+};
 
 export enum ProcessoSituacao {
   AGUARDANDO_DISTRIBUICAO = 'AGUARDANDO_DISTRIBUICAO',
