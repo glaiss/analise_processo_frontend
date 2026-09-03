@@ -29,6 +29,13 @@
     padding: 8px 16px 0;
   }
 
+  .etiquetas-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
   mat-card-actions {
     flex-shrink: 0;
     margin-top: auto;
@@ -231,6 +238,6 @@
   &.selected {
     outline: 2px solid red;
     outline-offset: -2px;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: var(--bg-hover);
   }
 }

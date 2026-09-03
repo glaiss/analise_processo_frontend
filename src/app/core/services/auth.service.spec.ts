@@ -11,7 +11,7 @@ function createMockUser(overrides?: Partial<User>): User {
     username: 'joao',
     nome: 'João Silva',
     equipe: 'Equipe A',
-    authorities: [{ authority: 'ROLE_ADMIN' }],
+    roles: ['ROLE_ADMIN'],
     ...overrides,
   };
 }

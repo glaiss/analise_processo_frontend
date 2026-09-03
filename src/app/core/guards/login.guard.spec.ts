@@ -50,7 +50,7 @@ describe('loginGuard', () => {
     });
 
     httpMock.expectOne(`${API_URL}/me`).flush({
-      username: 'joao', authorities: [{ authority: 'ROLE_ADMIN' }]
+      username: 'joao', roles: ['ROLE_ADMIN']
     });
   }));
 

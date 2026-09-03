@@ -524,6 +524,10 @@
   @media (max-width: 480px) { mat-card-title { font-size: 1rem; } }
 }
 
+.etiquetas-card {
+  mat-card-content { padding: 16px !important; }
+}
+
 .side-info-list {
   margin: 0;
   .info-item {

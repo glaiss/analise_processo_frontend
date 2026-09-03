@@ -32,7 +32,7 @@ describe('authGuard', () => {
   afterEach(() => httpMock.verify());
 
   it('should allow activation when user is already authenticated', async () => {
-    const user = { username: 'joao', authorities: [{ authority: 'ROLE_ADMIN' }] };
+    const user = { username: 'joao', roles: ['ROLE_ADMIN'] };
     (authService as any).user.set(user);
 
     const result = await TestBed.runInInjectionContext(async () => authGuard({} as any, {} as any));
@@ -50,7 +50,7 @@ describe('authGuard', () => {
     });
 
     httpMock.expectOne(`${API_URL}/me`).flush({
-      username: 'joao', authorities: [{ authority: 'ROLE_ADMIN' }]
+      username: 'joao', roles: ['ROLE_ADMIN']
     });
   }));
 

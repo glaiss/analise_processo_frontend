@@ -1,4 +1,5 @@
 import { ProcessoSituacao, ResultadoAtendimento, StatusAtribuicao, TipologiaProcesso } from './enums.model';
+import { EtiquetaDTO } from './etiqueta.model';
 
 export interface AtribuicaoProcessoResumoDTO {
     id: string;
@@ -24,4 +25,5 @@ export interface AtribuicaoProcessoResumoDTO {
     usuarioNome: string;
     monitorado: boolean;
     isLido: boolean;
+    etiquetas?: EtiquetaDTO[];
 }
