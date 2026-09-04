@@ -5,11 +5,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { ProcessoResumoDTO } from '../../../core/models/processo/processo-resumo.model';
 import { StatusDisplayPipe } from '../../pipes/status-display.pipe';
+import { EtiquetaBadgeComponent } from '../etiqueta-badge/etiqueta-badge.component';
 
 @Component({
   selector: 'app-process-card',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, StatusDisplayPipe],
+  imports: [CommonModule, MatCardModule, MatChipsModule, MatIconModule, StatusDisplayPipe, EtiquetaBadgeComponent],
   templateUrl: './process-card.component.html',
   styleUrl: './process-card.component.scss'
 })

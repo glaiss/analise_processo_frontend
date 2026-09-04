@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
 
   beforeEach(async () => {
     authService = {
-      currentUser: vi.fn(() => ({ username: 'joao', nome: 'João Silva', authorities: [{ authority: 'ROLE_ADMIN' }] })),
+      currentUser: vi.fn(() => ({ username: 'joao', nome: 'João Silva', roles: ['ROLE_ADMIN'] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
       hasRole: vi.fn(() => true),
@@ -79,7 +79,7 @@ describe('HeaderComponent', () => {
 
   it('should get avatar letter from username when nome is absent', () => {
     authService = {
-      currentUser: vi.fn(() => ({ username: 'maria', authorities: [] })),
+      currentUser: vi.fn(() => ({ username: 'maria', roles: [] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
       hasRole: vi.fn(() => true),
@@ -106,7 +106,7 @@ describe('HeaderComponent', () => {
 
   it('should return empty avatar letter when both nome and username are empty', () => {
     authService = {
-      currentUser: vi.fn(() => ({ username: '', authorities: [] })),
+      currentUser: vi.fn(() => ({ username: '', roles: [] })),
       isAuthenticated: vi.fn(() => true),
       isImpersonating: vi.fn(() => false),
       hasRole: vi.fn(() => true),

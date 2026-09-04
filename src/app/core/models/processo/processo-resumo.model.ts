@@ -1,4 +1,5 @@
 import { ProcessoSituacao, StatusAtribuicao } from './enums.model';
+import { EtiquetaDTO } from './etiqueta.model';
 
 export interface ProcessoResumoDTO {
   numero: string;
@@ -14,4 +15,5 @@ export interface ProcessoResumoDTO {
   diasParaVencer?: number;
   processoSituacao: ProcessoSituacao;
   monitorado: boolean;
+  etiquetas?: EtiquetaDTO[];
 }

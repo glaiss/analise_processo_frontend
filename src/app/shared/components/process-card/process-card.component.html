@@ -9,6 +9,18 @@
 
   <mat-card-content>
     <p class="assunto">{{ processo().assuntoJudicial }}</p>
+    @if (processo().etiquetas && processo().etiquetas!.length > 0) {
+      <div class="etiquetas-row">
+        @for (etiqueta of processo().etiquetas!; track etiqueta.id) {
+          <app-etiqueta-badge
+            [nome]="etiqueta.nome"
+            [cor]="etiqueta.cor"
+            [apelido]="etiqueta.apelido"
+            [compact]="true"
+          />
+        }
+      </div>
+    }
     <div class="metadata">
       <span class="label">Ajuizamento:</span>
       <span class="value">{{ processo().dataAjuizamento | date:'dd/MM/yyyy' }}</span>

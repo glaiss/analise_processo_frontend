@@ -42,13 +42,20 @@
 }
 
 .assunto {
-  margin: 16px 0;
+  margin: 16px 0 8px;
   font-size: 14px;
   color: var(--mat-sys-on-surface);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.etiquetas-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
 .metadata {

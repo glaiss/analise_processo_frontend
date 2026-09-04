@@ -4,14 +4,11 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-export interface Authority {
-  authority: string;
-}
 export interface User {
   username: string;
   nome?: string;
   equipe?: string;
-  authorities: Authority[];
+  roles: string[];
   password?: string | null;
   accountNonExpired?: boolean;
   accountNonLocked?: boolean;
@@ -57,8 +54,8 @@ export class AuthService {
   }
   hasRole(role: string): boolean {
     const user = this.user();
-    if (!user) return false;
-    return user.authorities.some((a) => a.authority === role || a.authority === `ROLE_${role}`);
+    if (!user || !Array.isArray(user.roles)) return false;
+    return user.roles.some((r) => r === role || r === `ROLE_${role}`);
   }
   login(credentials: { username: string; password: string }) {
     this.loading.set(true);

@@ -5,7 +5,7 @@ import { EquipeDto, EquipeService } from '../../../core/services/equipe.service'
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('UserManagementComponent', () => {
   let mockUserService: Partial<UserService>;
@@ -105,5 +105,43 @@ describe('UserManagementComponent', () => {
     const mockEvent = { target: { scrollTop: 0, offsetHeight: 200, scrollHeight: 1000 } };
     fixture.componentInstance.onEquipesScroll(mockEvent);
     expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should handle loadEquipes error', () => {
+    (mockEquipeService.getEquipes as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(UserManagementComponent);
+    expect(mockNotification.error).toHaveBeenCalledWith('Erro ao carregar equipes');
+    expect(fixture.componentInstance.loadingEquipes()).toBe(false);
+  });
+
+  it('should handle onSubmit error', () => {
+    (mockUserService.criarUsuario as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(UserManagementComponent);
+    fixture.componentInstance.userForm.patchValue({
+      username: 'test@test.com',
+      nome: 'Teste',
+      password: '123456',
+      role: Role.ANALISTA,
+    });
+    fixture.componentInstance.onSubmit();
+    expect(mockNotification.error).toHaveBeenCalledWith('Erro ao criar usuário');
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('should not load equipes when already loading', () => {
+    const fixture = TestBed.createComponent(UserManagementComponent);
+    (mockEquipeService.getEquipes as any).mockClear();
+    fixture.componentInstance.loadingEquipes.set(true);
+    fixture.componentInstance.loadEquipes();
+    expect(mockEquipeService.getEquipes).toHaveBeenCalledTimes(0);
+  });
+
+  it('should call loadEquipes on select opened when empty', () => {
+    const fixture = TestBed.createComponent(UserManagementComponent);
+    fixture.componentInstance['isLastPage'] = false;
+    (mockEquipeService.getEquipes as any).mockClear();
+    fixture.componentInstance.equipes.set([]);
+    fixture.componentInstance.onSelectOpened();
+    expect(mockEquipeService.getEquipes).toHaveBeenCalled();
   });
 });

@@ -24,96 +24,35 @@
 
   @else {
     <app-infinite-scroll [isLoading]="processState.isLoading()" (scrolled)="onScroll()">
-      <mat-card class="table-card">
-        @if (processState.isLoading() && processState.filteredProcesses().length === 0) {
-          <app-content-loader type="table" [columns]="8" [rows]="8" />
-        } @else {
-          <table mat-table class="full-width" [dataSource]="processState.filteredProcesses()">
-            <!-- Monitoramento -->
-            <ng-container matColumnDef="monitoramento">
-              <th *matHeaderCellDef mat-header-cell></th>
-              <td *matCellDef="let p" mat-cell>
-                <button type="button" mat-icon-button (click)="toggleMonitoramento(p.numero, $event)">
-                  <mat-icon [class.monitored]="p.monitorado">{{ p.monitorado ? 'star' : 'star_border' }}</mat-icon>
-                </button>
-              </td>
-            </ng-container>
-
-            <!-- Número -->
-            <ng-container matColumnDef="numero_valor">
-              <th *matHeaderCellDef mat-header-cell>Número</th>
-              <td *matCellDef="let p" mat-cell class="font-mono strong">{{ p.numero }}</td>
-            </ng-container>
-
-            <!-- Assunto -->
-            <ng-container matColumnDef="assunto">
-              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Assunto</th>
-              <td *matCellDef="let p" mat-cell class="text-truncate col-hide-sm">{{ p.assuntoJudicial || 'assunto não tem nome' }}</td>
-            </ng-container>
-
-            <!-- Nível -->
-            <ng-container matColumnDef="nivel">
-              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Nível</th>
-              <td *matCellDef="let p" mat-cell class="col-hide-sm">
-                <span class="risk-badge" [ngClass]="p.nivel?.toLowerCase()">{{ p.nivel | appScoreDisplay }}</span>
-              </td>
-            </ng-container>
-
-            <!-- Score -->
-            <ng-container matColumnDef="score">
-              <th *matHeaderCellDef mat-header-cell>Score</th>
-              <td *matCellDef="let p" mat-cell class="font-mono text-center">
-                <span class="score-value" [ngClass]="getScoreColor(p.scoreFinal)">{{ p.scoreFinal }}</span>
-              </td>
-            </ng-container>
-
-            <!-- Status -->
-            <ng-container matColumnDef="status">
-              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Status Atribuição</th>
-              <td *matCellDef="let p" mat-cell class="col-hide-sm">
-                <span class="status-badge">{{ p.statusAtribuicao | appStatusDisplay }}</span>
-              </td>
-            </ng-container>
-
-            <!-- Situação do Processo -->
-            <ng-container matColumnDef="processoSituacao">
-              <th *matHeaderCellDef mat-header-cell class="col-hide-sm">Situação</th>
-              <td *matCellDef="let p" mat-cell class="col-hide-sm">{{ p.processoSituacao | appSituacaoDisplay }}</td>
-            </ng-container>
-
-            <tr
-              *matHeaderRowDef="['monitoramento', 'numero_valor', 'assunto', 'nivel', 'score', 'status', 'processoSituacao']"
-              mat-header-row
-            ></tr>
-            <tr
-              *matRowDef="
-                let row;
-                columns: ['monitoramento', 'numero_valor', 'assunto', 'nivel', 'score', 'status', 'processoSituacao']
-              "
-              mat-row
-              [class.monitorado-row]="row.monitorado"
-              [class.clickable-row]="true"
-              (click)="openProcess(row.numero)"
-            ></tr>
-          </table>
-
-          @if (processState.isLoading() && processState.filteredProcesses().length > 0) {
-            <div class="loading-more-indicator">
-              <mat-progress-spinner diameter="20" />
-              <span>Carregando mais...</span>
-            </div>
-          }
-
-          @if (processState.filteredProcesses().length === 0 && !processState.isLoading()) {
-            <app-empty-state
-              icon="search_off"
-              message="Nenhum processo encontrado para os filtros selecionados."
-              actionLabel="Limpar filtros"
-              (action)="onClearFilters()"
+      @if (processState.isLoading() && processState.filteredProcesses().length === 0) {
+        <app-content-loader type="table" [columns]="4" [rows]="4" />
+      } @else {
+        <div class="processos-grid">
+          @for (processo of processState.filteredProcesses(); track processo.numero) {
+            <app-process-card-compact
+              [processo]="processo"
+              (monitorToggle)="toggleMonitoramento($event)"
+              (cardClick)="openProcess($event)"
             />
           }
+        </div>
+
+        @if (processState.isLoading() && processState.filteredProcesses().length > 0) {
+          <div class="loading-more-indicator">
+            <mat-progress-spinner diameter="20" />
+            <span>Carregando mais...</span>
+          </div>
         }
-      </mat-card>
+
+        @if (processState.filteredProcesses().length === 0 && !processState.isLoading()) {
+          <app-empty-state
+            icon="search_off"
+            message="Nenhum processo encontrado para os filtros selecionados."
+            actionLabel="Limpar filtros"
+            (action)="onClearFilters()"
+          />
+        }
+      }
     </app-infinite-scroll>
   }
 </div>
