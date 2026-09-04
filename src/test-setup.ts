@@ -1,14 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-function createMockMQL(query: string): any {
-  const listeners: Record<string, Function[]> = {};
+function createMockMQL(query: string) {
+  const listeners: Record<string, Array<(...args: unknown[]) => void>> = {};
   return {
     matches: false,
     media: query,
     onchange: null,
-    addListener(cb: Function) { (listeners['change'] = listeners['change'] || []).push(cb); },
-    removeListener(cb: Function) { if (listeners['change']) listeners['change'] = listeners['change'].filter((f: Function) => f !== cb); },
-    addEventListener(event: string, cb: Function) { (listeners[event] = listeners[event] || []).push(cb); },
-    removeEventListener(event: string, cb: Function) { if (listeners[event]) listeners[event] = listeners[event].filter((f: Function) => f !== cb); },
+    addListener(cb: (...args: unknown[]) => void) { (listeners['change'] ||= []).push(cb); },
+    removeListener(cb: (...args: unknown[]) => void) { if (listeners['change']) listeners['change'] = listeners['change'].filter((f) => f !== cb); },
+    addEventListener(event: string, cb: (...args: unknown[]) => void) { (listeners[event] ||= []).push(cb); },
+    removeEventListener(event: string, cb: (...args: unknown[]) => void) { if (listeners[event]) listeners[event] = listeners[event].filter((f) => f !== cb); },
     dispatchEvent() { return false; },
   };
 }
