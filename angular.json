@@ -89,7 +89,10 @@
             "runnerConfig": "./vitest-base.config.ts",
             "coverage": true,
             "coverageThresholds": {
-              "lines": 80
+              "lines": 80,
+              "functions": 80,
+              "branches": 80,
+              "statements": 80
             }
           }
         }

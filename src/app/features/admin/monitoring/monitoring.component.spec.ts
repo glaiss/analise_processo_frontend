@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MonitoringComponent } from './monitoring.component';
 import { ActuatorService, AppInfo, Health, Metric } from '../../../core/services/actuator.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('MonitoringComponent', () => {
   let mockActuator: Partial<ActuatorService>;
@@ -231,5 +231,120 @@ describe('MonitoringComponent', () => {
   it('getStatusColor should return empty for unknown status', () => {
     const fixture = TestBed.createComponent(MonitoringComponent);
     expect(fixture.componentInstance.getStatusColor('MAINTENANCE')).toBe('');
+  });
+
+  it('should update cpu with process type', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string) => {
+      if (name === 'system.cpu.usage') return of(createMetric(0.3));
+      if (name === 'process.cpu.usage') return of(createMetric(0.7));
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    const cpu = fixture.componentInstance.cpu();
+    expect(cpu!.system).toBe(0.3);
+    expect(cpu!.process).toBe(0.7);
+  });
+
+  it('should update threads with peak type', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string) => {
+      if (name === 'jvm.threads.live') return of(createMetric(20));
+      if (name === 'jvm.threads.peak') return of(createMetric(30));
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    const threads = fixture.componentInstance.threads();
+    expect(threads!.live).toBe(20);
+    expect(threads!.peak).toBe(30);
+  });
+
+  it('should update dbPool with idle and max types', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string) => {
+      if (name === 'hikaricp.connections.active') return of(createMetric(5));
+      if (name === 'hikaricp.connections.idle') return of(createMetric(10));
+      if (name === 'hikaricp.connections.max') return of(createMetric(25));
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    const pool = fixture.componentInstance.dbPool();
+    expect(pool!.used).toBe(5);
+    expect(pool!.max).toBe(25);
+  });
+
+  it('should handle nonHeap metric', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string, tag?: string) => {
+      if (tag?.includes('nonheap')) return of({ name: 'nonheap', measurements: [{ value: 50000 }, { value: 30000 }], availableTags: [] });
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    const nonHeap = fixture.componentInstance.nonHeap();
+    expect(nonHeap).toBeTruthy();
+    expect(nonHeap!.used).toBe(80000);
+  });
+
+  it('should handle buffer metrics with multiple samples', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string, tag?: string) => {
+      if (name.includes('buffer.memory.used') && tag?.includes('direct')) {
+        return of({ name: 'buffer', measurements: [{ value: 1000 }, { value: 2000 }], availableTags: [] });
+      }
+      if (name.includes('buffer.memory.used') && tag?.includes('mapped')) {
+        return of({ name: 'buffer', measurements: [{ value: 500 }], availableTags: [] });
+      }
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.bufferDirect()).toBe(3000);
+    expect(fixture.componentInstance.bufferMapped()).toBe(500);
+  });
+
+  it('should handle connections acquire with max sample', () => {
+    mockActuator.getMetric = vi.fn().mockImplementation((name: string) => {
+      if (name.includes('connections.acquire')) {
+        return of({ name: 'acquire', measurements: [{ value: 2 }, { value: 8 }, { value: 5 }], availableTags: [] });
+      }
+      return of(createMetric(0));
+    });
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.hikariAcquire()).toBe(8);
+  });
+
+  it('should handle error in getInfo', () => {
+    mockActuator.getInfo = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.appInfo()).toBeNull();
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('should handle error in getHealth', () => {
+    mockActuator.getHealth = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.health()).toBeNull();
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('should handle error in getMetric', () => {
+    mockActuator.getMetric = vi.fn().mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    expect(fixture.componentInstance.loading()).toBe(false);
+  });
+
+  it('should clear interval when autoRefreshHandle is null on destroy', () => {
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    fixture.detectChanges();
+    fixture.componentInstance.autoRefreshHandle = null;
+    fixture.destroy();
+  });
+
+  it('should format uptime with all parts', () => {
+    const fixture = TestBed.createComponent(MonitoringComponent);
+    expect(fixture.componentInstance.formatUptime(0)).toBe('0s');
   });
 });

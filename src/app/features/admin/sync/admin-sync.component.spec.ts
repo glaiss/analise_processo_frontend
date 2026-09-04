@@ -3,7 +3,7 @@ import { AdminSyncComponent } from './admin-sync.component';
 import { AdminSyncService } from '../../../core/services/admin-sync.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 describe('AdminSyncComponent', () => {
   let mockSyncService: Partial<AdminSyncService>;
@@ -85,6 +85,41 @@ describe('AdminSyncComponent', () => {
     fixture.componentInstance.syncIngestao();
     expect(mockSyncService.syncIngestao).toHaveBeenCalledWith('TRT2', 50, 10);
     expect(mockNotification.success).toHaveBeenCalledWith('Ingestão iniciada');
+  });
+
+  it('should handle syncMovimentos error', () => {
+    (mockSyncService.syncMovimentos as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(AdminSyncComponent);
+    fixture.componentInstance.syncMovimentos();
+    expect(fixture.componentInstance.loadingMovimentos()).toBe(false);
+  });
+
+  it('should handle syncClasses error', () => {
+    (mockSyncService.syncClasses as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(AdminSyncComponent);
+    fixture.componentInstance.syncClasses();
+    expect(fixture.componentInstance.loadingClasses()).toBe(false);
+  });
+
+  it('should handle syncAssuntos error', () => {
+    (mockSyncService.syncAssuntos as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(AdminSyncComponent);
+    fixture.componentInstance.syncAssuntos();
+    expect(fixture.componentInstance.loadingAssuntos()).toBe(false);
+  });
+
+  it('should handle syncTudo error', () => {
+    (mockSyncService.syncTudo as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(AdminSyncComponent);
+    fixture.componentInstance.syncTudo();
+    expect(fixture.componentInstance.loadingTudo()).toBe(false);
+  });
+
+  it('should handle syncIngestao error', () => {
+    (mockSyncService.syncIngestao as any).mockReturnValue(throwError(() => new Error('fail')));
+    const fixture = TestBed.createComponent(AdminSyncComponent);
+    fixture.componentInstance.syncIngestao();
+    expect(fixture.componentInstance.loadingIngestao()).toBe(false);
   });
 
   it('should render sync buttons', () => {
