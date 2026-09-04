@@ -36,7 +36,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       } else if (error.status === 401) {
         if (req.url.includes('/usuarios/login')) {
           notification.error('Usuário ou senha inválidos.');
-        } else if (!req.url.includes('/usuarios/me')) {
+        } else if (!req.url.includes('/usuarios/me') && !req.url.includes('/usuarios/impersonating-origin')) {
           notification.warn('Sua sessão expirou. Por favor, faça login novamente.');
           authService.clearLocalSession();
           void router.navigate(['/login']);
