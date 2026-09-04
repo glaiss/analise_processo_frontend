@@ -6,38 +6,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   selector: 'app-etiqueta-badge',
   standalone: true,
   imports: [CommonModule, MatTooltipModule],
-  template: `
-    <span
-      class="etiqueta-badge"
-      [class.compact]="compact()"
-      [style.background-color]="cor()"
-      [style.color]="textColor()"
-      [matTooltip]="compact() ? nome() : ''"
-      [matTooltipDisabled]="!compact()"
-    >
-      {{ compact() ? apelido() : nome() }}
-    </span>
-  `,
-  styles: [`
-    .etiqueta-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 12px;
-      font-weight: 500;
-      line-height: 1.4;
-      white-space: nowrap;
-      letter-spacing: 0.02em;
-    }
-
-    .etiqueta-badge.compact {
-      padding: 1px 6px;
-      font-size: 10px;
-      min-width: 20px;
-      justify-content: center;
-    }
-  `]
+  templateUrl: './etiqueta-badge.component.html',
+  styleUrl: './etiqueta-badge.component.scss',
 })
 export class EtiquetaBadgeComponent {
   readonly nome = input.required<string>();

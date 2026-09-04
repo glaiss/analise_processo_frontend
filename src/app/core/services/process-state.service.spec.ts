@@ -4,7 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ProcessStateService } from './process-state.service';
 import { environment } from '../../../environments/environment';
 import { ProcessoResumoDTO } from '../models/processo/processo-resumo.model';
-import { ProcessoSituacao, StatusAtribuicao } from '../models/processo/enums.model';
+import { ProcessoSituacao, StatusAtribuicao, TipologiaProcesso } from '../models/processo/enums.model';
 import { Page } from '../models/processo/pagination.model';
 const API_URL = `${environment.apiUrl}/v1/analise/processos`;
 function createMockProcesso(overrides?: Partial<ProcessoResumoDTO>): ProcessoResumoDTO {
@@ -264,6 +264,74 @@ describe('ProcessStateService', () => {
     it('should change group key', () => {
       service.setGroupBy('usuarioResponsavel');
       expect(service.groupedProcesses).toBeDefined();
+    });
+  });
+  describe('setAllFilters', () => {
+    it('should set all filters and reload processes', () => {
+      service.setAllFilters({
+        searchQuery: '123',
+        niveis: ['ALTO'],
+        status: [StatusAtribuicao.ATRIBUIDO],
+        situacao: ['ENRIQUECIDO'],
+        assunto: 'Civil',
+        processosTipologia: [TipologiaProcesso.JEC],
+      });
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === API_URL &&
+          r.params.get('numero') === '123' &&
+          r.params.get('assunto') === 'Civil'
+      );
+      expect(req.request.params.getAll('niveis')).toEqual(['ALTO']);
+      expect(req.request.params.getAll('status')).toEqual(['ATRIBUIDO']);
+      expect(req.request.params.getAll('situacao')).toEqual(['ENRIQUECIDO']);
+      expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC']);
+      req.flush(createMockPage([]));
+    });
+    it('should default processosTipologia to empty array when not provided', () => {
+      service.setAllFilters({
+        searchQuery: '',
+        niveis: [],
+        status: [],
+        situacao: [],
+        assunto: '',
+      });
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      expect(req.request.params.getAll('processosTipologia')).toBeNull();
+      req.flush(createMockPage([]));
+    });
+  });
+  describe('atualizarStatus', () => {
+    it('should PATCH status with novoStatus param', () => {
+      service.atualizarStatus('123', StatusAtribuicao.ATRIBUIDO).subscribe();
+      const req = httpMock.expectOne(`${API_URL}/123/status?novoStatus=ATRIBUIDO`);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toBeNull();
+      req.flush(null);
+    });
+  });
+  describe('marcarComoLido', () => {
+    it('should PUT marcar-como-lido', () => {
+      service.marcarComoLido('123').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/123/marcar-como-lido`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({});
+      req.flush(null);
+    });
+  });
+  describe('loadProcesses with filters', () => {
+    it('should include tipologia filter params', () => {
+      service.setAllFilters({
+        searchQuery: '',
+        niveis: [],
+        status: [],
+        situacao: [],
+        assunto: '',
+        processosTipologia: [TipologiaProcesso.JEC, TipologiaProcesso.PENAL],
+      });
+      const req = httpMock.expectOne((r) => r.url === API_URL);
+      expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC', 'PENAL']);
+      req.flush(createMockPage([]));
     });
   });
 });

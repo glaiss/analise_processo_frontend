@@ -34,4 +34,23 @@ describe('EnriquecimentoService', () => {
       req.flush(null);
     });
   });
+  describe('reprocessarPorNumeros', () => {
+    it('should POST scraping with numerosProcesso', () => {
+      const numeros = ['1234567-89.2024.8.26.0000', '9876543-21.2024.8.26.0001'];
+      service.reprocessarPorNumeros(numeros).subscribe((response) => {
+        expect(response.resultados.length).toBe(1);
+        expect(response.resultados[0].sucesso).toBe(true);
+      });
+      const req = httpMock.expectOne(`${API_URL}/scraping`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ numerosProcesso: numeros });
+      req.flush({ resultados: [{ numeroProcesso: numeros[0], sucesso: true }] });
+    });
+    it('should handle empty numeros array', () => {
+      service.reprocessarPorNumeros([]).subscribe();
+      const req = httpMock.expectOne(`${API_URL}/scraping`);
+      expect(req.request.body).toEqual({ numerosProcesso: [] });
+      req.flush({ resultados: [] });
+    });
+  });
 });
