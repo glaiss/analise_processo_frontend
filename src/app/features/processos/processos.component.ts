@@ -3,13 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatBadgeModule } from '@angular/material/badge';
 import { ProcessStateService } from '../../core/services/process-state.service';
 import { InfiniteScrollComponent } from '../../shared/components/infinite-scroll/infinite-scroll.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -17,10 +14,8 @@ import { FilterBarComponent } from '../../shared/components/filter-bar/filter-ba
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { ContentLoaderComponent } from '../../shared/components/content-loader/content-loader.component';
-import { SituacaoDisplayPipe } from '../../shared/pipes/situacao-display.pipe';
-import { StatusDisplayPipe } from '../../shared/pipes/status-display.pipe';
-import { ScoreDisplayPipe } from '../../shared/pipes/score-display.pipe';
 import { TipologiaProcesso } from '../../core/models/processo/enums.model';
+import { ProcessCardCompactComponent } from '../../shared/components/process-card-compact/process-card-compact.component';
 
 @Component({
   selector: 'app-processos',
@@ -30,22 +25,17 @@ import { TipologiaProcesso } from '../../core/models/processo/enums.model';
     RouterModule,
     FormsModule,
     MatCardModule,
-    MatTableModule,
-    MatButtonToggleModule,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
-    MatBadgeModule,
     InfiniteScrollComponent,
     PageHeaderComponent,
     FilterBarComponent,
     EmptyStateComponent,
     ErrorStateComponent,
     ContentLoaderComponent,
-    SituacaoDisplayPipe,
-    StatusDisplayPipe,
-    ScoreDisplayPipe,
+    ProcessCardCompactComponent,
   ],
   templateUrl: './processos.component.html',
   styleUrl: './processos.component.scss',
@@ -133,8 +123,7 @@ export class ProcessosComponent implements OnInit {
     });
   }
 
-  toggleMonitoramento(numero: string, event: MouseEvent) {
-    event.stopPropagation();
+  toggleMonitoramento(numero: string) {
     this.processState.alternarMonitoramento(numero).subscribe();
   }
 

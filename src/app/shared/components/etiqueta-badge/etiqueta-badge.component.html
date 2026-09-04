@@ -1,0 +1,10 @@
+<span
+  class="etiqueta-badge"
+  [class.compact]="compact()"
+  [style.background-color]="cor()"
+  [style.color]="textColor()"
+  [matTooltip]="compact() ? nome() : ''"
+  [matTooltipDisabled]="!compact()"
+>
+  {{ compact() ? apelido() : nome() }}
+</span>

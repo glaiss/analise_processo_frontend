@@ -4,6 +4,7 @@ import { EventoContatoDTO } from './evento-contato.model';
 import { ProcessoParteDTO } from './processo-parte.model';
 import { MovimentacaoDTO } from './movimentacao.model';
 import { ProcessoAnotacaoDTO } from './processo-anotacao.model';
+import { EtiquetaDTO } from './etiqueta.model';
 
 export interface ProcessoDetalheDTO {
   numero: string;
@@ -36,5 +37,7 @@ export interface ProcessoDetalheDTO {
   partes: ProcessoParteDTO[];
   movimentacoes: MovimentacaoDTO[];
   anotacoes: ProcessoAnotacaoDTO[];
+  contatos?: any[];
   monitorado: boolean;
+  etiquetas?: EtiquetaDTO[];
 }

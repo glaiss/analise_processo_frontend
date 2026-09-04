@@ -153,12 +153,9 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.getScoreColor(25)).toBe('high');
   });
 
-  it('should call alternarMonitoramento with stopPropagation', () => {
+  it('should call alternarMonitoramento', () => {
     const fixture = TestBed.createComponent(ProcessosComponent);
-    const event = new MouseEvent('click');
-    const stopSpy = vi.spyOn(event, 'stopPropagation');
-    fixture.componentInstance.toggleMonitoramento('123', event);
-    expect(stopSpy).toHaveBeenCalled();
+    fixture.componentInstance.toggleMonitoramento('123');
     expect(processState.alternarMonitoramento).toHaveBeenCalledWith('123');
   });
 
@@ -186,14 +183,15 @@ describe('ProcessosComponent', () => {
     expect(compiled.querySelector('app-content-loader')).toBeTruthy();
   });
 
-  it('should render table when processes exist', () => {
+  it('should render cards when processes exist', () => {
     processState.filteredProcesses.mockReturnValue([
       { numero: '123456', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: false, assuntoJudicial: 'Direito Civil', processoSituacao: 'ATIVO' },
     ]);
     const fixture = TestBed.createComponent(ProcessosComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('table')).toBeTruthy();
+    expect(compiled.querySelector('.processos-grid')).toBeTruthy();
+    expect(compiled.querySelector('app-process-card-compact')).toBeTruthy();
     expect(compiled.textContent).toContain('123456');
   });
 
@@ -237,15 +235,14 @@ describe('ProcessosComponent', () => {
     expect(monitoredIcon).toBeTruthy();
   });
 
-  it('should render monitored-row class for monitored process', () => {
+  it('should render card for monitored process', () => {
     processState.filteredProcesses.mockReturnValue([
       { numero: '123', nivel: 'MEDIO', scoreFinal: 80, statusAtribuicao: 'ATRIBUIDO', monitorado: true, assuntoJudicial: 'Teste', processoSituacao: 'ATIVO' },
     ]);
     const fixture = TestBed.createComponent(ProcessosComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    const rows = compiled.querySelectorAll('.mat-mdc-row');
-    expect(rows.length).toBe(1);
-    expect(rows[0].classList.contains('monitorado-row')).toBe(true);
+    const cards = compiled.querySelectorAll('app-process-card-compact');
+    expect(cards.length).toBe(1);
   });
 });

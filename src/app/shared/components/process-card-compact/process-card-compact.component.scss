@@ -1,0 +1,95 @@
+.process-card-compact {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 12px 0;
+    min-height: 36px;
+
+    .monitor-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: var(--text-primary);
+      }
+
+      &.monitored {
+        color: var(--accent-gold);
+      }
+    }
+
+    .etiquetas-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      justify-content: flex-end;
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  .card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px 12px;
+    margin-top: auto;
+
+    .process-number {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .score-badge {
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      flex-shrink: 0;
+
+      &.low {
+        background-color: var(--red-50);
+        color: var(--red-600);
+      }
+
+      &.medium {
+        background-color: var(--bg-orange-50);
+        color: var(--risk-text-medium);
+      }
+
+      &.high {
+        background-color: var(--bg-green-50);
+        color: var(--emerald-600);
+      }
+    }
+  }
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}

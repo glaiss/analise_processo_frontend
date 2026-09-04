@@ -35,6 +35,18 @@
   </mat-card-header>
 
   <mat-card-content class="card-content">
+    @if (atribuicao.etiquetas && atribuicao.etiquetas.length > 0) {
+      <div class="etiquetas-row">
+        @for (etiqueta of atribuicao.etiquetas; track etiqueta.id) {
+          <app-etiqueta-badge
+            [nome]="etiqueta.nome"
+            [cor]="etiqueta.cor"
+            [apelido]="etiqueta.apelido"
+            [compact]="true"
+          />
+        }
+      </div>
+    }
     @if (showUsuario) {
       <div class="info-row">
         <span class="label">Responsável</span>

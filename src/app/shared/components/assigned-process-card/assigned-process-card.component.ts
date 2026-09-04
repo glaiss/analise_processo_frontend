@@ -15,6 +15,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { ProcessStateService } from '../../../core/services/process-state.service';
 import { NotificationService } from '../../../core/services/notification.service';
+import { EtiquetaBadgeComponent } from '../etiqueta-badge/etiqueta-badge.component';
 
 @Component({
   selector: 'app-assigned-process-card',
@@ -28,6 +29,7 @@ import { NotificationService } from '../../../core/services/notification.service
     MatButtonModule,
     MatTooltipModule,
     MatDividerModule,
+    EtiquetaBadgeComponent,
   ],
   templateUrl: './assigned-process-card.component.html',
   styleUrl: './assigned-process-card.component.scss',

@@ -451,6 +451,15 @@
             </mat-card-content>
           </mat-card>
 
+          <!-- Etiquetas -->
+          @if (numero()) {
+            <mat-card class="side-card etiquetas-card">
+              <mat-card-content>
+                <app-etiqueta-selector [processoNumero]="numero()!" />
+              </mat-card-content>
+            </mat-card>
+          }
+
           <!-- Annotations and Contacts -->
           <mat-card class="side-card annotations-card">
             <mat-card-header>
