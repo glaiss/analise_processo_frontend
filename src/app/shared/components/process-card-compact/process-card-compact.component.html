@@ -1,0 +1,28 @@
+<mat-card class="process-card-compact" (click)="onCardClick()">
+  <div class="card-top">
+    <mat-icon
+      class="monitor-icon"
+      [class.monitored]="processo.monitorado"
+      matTooltip="Alternar monitoramento"
+      (click)="onToggleMonitoramento($event)"
+    >
+      {{ processo.monitorado ? 'star' : 'star_border' }}
+    </mat-icon>
+    @if (processo.etiquetas && processo.etiquetas.length > 0) {
+      <div class="etiquetas-row">
+        @for (etiqueta of processo.etiquetas; track etiqueta.id) {
+          <app-etiqueta-badge
+            [nome]="etiqueta.nome"
+            [cor]="etiqueta.cor"
+            [apelido]="etiqueta.apelido"
+            [compact]="true"
+          />
+        }
+      </div>
+    }
+  </div>
+  <div class="card-bottom">
+    <span class="process-number font-mono">{{ processo.numero }}</span>
+    <span class="score-badge font-mono" [ngClass]="scoreColor">{{ processo.scoreFinal }}</span>
+  </div>
+</mat-card>

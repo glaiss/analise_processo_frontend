@@ -38,6 +38,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { ContactProcessDialogComponent } from '../../../shared/components/contact-process-dialog/contact-process-dialog.component';
 import { ContatoService } from '../../../core/services/contato.service';
 import { ProcessoContatoDTO } from '../../../core/models/processo/processo-contato.model';
+import { EtiquetaSelectorComponent } from '../../../shared/components/etiqueta-selector/etiqueta-selector.component';
 
 @Component({
   selector: 'app-process-details',
@@ -67,6 +68,7 @@ import { ProcessoContatoDTO } from '../../../core/models/processo/processo-conta
       EmptyStateComponent,
       StatusDisplayPipe,
       ScoreDisplayPipe,
+      EtiquetaSelectorComponent,
     ],
   templateUrl: './process-details.component.html',
   styleUrl: './process-details.component.scss'

@@ -135,4 +135,20 @@ describe('DistributionService', () => {
       req.flush(null);
     });
   });
+  describe('definirPrazo', () => {
+    it('should PUT prazo with prazoFinal', () => {
+      service.definirPrazo('id-1', '2025-12-31T23:59:59').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/id-1/prazo`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ prazoFinal: '2025-12-31T23:59:59' });
+      req.flush(null);
+    });
+    it('should PUT prazo with null prazoFinal to clear', () => {
+      service.definirPrazo('id-1', null).subscribe();
+      const req = httpMock.expectOne(`${API_URL}/id-1/prazo`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ prazoFinal: null });
+      req.flush(null);
+    });
+  });
 });

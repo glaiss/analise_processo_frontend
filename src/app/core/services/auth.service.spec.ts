@@ -11,7 +11,7 @@ function createMockUser(overrides?: Partial<User>): User {
     username: 'joao',
     nome: 'João Silva',
     equipe: 'Equipe A',
-    authorities: [{ authority: 'ROLE_ADMIN' }],
+    roles: ['ROLE_ADMIN'],
     ...overrides,
   };
 }
@@ -218,6 +218,79 @@ describe('AuthService', () => {
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual({ senhaAtual: 'senhaAtual', senhaNova: 'senhaNova' });
       req.flush(null);
+    });
+  });
+  describe('impersonate', () => {
+    it('should POST impersonate and save user + checkImpersonation', () => {
+      const mockUser = createMockUser();
+      service.impersonate('target@email.com').subscribe((user) => {
+        expect(user).toEqual(mockUser);
+      });
+      const req = httpMock.expectOne(`${API_URL}/impersonate`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ targetEmail: 'target@email.com' });
+      req.flush(mockUser);
+      expect(service.currentUser()).toEqual(mockUser);
+      const impReq = httpMock.expectOne(`${API_URL}/impersonating-origin`);
+      impReq.flush({ origin: 'target@email.com' });
+      expect(service.isImpersonating()).toBe(true);
+    });
+  });
+  describe('alterarNome', () => {
+    it('should PUT new name and update session', () => {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(createMockUser()));
+      const updatedUser = createMockUser({ nome: 'Novo Nome' });
+      service.alterarNome('Novo Nome').subscribe((user) => {
+        expect(user.nome).toBe('Novo Nome');
+      });
+      const req = httpMock.expectOne(`${API_URL}/nome`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ nome: 'Novo Nome' });
+      req.flush(updatedUser);
+      expect(service.currentUser()?.nome).toBe('Novo Nome');
+    });
+  });
+  describe('alterarEmail', () => {
+    it('should PUT new email and update session', () => {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(createMockUser()));
+      const updatedUser = createMockUser({ username: 'novo@email.com' });
+      service.alterarEmail('novo@email.com').subscribe((user) => {
+        expect(user.username).toBe('novo@email.com');
+      });
+      const req = httpMock.expectOne(`${API_URL}/email`);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual({ email: 'novo@email.com' });
+      req.flush(updatedUser);
+      expect(service.currentUser()?.username).toBe('novo@email.com');
+    });
+  });
+  describe('stopImpersonating (with user returned)', () => {
+    it('should save user and clear impersonation when user is returned', () => {
+      sessionStorage.setItem(USER_KEY, JSON.stringify(createMockUser()));
+      sessionStorage.setItem('impersonating_origin', 'admin_user');
+      service.stopImpersonating().subscribe(() => {
+        expect(service.isImpersonating()).toBe(false);
+      });
+      const req = httpMock.expectOne(`${API_URL}/stop-impersonating`);
+      req.flush(createMockUser({ username: 'restored' }));
+      expect(service.currentUser()?.username).toBe('restored');
+      expect(service.isImpersonating()).toBe(false);
+    });
+  });
+  describe('setInSession (SSR)', () => {
+    it('should not write to sessionStorage when not in browser', () => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          provideHttpClient(),
+          provideHttpClientTesting(),
+          AuthService,
+          { provide: PLATFORM_ID, useValue: 'server' },
+        ],
+      });
+      const svc = TestBed.inject(AuthService);
+      (svc as any).setInSession('test_key', 'test_value');
+      expect(sessionStorage.getItem('test_key')).toBeNull();
     });
   });
 });
