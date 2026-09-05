@@ -3,7 +3,19 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # API via proxy same-origin (resolvido no netlify.toml redirects)
+  # IMPORTANTE: remova API_URL do dashboard do Netlify se estiver definido lá
+  API_URL = "/api"
 
+# Proxy da API: redireciona /api/* para o CloudFront (same-origin).
+# Isso resolve o bloqueio de third-party cookies no Safari/Brave.
+[[redirects]]
+  from = "/api/*"
+  to = "https://d24blruqi6fqsu.cloudfront.net/analise-processos/:splat"
+  status = 200
+  force = true
+
+# SPA fallback: todas as rotas do Angular
 [[redirects]]
   from = "/*"
   to = "/index.html"
