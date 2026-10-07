@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProcessStateService } from '../../core/services/process-state.service';
+import { EtiquetaService } from '../../core/services/etiqueta.service';
 import { InfiniteScrollComponent } from '../../shared/components/infinite-scroll/infinite-scroll.component';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { FilterBarComponent } from '../../shared/components/filter-bar/filter-bar.component';
@@ -15,6 +16,7 @@ import { EmptyStateComponent } from '../../shared/components/empty-state/empty-s
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state.component';
 import { ContentLoaderComponent } from '../../shared/components/content-loader/content-loader.component';
 import { TipologiaProcesso } from '../../core/models/processo/enums.model';
+import { EtiquetaDTO } from '../../core/models/processo/etiqueta.model';
 import { ProcessCardCompactComponent } from '../../shared/components/process-card-compact/process-card-compact.component';
 
 @Component({
@@ -44,6 +46,7 @@ export class ProcessosComponent implements OnInit {
   processState = inject(ProcessStateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly etiquetaService = inject(EtiquetaService);
 
   readonly searchQuery = signal<string>('');
   readonly selectedNiveis = signal<string[]>([]);
@@ -51,6 +54,13 @@ export class ProcessosComponent implements OnInit {
   readonly selectedSituacao = signal<string[]>([]);
   readonly selectedAssunto = signal<string>('');
   readonly selectedTipologia = signal<TipologiaProcesso[]>([]);
+  readonly selectedEtiquetas = signal<string[]>([]);
+  readonly autorComAdvogado = signal(false);
+  readonly autorSemAdvogado = signal(false);
+  readonly partesComAdvogado = signal(false);
+  readonly partesSemAdvogado = signal(false);
+  readonly semAdvogado = signal(false);
+  readonly etiquetaOptions = signal<EtiquetaDTO[]>([]);
 
   readonly hasActiveFilters = computed(() =>
     this.selectedNiveis().length > 0 ||
@@ -58,6 +68,12 @@ export class ProcessosComponent implements OnInit {
     this.selectedSituacao().length > 0 ||
     this.selectedAssunto().length > 0 ||
     this.selectedTipologia().length > 0 ||
+    this.selectedEtiquetas().length > 0 ||
+    this.autorComAdvogado() ||
+    this.autorSemAdvogado() ||
+    this.partesComAdvogado() ||
+    this.partesSemAdvogado() ||
+    this.semAdvogado() ||
     this.searchQuery().length > 0
   );
 
@@ -80,6 +96,11 @@ export class ProcessosComponent implements OnInit {
       const isMonitorados = data['monitorados'] === true;
       this.processState.setMode(isMonitorados ? 'monitorados' : 'all');
     });
+
+    this.etiquetaService.listar().subscribe({
+      next: (etiquetas) => this.etiquetaOptions.set(etiquetas),
+      error: () => this.etiquetaOptions.set([]),
+    });
   }
 
   onFilterChange(filters: {
@@ -89,6 +110,12 @@ export class ProcessosComponent implements OnInit {
     selectedSituacao: string[];
     selectedAssunto: string;
     selectedTipologia: TipologiaProcesso[];
+    selectedEtiquetas: string[];
+    autorComAdvogado: boolean;
+    autorSemAdvogado: boolean;
+    partesComAdvogado: boolean;
+    partesSemAdvogado: boolean;
+    semAdvogado: boolean;
   }) {
     this.searchQuery.set(filters.searchQuery);
     this.selectedNiveis.set(filters.selectedNiveis);
@@ -96,6 +123,12 @@ export class ProcessosComponent implements OnInit {
     this.selectedSituacao.set(filters.selectedSituacao);
     this.selectedAssunto.set(filters.selectedAssunto);
     this.selectedTipologia.set(filters.selectedTipologia);
+    this.selectedEtiquetas.set(filters.selectedEtiquetas);
+    this.autorComAdvogado.set(filters.autorComAdvogado);
+    this.autorSemAdvogado.set(filters.autorSemAdvogado);
+    this.partesComAdvogado.set(filters.partesComAdvogado);
+    this.partesSemAdvogado.set(filters.partesSemAdvogado);
+    this.semAdvogado.set(filters.semAdvogado);
     this.processState.setAllFilters({
       searchQuery: filters.searchQuery,
       niveis: filters.selectedNiveis,
@@ -103,6 +136,12 @@ export class ProcessosComponent implements OnInit {
       situacao: filters.selectedSituacao,
       assunto: filters.selectedAssunto,
       processosTipologia: filters.selectedTipologia,
+      etiquetas: filters.selectedEtiquetas,
+      autorComAdvogado: filters.autorComAdvogado,
+      autorSemAdvogado: filters.autorSemAdvogado,
+      partesComAdvogado: filters.partesComAdvogado,
+      partesSemAdvogado: filters.partesSemAdvogado,
+      semAdvogado: filters.semAdvogado,
     });
   }
 
@@ -113,6 +152,12 @@ export class ProcessosComponent implements OnInit {
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
     this.selectedTipologia.set([]);
+    this.selectedEtiquetas.set([]);
+    this.autorComAdvogado.set(false);
+    this.autorSemAdvogado.set(false);
+    this.partesComAdvogado.set(false);
+    this.partesSemAdvogado.set(false);
+    this.semAdvogado.set(false);
     this.processState.setAllFilters({
       searchQuery: '',
       niveis: [],
@@ -120,6 +165,12 @@ export class ProcessosComponent implements OnInit {
       situacao: [],
       assunto: '',
       processosTipologia: [],
+      etiquetas: [],
+      autorComAdvogado: false,
+      autorSemAdvogado: false,
+      partesComAdvogado: false,
+      partesSemAdvogado: false,
+      semAdvogado: false,
     });
   }
 

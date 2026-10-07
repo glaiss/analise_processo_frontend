@@ -74,6 +74,40 @@ describe('DistributionService', () => {
       expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC', 'PENAL']);
       req.flush({ content: [] });
     });
+    it('should append etiqueta and advogado filters', () => {
+      service.getMeusProcessos(0, 20, {
+        etiquetas: ['uuid-1', 'uuid-2'],
+        autorComAdvogado: true,
+        autorSemAdvogado: true,
+        partesComAdvogado: true,
+        partesSemAdvogado: true,
+        semAdvogado: true,
+      }).subscribe();
+      const req = httpMock.expectOne((r) => r.url === `${API_URL}/meus-processos`);
+      expect(req.request.params.getAll('etiquetas')).toEqual(['uuid-1', 'uuid-2']);
+      expect(req.request.params.get('autorComAdvogado')).toBe('true');
+      expect(req.request.params.get('autorSemAdvogado')).toBe('true');
+      expect(req.request.params.get('partesComAdvogado')).toBe('true');
+      expect(req.request.params.get('partesSemAdvogado')).toBe('true');
+      expect(req.request.params.get('semAdvogado')).toBe('true');
+      req.flush({ content: [] });
+    });
+    it('should omit advogado flags when false', () => {
+      service.getMeusProcessos(0, 20, {
+        autorComAdvogado: false,
+        autorSemAdvogado: false,
+        partesComAdvogado: false,
+        partesSemAdvogado: false,
+        semAdvogado: false,
+      }).subscribe();
+      const req = httpMock.expectOne((r) => r.url === `${API_URL}/meus-processos`);
+      expect(req.request.params.get('autorComAdvogado')).toBeNull();
+      expect(req.request.params.get('autorSemAdvogado')).toBeNull();
+      expect(req.request.params.get('partesComAdvogado')).toBeNull();
+      expect(req.request.params.get('partesSemAdvogado')).toBeNull();
+      expect(req.request.params.get('semAdvogado')).toBeNull();
+      req.flush({ content: [] });
+    });
     it('should append all filters together', () => {
       service.getMeusProcessos(0, 20, {
         numero: '123',

@@ -27,6 +27,12 @@ export class ProcessStateService {
   private readonly filterAssunto = signal<string>('');
   private readonly searchQuery = signal<string>('');
   private readonly filterTipologia = signal<TipologiaProcesso[]>([]);
+  private readonly filterEtiquetas = signal<string[]>([]);
+  private readonly filterAutorComAdvogado = signal(false);
+  private readonly filterAutorSemAdvogado = signal(false);
+  private readonly filterPartesComAdvogado = signal(false);
+  private readonly filterPartesSemAdvogado = signal(false);
+  private readonly filterSemAdvogado = signal(false);
   private readonly groupBy = signal<'equipeNome' | 'usuarioResponsavel'>('equipeNome');
 
   // Computed
@@ -71,6 +77,24 @@ export class ProcessStateService {
     this.filterSituacao().forEach(situacao => {
       params = params.append('situacao', situacao);
     });
+    this.filterEtiquetas().forEach(etiqueta => {
+      params = params.append('etiquetas', etiqueta);
+    });
+    if (this.filterAutorComAdvogado()) {
+      params = params.set('autorComAdvogado', 'true');
+    }
+    if (this.filterAutorSemAdvogado()) {
+      params = params.set('autorSemAdvogado', 'true');
+    }
+    if (this.filterPartesComAdvogado()) {
+      params = params.set('partesComAdvogado', 'true');
+    }
+    if (this.filterPartesSemAdvogado()) {
+      params = params.set('partesSemAdvogado', 'true');
+    }
+    if (this.filterSemAdvogado()) {
+      params = params.set('semAdvogado', 'true');
+    }
     const endpoint = this.mode() === 'monitorados' ? `${this.apiUrl}/monitorados` : this.apiUrl;
     this.http.get<Page<ProcessoResumoDTO>>(endpoint, { params }).pipe(
       tap({
@@ -130,6 +154,12 @@ export class ProcessStateService {
     situacao: string[];
     assunto: string;
     processosTipologia?: TipologiaProcesso[];
+    etiquetas?: string[];
+    autorComAdvogado?: boolean;
+    autorSemAdvogado?: boolean;
+    partesComAdvogado?: boolean;
+    partesSemAdvogado?: boolean;
+    semAdvogado?: boolean;
   }) {
     this.searchQuery.set(filters.searchQuery);
     this.filterNivel.set(filters.niveis);
@@ -137,6 +167,12 @@ export class ProcessStateService {
     this.filterSituacao.set(filters.situacao);
     this.filterAssunto.set(filters.assunto);
     this.filterTipologia.set(filters.processosTipologia ?? []);
+    this.filterEtiquetas.set(filters.etiquetas ?? []);
+    this.filterAutorComAdvogado.set(filters.autorComAdvogado ?? false);
+    this.filterAutorSemAdvogado.set(filters.autorSemAdvogado ?? false);
+    this.filterPartesComAdvogado.set(filters.partesComAdvogado ?? false);
+    this.filterPartesSemAdvogado.set(filters.partesSemAdvogado ?? false);
+    this.filterSemAdvogado.set(filters.semAdvogado ?? false);
     this.loadProcesses();
   }
 

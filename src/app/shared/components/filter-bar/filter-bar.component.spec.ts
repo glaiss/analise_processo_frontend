@@ -41,6 +41,12 @@ describe('FilterBarComponent', () => {
     fixture.componentInstance.selectedSituacao.set(['ENRIQUECIDO']);
     fixture.componentInstance.selectedAssunto.set('tributário');
     fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
+    fixture.componentInstance.selectedEtiquetas.set(['uuid-1']);
+    fixture.componentInstance.autorComAdvogado.set(true);
+    fixture.componentInstance.autorSemAdvogado.set(true);
+    fixture.componentInstance.partesComAdvogado.set(true);
+    fixture.componentInstance.partesSemAdvogado.set(true);
+    fixture.componentInstance.semAdvogado.set(true);
     fixture.componentInstance.showAdvanced.set(true);
 
     const emitSpy = vi.spyOn(fixture.componentInstance.clearFilters, 'emit');
@@ -52,6 +58,12 @@ describe('FilterBarComponent', () => {
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
     expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
+    expect(fixture.componentInstance.selectedEtiquetas()).toEqual([]);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(false);
+    expect(fixture.componentInstance.partesComAdvogado()).toBe(false);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(false);
+    expect(fixture.componentInstance.semAdvogado()).toBe(false);
     expect(fixture.componentInstance.showAdvanced()).toBe(false);
     expect(emitSpy).toHaveBeenCalled();
   });
@@ -237,5 +249,119 @@ describe('FilterBarComponent', () => {
     const warnIcons = fixture.nativeElement.querySelectorAll('.full-width mat-icon[color="warn"]');
     expect(warnIcons.length).toBe(1);
     expect(warnIcons[0].textContent).toContain('close');
+  });
+
+  it('should update selectedEtiquetas on onEtiquetasChange', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+    fixture.componentInstance.onEtiquetasChange(['uuid-1', 'uuid-2']);
+    expect(fixture.componentInstance.selectedEtiquetas()).toEqual(['uuid-1', 'uuid-2']);
+    expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ selectedEtiquetas: ['uuid-1', 'uuid-2'] }));
+  });
+
+  it('should clear semAdvogado when autorComAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.semAdvogado.set(true);
+    fixture.componentInstance.onAutorComAdvogadoChange(true);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(true);
+    expect(fixture.componentInstance.semAdvogado()).toBe(false);
+  });
+
+  it('should clear autorSemAdvogado when autorComAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.autorSemAdvogado.set(true);
+    fixture.componentInstance.onAutorComAdvogadoChange(true);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(true);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(false);
+  });
+
+  it('should clear autorComAdvogado when autorSemAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.autorComAdvogado.set(true);
+    fixture.componentInstance.onAutorSemAdvogadoChange(true);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(true);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
+  });
+
+  it('should keep partesSemAdvogado when autorSemAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.partesSemAdvogado.set(true);
+    fixture.componentInstance.onAutorSemAdvogadoChange(true);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(true);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(true);
+  });
+
+  it('should clear semAdvogado when partesComAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.semAdvogado.set(true);
+    fixture.componentInstance.onPartesComAdvogadoChange(true);
+    expect(fixture.componentInstance.partesComAdvogado()).toBe(true);
+    expect(fixture.componentInstance.semAdvogado()).toBe(false);
+  });
+
+  it('should keep partesComAdvogado when partesSemAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.partesComAdvogado.set(true);
+    fixture.componentInstance.onPartesSemAdvogadoChange(true);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(true);
+    expect(fixture.componentInstance.partesComAdvogado()).toBe(true);
+  });
+
+  it('should clear positive advogado filters when semAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.autorComAdvogado.set(true);
+    fixture.componentInstance.partesComAdvogado.set(true);
+    fixture.componentInstance.onSemAdvogadoChange(true);
+    expect(fixture.componentInstance.semAdvogado()).toBe(true);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
+    expect(fixture.componentInstance.partesComAdvogado()).toBe(false);
+  });
+
+  it('should keep negative advogado filters when semAdvogado is checked', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.autorSemAdvogado.set(true);
+    fixture.componentInstance.partesSemAdvogado.set(true);
+    fixture.componentInstance.onSemAdvogadoChange(true);
+    expect(fixture.componentInstance.semAdvogado()).toBe(true);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(true);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(true);
+  });
+
+  it('should emit advogado flags on filterChange', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+    fixture.componentInstance.onAutorComAdvogadoChange(true);
+    expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ autorComAdvogado: true, semAdvogado: false }));
+  });
+
+  it('should emit new advogado flags on filterChange', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    const emitSpy = vi.spyOn(fixture.componentInstance.filterChange, 'emit');
+    fixture.componentInstance.onAutorSemAdvogadoChange(true);
+    fixture.componentInstance.onPartesSemAdvogadoChange(true);
+    expect(emitSpy).toHaveBeenLastCalledWith(expect.objectContaining({
+      autorSemAdvogado: true,
+      partesSemAdvogado: true,
+      autorComAdvogado: false,
+    }));
+  });
+
+  it('should hide processo filters when showProcessoFilters is false', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.showAdvanced.set(true);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.processo-filters-row')).toBeFalsy();
+  });
+
+  it('should show processo filters when showProcessoFilters is true', () => {
+    const fixture = TestBed.createComponent(FilterBarComponent);
+    fixture.componentInstance.showAdvanced.set(true);
+    fixture.componentRef.setInput('showProcessoFilters', true);
+    fixture.componentRef.setInput('etiquetasOptions', [
+      { id: 'uuid-1', nome: 'Urgente', cor: '#FF0000', tipo: 'GLOBAL', apelido: 'Urgente', usuarioNome: null },
+    ]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.processo-filters-row')).toBeTruthy();
+    expect(fixture.nativeElement.querySelectorAll('mat-checkbox').length).toBe(5);
   });
 });

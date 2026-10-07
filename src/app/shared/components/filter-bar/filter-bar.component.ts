@@ -7,7 +7,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATUS_DISPLAY, StatusAtribuicao, TIPOLOGIA_DISPLAY, TipologiaProcesso } from '../../../core/models/processo/enums.model';
+import { EtiquetaDTO } from '../../../core/models/processo/etiqueta.model';
 
 @Component({
   selector: 'app-filter-bar',
@@ -21,6 +23,7 @@ import { ProcessoSituacao, SCORE_DISPLAY, SCORE_OPTIONS, SITUACAO_DISPLAY, STATU
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
+    MatCheckboxModule,
   ],
   templateUrl: './filter-bar.component.html',
   styleUrl: './filter-bar.component.scss',
@@ -32,8 +35,17 @@ export class FilterBarComponent implements OnDestroy {
   readonly selectedSituacao = model<string[]>([]);
   readonly selectedAssunto = model<string>('');
   readonly selectedTipologia = model<TipologiaProcesso[]>([]);
+  readonly selectedEtiquetas = model<string[]>([]);
+  readonly autorComAdvogado = model(false);
+  readonly autorSemAdvogado = model(false);
+  readonly partesComAdvogado = model(false);
+  readonly partesSemAdvogado = model(false);
+  readonly semAdvogado = model(false);
 
   readonly showAdvanced = model(false);
+
+  readonly showProcessoFilters = input(false);
+  readonly etiquetasOptions = input<EtiquetaDTO[]>([]);
 
   readonly statusOptions = Object.values(StatusAtribuicao);
   readonly situacaoOptions = Object.values(ProcessoSituacao);
@@ -53,6 +65,12 @@ export class FilterBarComponent implements OnDestroy {
     selectedSituacao: string[];
     selectedAssunto: string;
     selectedTipologia: TipologiaProcesso[];
+    selectedEtiquetas: string[];
+    autorComAdvogado: boolean;
+    autorSemAdvogado: boolean;
+    partesComAdvogado: boolean;
+    partesSemAdvogado: boolean;
+    semAdvogado: boolean;
   }>();
   readonly clearFilters = output<void>();
 
@@ -64,6 +82,12 @@ export class FilterBarComponent implements OnDestroy {
       selectedSituacao: this.selectedSituacao(),
       selectedAssunto: this.selectedAssunto(),
       selectedTipologia: this.selectedTipologia(),
+      selectedEtiquetas: this.selectedEtiquetas(),
+      autorComAdvogado: this.autorComAdvogado(),
+      autorSemAdvogado: this.autorSemAdvogado(),
+      partesComAdvogado: this.partesComAdvogado(),
+      partesSemAdvogado: this.partesSemAdvogado(),
+      semAdvogado: this.semAdvogado(),
     });
   }
 
@@ -85,6 +109,12 @@ export class FilterBarComponent implements OnDestroy {
     this.selectedSituacao.set([]);
     this.selectedAssunto.set('');
     this.selectedTipologia.set([]);
+    this.selectedEtiquetas.set([]);
+    this.autorComAdvogado.set(false);
+    this.autorSemAdvogado.set(false);
+    this.partesComAdvogado.set(false);
+    this.partesSemAdvogado.set(false);
+    this.semAdvogado.set(false);
     this.showAdvanced.set(false);
     this.clearFilters.emit();
   }
@@ -101,6 +131,50 @@ export class FilterBarComponent implements OnDestroy {
 
   onTipologiaChange(values: TipologiaProcesso[]) {
     this.selectedTipologia.set(values);
+    this.emitSearch();
+  }
+
+  onEtiquetasChange(values: string[]) {
+    this.selectedEtiquetas.set(values);
+    this.emitSearch();
+  }
+
+  onAutorComAdvogadoChange(checked: boolean) {
+    this.autorComAdvogado.set(checked);
+    if (checked) {
+      this.autorSemAdvogado.set(false);
+      this.semAdvogado.set(false);
+    }
+    this.emitSearch();
+  }
+
+  onAutorSemAdvogadoChange(checked: boolean) {
+    this.autorSemAdvogado.set(checked);
+    if (checked) {
+      this.autorComAdvogado.set(false);
+    }
+    this.emitSearch();
+  }
+
+  onPartesComAdvogadoChange(checked: boolean) {
+    this.partesComAdvogado.set(checked);
+    if (checked) {
+      this.semAdvogado.set(false);
+    }
+    this.emitSearch();
+  }
+
+  onPartesSemAdvogadoChange(checked: boolean) {
+    this.partesSemAdvogado.set(checked);
+    this.emitSearch();
+  }
+
+  onSemAdvogadoChange(checked: boolean) {
+    this.semAdvogado.set(checked);
+    if (checked) {
+      this.autorComAdvogado.set(false);
+      this.partesComAdvogado.set(false);
+    }
     this.emitSearch();
   }
 

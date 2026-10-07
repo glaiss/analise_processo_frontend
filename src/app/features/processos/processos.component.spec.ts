@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
 import { ProcessosComponent } from './processos.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
+import { EtiquetaService } from '../../core/services/etiqueta.service';
 import { StatusAtribuicao, TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 class MockIntersectionObserver {
@@ -47,6 +49,7 @@ describe('ProcessosComponent', () => {
       providers: [
         provideRouter([]),
         { provide: ProcessStateService, useValue: processState },
+        { provide: EtiquetaService, useValue: { listar: () => of([]) } },
       ],
     }).compileComponents();
   });
@@ -72,6 +75,12 @@ describe('ProcessosComponent', () => {
         selectedSituacao: ['ATIVO'],
         selectedAssunto: 'tributário',
         selectedTipologia: [TipologiaProcesso.JEC],
+        selectedEtiquetas: ['uuid-1'],
+        autorComAdvogado: true,
+        autorSemAdvogado: false,
+        partesComAdvogado: false,
+        partesSemAdvogado: true,
+        semAdvogado: false,
       });
     } catch {
       // If onFilterChange doesn't exist, test passes vacuously
@@ -82,6 +91,9 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedSituacao()).toEqual(['ATIVO']);
     expect(fixture.componentInstance.selectedAssunto()).toBe('tributário');
     expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC]);
+    expect(fixture.componentInstance.selectedEtiquetas()).toEqual(['uuid-1']);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(true);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(true);
     expect(processState.setAllFilters).toHaveBeenCalledWith({
       searchQuery: 'test123',
       niveis: ['ALTO', 'MEDIO'],
@@ -89,6 +101,12 @@ describe('ProcessosComponent', () => {
       situacao: ['ATIVO'],
       assunto: 'tributário',
       processosTipologia: [TipologiaProcesso.JEC],
+      etiquetas: ['uuid-1'],
+      autorComAdvogado: true,
+      autorSemAdvogado: false,
+      partesComAdvogado: false,
+      partesSemAdvogado: true,
+      semAdvogado: false,
     });
   });
 
@@ -120,6 +138,10 @@ describe('ProcessosComponent', () => {
     fixture.componentInstance.selectedSituacao.set(['ATIVO']);
     fixture.componentInstance.selectedAssunto.set('trib');
     fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
+    fixture.componentInstance.selectedEtiquetas.set(['uuid-1']);
+    fixture.componentInstance.autorComAdvogado.set(true);
+    fixture.componentInstance.autorSemAdvogado.set(true);
+    fixture.componentInstance.partesSemAdvogado.set(true);
 
     fixture.componentInstance.onClearFilters();
 
@@ -129,6 +151,10 @@ describe('ProcessosComponent', () => {
     expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
     expect(fixture.componentInstance.selectedAssunto()).toBe('');
     expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
+    expect(fixture.componentInstance.selectedEtiquetas()).toEqual([]);
+    expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
+    expect(fixture.componentInstance.autorSemAdvogado()).toBe(false);
+    expect(fixture.componentInstance.partesSemAdvogado()).toBe(false);
     expect(processState.setAllFilters).toHaveBeenCalledWith({
       searchQuery: '',
       niveis: [],
@@ -136,7 +162,35 @@ describe('ProcessosComponent', () => {
       situacao: [],
       assunto: '',
       processosTipologia: [],
+      etiquetas: [],
+      autorComAdvogado: false,
+      autorSemAdvogado: false,
+      partesComAdvogado: false,
+      partesSemAdvogado: false,
+      semAdvogado: false,
     });
+  });
+
+  it('should compute hasActiveFilters with etiqueta and advogado filters', () => {
+    const fixture = TestBed.createComponent(ProcessosComponent);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(false);
+
+    fixture.componentInstance.selectedEtiquetas.set(['uuid-1']);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+
+    fixture.componentInstance.selectedEtiquetas.set([]);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(false);
+
+    fixture.componentInstance.semAdvogado.set(true);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+
+    fixture.componentInstance.semAdvogado.set(false);
+    fixture.componentInstance.autorSemAdvogado.set(true);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+
+    fixture.componentInstance.autorSemAdvogado.set(false);
+    fixture.componentInstance.partesSemAdvogado.set(true);
+    expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
   });
 
   it('should compute hasActiveFilters correctly', () => {

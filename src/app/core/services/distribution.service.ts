@@ -13,6 +13,12 @@ export interface ProcessoFilterParams {
   assunto?: string;
   situacao?: string[];
   processosTipologia?: TipologiaProcesso[];
+  etiquetas?: string[];
+  autorComAdvogado?: boolean;
+  autorSemAdvogado?: boolean;
+  partesComAdvogado?: boolean;
+  partesSemAdvogado?: boolean;
+  semAdvogado?: boolean;
 }
 export interface RedirecionarProcessoRequest {
   tipo: 'PESSOA' | 'EQUIPE';
@@ -75,6 +81,26 @@ export class DistributionService {
       filter.processosTipologia.forEach((t) => {
         result = result.append('processosTipologia', t);
       });
+    }
+    if (filter.etiquetas) {
+      filter.etiquetas.forEach((e) => {
+        result = result.append('etiquetas', e);
+      });
+    }
+    if (filter.autorComAdvogado) {
+      result = result.set('autorComAdvogado', 'true');
+    }
+    if (filter.autorSemAdvogado) {
+      result = result.set('autorSemAdvogado', 'true');
+    }
+    if (filter.partesComAdvogado) {
+      result = result.set('partesComAdvogado', 'true');
+    }
+    if (filter.partesSemAdvogado) {
+      result = result.set('partesSemAdvogado', 'true');
+    }
+    if (filter.semAdvogado) {
+      result = result.set('semAdvogado', 'true');
     }
     return result;
   }
