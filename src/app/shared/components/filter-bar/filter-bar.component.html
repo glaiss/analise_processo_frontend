@@ -77,6 +77,47 @@
           }
         </mat-form-field>
       </div>
+
+      @if (showProcessoFilters()) {
+        <div class="filters-extra-row processo-filters-row">
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Etiquetas</mat-label>
+            <mat-select multiple panelClass="filter-select-panel"
+                        [value]="selectedEtiquetas()"
+                        (selectionChange)="onEtiquetasChange($event.value)">
+              @for (etiqueta of etiquetasOptions(); track etiqueta.id) {
+                <mat-option [value]="etiqueta.id">
+                  <span class="etiqueta-dot" [style.backgroundColor]="etiqueta.cor"></span>
+                  {{ etiqueta.nome }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="advogado-filters">
+            <mat-checkbox [checked]="autorComAdvogado()"
+                          (change)="onAutorComAdvogadoChange($event.checked)">
+              Parte autora com advogado
+            </mat-checkbox>
+            <mat-checkbox [checked]="autorSemAdvogado()"
+                          (change)="onAutorSemAdvogadoChange($event.checked)">
+              Parte autora sem advogado
+            </mat-checkbox>
+            <mat-checkbox [checked]="partesComAdvogado()"
+                          (change)="onPartesComAdvogadoChange($event.checked)">
+              Alguma parte com advogado
+            </mat-checkbox>
+            <mat-checkbox [checked]="partesSemAdvogado()"
+                          (change)="onPartesSemAdvogadoChange($event.checked)">
+              Alguma parte sem advogado
+            </mat-checkbox>
+            <mat-checkbox [checked]="semAdvogado()"
+                          (change)="onSemAdvogadoChange($event.checked)">
+              Nenhuma parte com advogado
+            </mat-checkbox>
+          </div>
+        </div>
+      }
     </div>
   }
 </div>

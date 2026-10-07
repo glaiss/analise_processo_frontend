@@ -333,5 +333,56 @@ describe('ProcessStateService', () => {
       expect(req.request.params.getAll('processosTipologia')).toEqual(['JEC', 'PENAL']);
       req.flush(createMockPage([]));
     });
+    it('should include etiqueta and advogado filter params', () => {
+      service.setAllFilters({
+        searchQuery: '',
+        niveis: [],
+        status: [],
+        situacao: [],
+        assunto: '',
+        etiquetas: ['uuid-1', 'uuid-2'],
+        autorComAdvogado: true,
+        semAdvogado: false,
+      });
+      const req = httpMock.expectOne((r) => r.url === API_URL);
+      expect(req.request.params.getAll('etiquetas')).toEqual(['uuid-1', 'uuid-2']);
+      expect(req.request.params.get('autorComAdvogado')).toBe('true');
+      expect(req.request.params.get('partesComAdvogado')).toBeNull();
+      expect(req.request.params.get('semAdvogado')).toBeNull();
+      req.flush(createMockPage([]));
+    });
+    it('should send semAdvogado param when only semAdvogado is set', () => {
+      service.setAllFilters({
+        searchQuery: '',
+        niveis: [],
+        status: [],
+        situacao: [],
+        assunto: '',
+        semAdvogado: true,
+      });
+      const req = httpMock.expectOne((r) => r.url === API_URL);
+      expect(req.request.params.get('semAdvogado')).toBe('true');
+      expect(req.request.params.get('autorComAdvogado')).toBeNull();
+      expect(req.request.params.getAll('etiquetas')).toBeNull();
+      req.flush(createMockPage([]));
+    });
+    it('should include negative advogado filter params', () => {
+      service.setAllFilters({
+        searchQuery: '',
+        niveis: [],
+        status: [],
+        situacao: [],
+        assunto: '',
+        autorSemAdvogado: true,
+        partesSemAdvogado: true,
+      });
+      const req = httpMock.expectOne((r) => r.url === API_URL);
+      expect(req.request.params.get('autorSemAdvogado')).toBe('true');
+      expect(req.request.params.get('partesSemAdvogado')).toBe('true');
+      expect(req.request.params.get('autorComAdvogado')).toBeNull();
+      expect(req.request.params.get('partesComAdvogado')).toBeNull();
+      expect(req.request.params.get('semAdvogado')).toBeNull();
+      req.flush(createMockPage([]));
+    });
   });
 });

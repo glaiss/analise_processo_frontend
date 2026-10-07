@@ -8,13 +8,21 @@
 
   <app-filter-bar
     [hasActiveFilters]="hasActiveFilters()"
+    [showProcessoFilters]="true"
+    [etiquetasOptions]="etiquetaOptions()"
     [(searchQuery)]="searchQuery"
     [(selectedNiveis)]="selectedNiveis"
     [(selectedStatus)]="selectedStatus"
     [(selectedSituacao)]="selectedSituacao"
     [(selectedAssunto)]="selectedAssunto"
     [(selectedTipologia)]="selectedTipologia"
-    (filterChange)="onFilterChange({ searchQuery: searchQuery(), selectedNiveis: selectedNiveis(), selectedStatus: selectedStatus(), selectedSituacao: selectedSituacao(), selectedAssunto: selectedAssunto(), selectedTipologia: selectedTipologia() })"
+    [(selectedEtiquetas)]="selectedEtiquetas"
+    [(autorComAdvogado)]="autorComAdvogado"
+    [(autorSemAdvogado)]="autorSemAdvogado"
+    [(partesComAdvogado)]="partesComAdvogado"
+    [(partesSemAdvogado)]="partesSemAdvogado"
+    [(semAdvogado)]="semAdvogado"
+    (filterChange)="onFilterChange($event)"
     (clearFilters)="onClearFilters()"
   />
 

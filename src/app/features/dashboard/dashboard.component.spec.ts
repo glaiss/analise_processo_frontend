@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of } from 'rxjs';
 import { DashboardComponent } from './dashboard.component';
 import { ProcessStateService } from '../../core/services/process-state.service';
+import { EtiquetaService } from '../../core/services/etiqueta.service';
 import { TipologiaProcesso } from '../../core/models/processo/enums.model';
 
 describe('DashboardComponent', () => {
@@ -10,6 +12,7 @@ describe('DashboardComponent', () => {
       imports: [DashboardComponent, NoopAnimationsModule],
       providers: [
         { provide: ProcessStateService, useValue: { loadProcesses: vi.fn() } },
+        { provide: EtiquetaService, useValue: { listar: () => of([]) } },
       ],
     }).compileComponents();
   });
@@ -78,6 +81,24 @@ describe('DashboardComponent', () => {
       fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
       expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
     });
+
+    it('should return true when selectedEtiquetas has items', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.selectedEtiquetas.set(['uuid-1']);
+      expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+    });
+
+    it('should return true when autorSemAdvogado is checked', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.autorSemAdvogado.set(true);
+      expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+    });
+
+    it('should return true when partesSemAdvogado is checked', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.partesSemAdvogado.set(true);
+      expect(fixture.componentInstance.hasActiveFilters()).toBe(true);
+    });
   });
 
   describe('filterParams', () => {
@@ -129,6 +150,23 @@ describe('DashboardComponent', () => {
       expect(params?.numero).toBeUndefined();
       expect(params?.niveis).toEqual(['ALTO']);
     });
+
+    it('should include etiquetas when selectedEtiquetas has items', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.selectedEtiquetas.set(['uuid-1', 'uuid-2']);
+      expect(fixture.componentInstance.filterParams()?.etiquetas).toEqual(['uuid-1', 'uuid-2']);
+    });
+
+    it('should include advogado flags when checked', () => {
+      const fixture = TestBed.createComponent(DashboardComponent);
+      fixture.componentInstance.autorSemAdvogado.set(true);
+      fixture.componentInstance.partesSemAdvogado.set(true);
+      const params = fixture.componentInstance.filterParams();
+      expect(params?.autorSemAdvogado).toBe(true);
+      expect(params?.partesSemAdvogado).toBe(true);
+      expect(params?.autorComAdvogado).toBeUndefined();
+      expect(params?.semAdvogado).toBeUndefined();
+    });
   });
 
   describe('onFilterChange', () => {
@@ -141,6 +179,12 @@ describe('DashboardComponent', () => {
         selectedSituacao: ['ENRIQUECIDO'],
         selectedAssunto: 'tributário',
         selectedTipologia: [TipologiaProcesso.JEC],
+        selectedEtiquetas: ['uuid-1'],
+        autorComAdvogado: false,
+        autorSemAdvogado: true,
+        partesComAdvogado: false,
+        partesSemAdvogado: true,
+        semAdvogado: false,
       });
       expect(fixture.componentInstance.searchQuery()).toBe('123');
       expect(fixture.componentInstance.selectedNiveis()).toEqual(['ALTO']);
@@ -148,6 +192,10 @@ describe('DashboardComponent', () => {
       expect(fixture.componentInstance.selectedSituacao()).toEqual(['ENRIQUECIDO']);
       expect(fixture.componentInstance.selectedAssunto()).toBe('tributário');
       expect(fixture.componentInstance.selectedTipologia()).toEqual([TipologiaProcesso.JEC]);
+      expect(fixture.componentInstance.selectedEtiquetas()).toEqual(['uuid-1']);
+      expect(fixture.componentInstance.autorSemAdvogado()).toBe(true);
+      expect(fixture.componentInstance.partesSemAdvogado()).toBe(true);
+      expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
     });
   });
 
@@ -160,6 +208,12 @@ describe('DashboardComponent', () => {
       fixture.componentInstance.selectedSituacao.set(['ENRIQUECIDO']);
       fixture.componentInstance.selectedAssunto.set('tributário');
       fixture.componentInstance.selectedTipologia.set([TipologiaProcesso.JEC]);
+      fixture.componentInstance.selectedEtiquetas.set(['uuid-1']);
+      fixture.componentInstance.autorComAdvogado.set(true);
+      fixture.componentInstance.autorSemAdvogado.set(true);
+      fixture.componentInstance.partesComAdvogado.set(true);
+      fixture.componentInstance.partesSemAdvogado.set(true);
+      fixture.componentInstance.semAdvogado.set(true);
       fixture.componentInstance.onClearFilters();
       expect(fixture.componentInstance.searchQuery()).toBe('');
       expect(fixture.componentInstance.selectedNiveis()).toEqual([]);
@@ -167,6 +221,12 @@ describe('DashboardComponent', () => {
       expect(fixture.componentInstance.selectedSituacao()).toEqual([]);
       expect(fixture.componentInstance.selectedAssunto()).toBe('');
       expect(fixture.componentInstance.selectedTipologia()).toEqual([]);
+      expect(fixture.componentInstance.selectedEtiquetas()).toEqual([]);
+      expect(fixture.componentInstance.autorComAdvogado()).toBe(false);
+      expect(fixture.componentInstance.autorSemAdvogado()).toBe(false);
+      expect(fixture.componentInstance.partesComAdvogado()).toBe(false);
+      expect(fixture.componentInstance.partesSemAdvogado()).toBe(false);
+      expect(fixture.componentInstance.semAdvogado()).toBe(false);
     });
   });
 });
