@@ -11,7 +11,7 @@
 # Isso resolve o bloqueio de third-party cookies no Safari/Brave.
 [[redirects]]
   from = "/api/*"
-  to = "https://d24blruqi6fqsu.cloudfront.net/analise-processos/:splat"
+  to = "https://d2a94canlc4jaa.cloudfront.net/analise-processos/:splat"
   status = 200
   force = true
 
