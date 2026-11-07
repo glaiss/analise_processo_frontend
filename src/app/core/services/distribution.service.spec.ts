@@ -21,8 +21,8 @@ describe('DistributionService', () => {
   });
   describe('getMeusProcessos', () => {
     it('should GET meus-processos with pagination', () => {
-      service.getMeusProcessos(0, 20).subscribe();
-      const req = httpMock.expectOne(`${API_URL}/meus-processos?page=0&size=20`);
+      service.getMeusProcessos().subscribe();
+      const req = httpMock.expectOne(`${API_URL}/meus-processos?page=0&size=50&sort=isLido,asc`);
       expect(req.request.method).toBe('GET');
       req.flush({ content: [] });
     });
@@ -132,7 +132,7 @@ describe('DistributionService', () => {
   describe('getProcessosEquipe', () => {
     it('should GET equipe with pagination', () => {
       service.getProcessosEquipe(1, 10).subscribe();
-      const req = httpMock.expectOne(`${API_URL}/equipe?page=1&size=10`);
+      const req = httpMock.expectOne(`${API_URL}/equipe?page=1&size=10&sort=isLido,asc`);
       expect(req.request.method).toBe('GET');
       req.flush({ content: [] });
     });

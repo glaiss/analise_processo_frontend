@@ -30,7 +30,7 @@ export class UserService {
   criarUsuario(usuario: UsuarioRequest): Observable<void> {
     return this.http.post<void>(this.apiUrl, usuario);
   }
-  getUsuarios(page: number = 0, size: number = 100): Observable<Page<UsuarioResponse>> {
+  getUsuarios(page: number = 0, size: number = 50): Observable<Page<UsuarioResponse>> {
     return this.http.get<Page<UsuarioResponse>>(`${this.apiUrl}?page=${page}&size=${size}`);
   }
   associarEquipe(usuarioId: string, equipeId: string): Observable<void> {

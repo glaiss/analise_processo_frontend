@@ -45,7 +45,7 @@ describe('ContratoListaComponent', () => {
     content,
     totalElements: content.length,
     totalPages: 1,
-    size: 20,
+    size: 50,
     number: 0,
     last: true,
     first: true,
@@ -80,7 +80,7 @@ describe('ContratoListaComponent', () => {
     const fixture = TestBed.createComponent(ContratoListaComponent);
     fixture.detectChanges();
 
-    expect(mockFinanceiro.listarContratos).toHaveBeenCalledWith(0, 20);
+    expect(mockFinanceiro.listarContratos).toHaveBeenCalledWith(0, 50);
     expect(fixture.componentInstance.contratos().length).toBe(2);
     expect(fixture.componentInstance.total()).toBe(2);
     expect(fixture.componentInstance.loading()).toBe(false);

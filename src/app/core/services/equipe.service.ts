@@ -12,11 +12,11 @@ export interface EquipeDto {
 export class EquipeService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/equipes`;
-  getEquipes(page: number = 0, size: number = 20): Observable<Page<EquipeDto>> {
+  getEquipes(page: number = 0, size: number = 50): Observable<Page<EquipeDto>> {
     const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     return this.http.get<Page<EquipeDto>>(this.apiUrl, { params });
   }
-  getEquipesAtivas(page: number = 0, size: number = 20): Observable<Page<EquipeDto>> {
+  getEquipesAtivas(page: number = 0, size: number = 50): Observable<Page<EquipeDto>> {
     const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     return this.http.get<Page<EquipeDto>>(`${this.apiUrl}/ativas`, { params });
   }

@@ -20,8 +20,8 @@ describe('EquipeService', () => {
   });
   describe('getEquipes', () => {
     it('should GET equipes with pagination', () => {
-      service.getEquipes(0, 20).subscribe();
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      service.getEquipes(0, 50).subscribe();
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       expect(req.request.method).toBe('GET');
       req.flush({ content: [] });
     });

@@ -58,7 +58,7 @@ export class ProcessStateService {
     this.loading.set(true);
     let params = new HttpParams()
       .set('page', this.currentPage().toString())
-      .set('size', '20');
+      .set('size', '50');
     if (this.searchQuery()) {
       params = params.set('numero', this.searchQuery());
     }

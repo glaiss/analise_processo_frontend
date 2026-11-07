@@ -32,10 +32,10 @@ export class DistributionService {
   private readonly apiUrl = `${environment.apiUrl}/distribuicao`;
   getMeusProcessos(
     page: number = 0,
-    size: number = 20,
+    size: number = 50,
     filter?: ProcessoFilterParams,
   ): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'isLido,asc');
     params = this.appendFilterParams(params, filter);
     return this.http.get<Page<AtribuicaoProcessoResumoDTO>>(`${this.apiUrl}/meus-processos`, {
       params,
@@ -43,10 +43,10 @@ export class DistributionService {
   }
   getProcessosEquipe(
     page: number = 0,
-    size: number = 20,
+    size: number = 50,
     filter?: ProcessoFilterParams,
   ): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'isLido,asc');
     params = this.appendFilterParams(params, filter);
     return this.http.get<Page<AtribuicaoProcessoResumoDTO>>(`${this.apiUrl}/equipe`, { params });
   }

@@ -16,7 +16,7 @@ export class FinanceiroService {
   private readonly baseUrl = `${environment.apiUrl}/financeiro`;
 
   // Clientes
-  listarClientes(page: number = 0, size: number = 100): Observable<Page<Cliente>> {
+  listarClientes(page: number = 0, size: number = 50): Observable<Page<Cliente>> {
     const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     return this.http.get<Page<Cliente>>(`${this.baseUrl}/clientes`, { params });
   }
@@ -31,7 +31,7 @@ export class FinanceiroService {
   }
 
   // Contratos
-  listarContratos(page: number = 0, size: number = 20): Observable<Page<Contrato>> {
+  listarContratos(page: number = 0, size: number = 50): Observable<Page<Contrato>> {
     const params = new HttpParams().set('page', page.toString()).set('size', size.toString());
     return this.http.get<Page<Contrato>>(`${this.baseUrl}/contratos`, { params });
   }
