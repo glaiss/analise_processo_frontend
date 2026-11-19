@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Page } from '../models/processo/pagination.model';
+import { Funcionalidade } from '../models/funcionalidade.model';
+export type { Funcionalidade } from '../models/funcionalidade.model';
 export enum Role {
   ADMIN = 'ADMIN',
   GESTOR = 'GESTOR',
@@ -38,5 +40,14 @@ export class UserService {
   }
   desassociarEquipe(usuarioId: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${usuarioId}/equipe`);
+  }
+  listarFuncionalidades(usuarioId: string): Observable<Funcionalidade[]> {
+    return this.http.get<Funcionalidade[]>(`${this.apiUrl}/${usuarioId}/funcionalidades`);
+  }
+  adicionarFuncionalidade(usuarioId: string, funcionalidade: Funcionalidade): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${usuarioId}/funcionalidades/${funcionalidade}`, {});
+  }
+  removerFuncionalidade(usuarioId: string, funcionalidade: Funcionalidade): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${usuarioId}/funcionalidades/${funcionalidade}`);
   }
 }

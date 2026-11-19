@@ -35,7 +35,7 @@ export class DistributionService {
     size: number = 50,
     filter?: ProcessoFilterParams,
   ): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'isLido,asc');
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'lido,asc');
     params = this.appendFilterParams(params, filter);
     return this.http.get<Page<AtribuicaoProcessoResumoDTO>>(`${this.apiUrl}/meus-processos`, {
       params,
@@ -46,7 +46,7 @@ export class DistributionService {
     size: number = 50,
     filter?: ProcessoFilterParams,
   ): Observable<Page<AtribuicaoProcessoResumoDTO>> {
-    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'isLido,asc');
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString()).set('sort', 'lido,asc');
     params = this.appendFilterParams(params, filter);
     return this.http.get<Page<AtribuicaoProcessoResumoDTO>>(`${this.apiUrl}/equipe`, { params });
   }

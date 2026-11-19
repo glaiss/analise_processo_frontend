@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { loginGuard } from './core/guards/login.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { funcionalidadeGuard } from './core/guards/funcionalidade.guard';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,16 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: async () => import('./shared/components/assigned-processes-list/assigned-processes-list.component').then(m => m.AssignedProcessesListComponent),
     data: { mode: 'equipe', title: 'Processos da Equipe' }
+  },
+  {
+    path: 'acompanhamento',
+    canActivate: [authGuard, funcionalidadeGuard('FUNC_ACOMPANHAMENTO')],
+    loadComponent: async () => import('./features/acompanhamento/acompanhamento.component').then(m => m.AcompanhamentoComponent)
+  },
+  {
+    path: 'acompanhamento/processos/:numero',
+    canActivate: [authGuard, funcionalidadeGuard('FUNC_ACOMPANHAMENTO')],
+    loadComponent: async () => import('./features/acompanhamento/details/acompanhamento-details.component').then(m => m.AcompanhamentoDetailsComponent)
   },
   {
     path: 'admin',

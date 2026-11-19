@@ -44,4 +44,24 @@ describe('EquipeService', () => {
       req.flush({ id: '1', ...equipe });
     });
   });
+  describe('funcionalidades', () => {
+    it('should GET equipe funcionalidades', () => {
+      service.listarFuncionalidades('eq-1').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades`);
+      expect(req.request.method).toBe('GET');
+      req.flush([]);
+    });
+    it('should POST equipe funcionalidade', () => {
+      service.adicionarFuncionalidade('eq-1', 'FUNC_ACOMPANHAMENTO').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades/FUNC_ACOMPANHAMENTO`);
+      expect(req.request.method).toBe('POST');
+      req.flush(null);
+    });
+    it('should DELETE equipe funcionalidade', () => {
+      service.removerFuncionalidade('eq-1', 'FUNC_ACOMPANHAMENTO').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades/FUNC_ACOMPANHAMENTO`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+  });
 });
