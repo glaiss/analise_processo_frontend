@@ -31,10 +31,25 @@ export interface OabEquipeResponse {
   membros: OabMembroDTO[];
 }
 
+export interface FonteSincronizacaoDTO {
+  fonte: FonteAcompanhamento;
+  descricao: string;
+  status: string | null;
+  quantidadeEncontrada: number | null;
+  quantidadeProcessada: number | null;
+  quantidadeCompleta: number | null;
+  quantidadeErro: number | null;
+  totalEsperado: number | null;
+  iniciadaEm: string | null;
+  finalizadaEm: string | null;
+  ultimoErro: string | null;
+}
+
 export interface StatusSincronizacaoDTO {
   status: string | null;
   ultimaSincronizacaoEm: string | null;
   ultimoErro: string | null;
+  fontes: FonteSincronizacaoDTO[];
 }
 
 export interface ProcessoAcompanhadoResumoDTO {
@@ -50,6 +65,14 @@ export interface ProcessoAcompanhadoResumoDTO {
   donoUsername: string;
   donoNome: string;
   oab: string;
+  fontePrincipal: FonteAcompanhamento | null;
+  fontes: FonteAcompanhamento[];
+  statusDados: string | null;
+  dadosCompletos: boolean;
+  partesOk: boolean;
+  advogadosOk: boolean;
+  movimentacoesOk: boolean;
+  pendencias: string | null;
 }
 
 export interface ProcessoAcompanhadoParteDTO {
@@ -83,6 +106,15 @@ export interface ProcessoAcompanhadoDetalheDTO {
   donoUsername: string;
   donoNome: string;
   oab: string;
+  fontePrincipal: FonteAcompanhamento | null;
+  fontes: FonteAcompanhamento[];
+  statusDados: string | null;
+  dadosCompletos: boolean;
+  partesOk: boolean;
+  advogadosOk: boolean;
+  movimentacoesOk: boolean;
+  pendencias: string | null;
+  ultimaVerificacaoEm: string | null;
   partes: ProcessoAcompanhadoParteDTO[];
   movimentacoes: ProcessoAcompanhadoMovimentacaoDTO[];
 }
@@ -92,4 +124,13 @@ export interface SincronizacaoResultadoDTO {
   atualizados: number;
   desvinculados: number;
   erros: number;
+}
+
+export interface ProcessoSincronizacaoResultadoDTO {
+  numero: string;
+  fonte: FonteAcompanhamento | null;
+  encontrado: boolean;
+  completo: boolean;
+  statusDados: string | null;
+  pendencias: string | null;
 }

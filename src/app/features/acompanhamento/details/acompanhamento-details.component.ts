@@ -9,9 +9,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AcompanhamentoService } from '../../../core/services/acompanhamento.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ProcessoAcompanhadoDetalheDTO } from '../../../core/models/acompanhamento/acompanhamento.model';
+import { fonteLabel } from '../../../core/models/acompanhamento/fonte-acompanhamento';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
-import { statusColor, statusLabel } from '../../../core/utils/acompanhamento-status.util';
+import { pendenciaLabel, statusColor, statusLabel } from '../../../core/utils/acompanhamento-status.util';
 
 @Component({
   selector: 'app-acompanhamento-details',
@@ -39,10 +40,13 @@ export class AcompanhamentoDetailsComponent implements OnInit {
   readonly numero = signal('');
   readonly processo = signal<ProcessoAcompanhadoDetalheDTO | null>(null);
   readonly carregando = signal(true);
+  readonly sincronizando = signal(false);
   readonly erro = signal('');
 
   readonly statusLabel = statusLabel;
   readonly statusColor = statusColor;
+  readonly fonteLabel = fonteLabel;
+  readonly pendenciaLabel = pendenciaLabel;
 
   ngOnInit() {
     const numero = this.route.snapshot.paramMap.get('numero');
@@ -66,6 +70,30 @@ export class AcompanhamentoDetailsComponent implements OnInit {
       error: () => {
         this.erro.set('Não foi possível carregar os detalhes do processo.');
         this.carregando.set(false);
+      },
+    });
+  }
+
+  sincronizarProcesso() {
+    const numero = this.numero();
+    if (!numero || this.sincronizando()) return;
+
+    this.sincronizando.set(true);
+    this.acompanhamentoService.sincronizarProcesso(numero).subscribe({
+      next: (resultado) => {
+        this.sincronizando.set(false);
+        if (!resultado.encontrado) {
+          this.notification.error('Processo não encontrado nas fontes consultadas');
+        } else if (resultado.completo) {
+          this.notification.success('Processo reconsultado com dados completos');
+        } else {
+          this.notification.info('Processo reconsultado, mas há pendências nos dados');
+        }
+        this.carregar(numero);
+      },
+      error: () => {
+        this.sincronizando.set(false);
+        this.notification.error('Erro ao reconsultar o processo');
       },
     });
   }

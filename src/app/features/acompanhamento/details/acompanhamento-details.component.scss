@@ -205,3 +205,15 @@
   padding: 48px 16px;
   color: var(--mat-sys-on-surface-variant);
 }
+
+
+.checks-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pendencia-card {
+  border-left: 4px solid #f9a825;
+}

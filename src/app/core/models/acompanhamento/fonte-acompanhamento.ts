@@ -1,4 +1,4 @@
-export type FonteAcompanhamento = 'ESAJ_1G' | 'ESAJ_2G' | 'EPROC';
+export type FonteAcompanhamento = 'EPROC' | 'ESAJ_1G' | 'ESAJ_2G';
 
 export interface FonteAcompanhamentoOpcao {
   valor: FonteAcompanhamento;
@@ -8,19 +8,19 @@ export interface FonteAcompanhamentoOpcao {
 
 export const FONTES_ACOMPANHAMENTO: readonly FonteAcompanhamentoOpcao[] = [
   {
+    valor: 'EPROC',
+    label: 'eProc TJSP',
+    descricao: 'Fonte principal: consulta pública do eProc',
+  },
+  {
     valor: 'ESAJ_1G',
     label: 'eSAJ - 1º Grau',
-    descricao: 'Processos de primeira instância no TJSP',
+    descricao: 'Fallback para processos de primeira instância no TJSP',
   },
   {
     valor: 'ESAJ_2G',
     label: 'eSAJ - 2º Grau',
-    descricao: 'Recursos e processos de segunda instância no TJSP',
-  },
-  {
-    valor: 'EPROC',
-    label: 'eProc TJSP',
-    descricao: 'Consulta pública do eProc (1º grau)',
+    descricao: 'Fallback para recursos e processos de segunda instância no TJSP',
   },
 ];
 

@@ -101,6 +101,42 @@
               </div>
             }
 
+            @if (usuarioAtualTemOab() && fontesStatus().length > 0) {
+              <div class="fontes-status">
+                <span class="fontes-title">Situação por fonte</span>
+                @for (fonte of fontesStatus(); track fonte.fonte) {
+                  <div class="fonte-status-row">
+                    <div class="fonte-status-info">
+                      <span class="fonte-nome">{{ fonteLabel(fonte.fonte) }}</span>
+                      <span [class]="'status-chip ' + statusColor(fonte.status)">
+                        {{ statusLabel(fonte.status) }}
+                      </span>
+                    </div>
+                    <div class="fonte-status-metrics">
+                      <span>{{ fonte.quantidadeEncontrada ?? 0 }} encontrado(s)</span>
+                      <span>{{ fonte.quantidadeCompleta ?? 0 }} completo(s)</span>
+                      @if (fonte.quantidadeErro) {
+                        <span class="error-text">{{ fonte.quantidadeErro }} erro(s)</span>
+                      }
+                    </div>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      matTooltip="Sincronizar apenas esta fonte"
+                      [disabled]="sincronizando()"
+                      (click)="sincronizarFonte(fonte.fonte)"
+                    >
+                      @if (sincronizandoFonte() === fonte.fonte) {
+                        <mat-spinner diameter="18" />
+                      } @else {
+                        <mat-icon>sync</mat-icon>
+                      }
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
             @if (membroAtual()?.ultimoErro) {
               <p class="error-text">{{ membroAtual()?.ultimoErro }}</p>
             }
@@ -201,6 +237,7 @@
             <mat-select [value]="filtroStatus()" (selectionChange)="filtroStatus.set($event.value)">
               <mat-option value="">Todos</mat-option>
               <mat-option value="ATIVO">Ativo</mat-option>
+              <mat-option value="ERRO">Erro</mat-option>
               <mat-option value="PROCESSO_DESVINCULADO">Desvinculado</mat-option>
             </mat-select>
           </mat-form-field>
@@ -244,6 +281,15 @@
                   <span [class]="'status-chip ' + statusColor(processo.statusVinculo)">
                     {{ statusLabel(processo.statusVinculo) }}
                   </span>
+                  <span
+                    [class]="'status-chip ' + statusColor(processo.statusDados)"
+                    [matTooltip]="pendenciaLabel(processo.pendencias)"
+                  >
+                    {{ statusLabel(processo.statusDados) }}
+                  </span>
+                  @if (processo.fontePrincipal) {
+                    <span class="meta-chip">{{ fonteLabel(processo.fontePrincipal) }}</span>
+                  }
                   @if (processo.ultimaMovimentacao) {
                     <span class="processo-data">
                       {{ processo.ultimaMovimentacao | date: 'dd/MM/yyyy' }}

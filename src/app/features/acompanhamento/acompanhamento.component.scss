@@ -339,3 +339,39 @@
   padding: 48px 16px;
   color: var(--mat-sys-on-surface-variant);
 }
+
+
+.fontes-status {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.fonte-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.fonte-status-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.fonte-status-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  margin-left: auto;
+}

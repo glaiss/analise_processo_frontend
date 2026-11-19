@@ -8,6 +8,7 @@ import {
   OabResponse,
   ProcessoAcompanhadoDetalheDTO,
   ProcessoAcompanhadoResumoDTO,
+  ProcessoSincronizacaoResultadoDTO,
   StatusSincronizacaoDTO,
 } from '../models/acompanhamento/acompanhamento.model';
 import { FonteAcompanhamento } from '../models/acompanhamento/fonte-acompanhamento';
@@ -50,8 +51,19 @@ export class AcompanhamentoService {
     return this.http.get<StatusSincronizacaoDTO>(`${this.apiUrl}/oab/status`);
   }
 
-  sincronizar(): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/oab/sincronizar`, {});
+  sincronizar(fontes?: FonteAcompanhamento[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/oab/sincronizar`,
+      fontes && fontes.length > 0 ? { fontes } : {});
+  }
+
+  sincronizarProcesso(
+    numero: string,
+    fonte?: FonteAcompanhamento,
+  ): Observable<ProcessoSincronizacaoResultadoDTO> {
+    return this.http.post<ProcessoSincronizacaoResultadoDTO>(
+      `${this.apiUrl}/processos/${numero}/sincronizar`,
+      fonte ? { fonte } : {},
+    );
   }
 
   listarProcessos(

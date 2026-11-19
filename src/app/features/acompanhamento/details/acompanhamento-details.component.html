@@ -8,9 +8,18 @@
     <button type="button" mat-icon-button matTooltip="Copiar número" (click)="copiarNumero()">
       <mat-icon>content_copy</mat-icon>
     </button>
-    <button type="button" mat-stroked-button [disabled]="carregando()" (click)="carregar(numero())">
-      <mat-icon>refresh</mat-icon>
-      Atualizar
+    <button
+      type="button"
+      mat-stroked-button
+      [disabled]="carregando() || sincronizando()"
+      (click)="sincronizarProcesso()"
+    >
+      @if (sincronizando()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <mat-icon>sync</mat-icon>
+      }
+      Reconsultar
     </button>
   </app-page-header>
 
@@ -28,7 +37,37 @@
       </span>
       <span class="meta-chip">OAB {{ p.oab }}</span>
       <span class="meta-chip">Responsável: {{ p.donoNome }}</span>
+      @if (p.fontePrincipal) {
+        <span class="meta-chip">Fonte principal: {{ fonteLabel(p.fontePrincipal) }}</span>
+      }
+      <span [class]="'status-chip ' + statusColor(p.statusDados)">
+        {{ statusLabel(p.statusDados) }}
+      </span>
     </div>
+
+    @if (!p.dadosCompletos) {
+      <mat-card class="info-card pendencia-card">
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Pendências de dados</span>
+            <span class="value">
+              {{ p.pendencias ? pendenciaLabel(p.pendencias) : 'Partes, advogados ou movimentações precisam ser revisados.' }}
+            </span>
+          </div>
+          <div class="checks-row">
+            <span [class]="'status-chip ' + statusColor(p.partesOk ? 'COMPLETO' : 'PARCIAL')">
+              Partes: {{ p.partesOk ? 'ok' : 'pendente' }}
+            </span>
+            <span [class]="'status-chip ' + statusColor(p.advogadosOk ? 'COMPLETO' : 'PARCIAL')">
+              Advogados: {{ p.advogadosOk ? 'ok' : 'pendente' }}
+            </span>
+            <span [class]="'status-chip ' + statusColor(p.movimentacoesOk ? 'COMPLETO' : 'PARCIAL')">
+              Movimentações: {{ p.movimentacoesOk ? 'ok' : 'pendente' }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
 
     <mat-card class="info-card">
       <mat-card-content>
@@ -66,6 +105,26 @@
             <span class="value">
               @if (p.dataAjuizamento) {
                 {{ p.dataAjuizamento | date: 'dd/MM/yyyy' }}
+              } @else {
+                —
+              }
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">Fontes</span>
+            <span class="value">
+              @for (fonte of p.fontes; track fonte) {
+                <span class="meta-chip">{{ fonteLabel(fonte) }}</span>
+              } @empty {
+                —
+              }
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">Última verificação</span>
+            <span class="value">
+              @if (p.ultimaVerificacaoEm) {
+                {{ p.ultimaVerificacaoEm | date: 'dd/MM/yyyy HH:mm' }}
               } @else {
                 —
               }

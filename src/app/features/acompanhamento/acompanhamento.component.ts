@@ -16,6 +16,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { AcompanhamentoService } from '../../core/services/acompanhamento.service';
 import { NotificationService } from '../../core/services/notification.service';
 import {
+  FonteSincronizacaoDTO,
   OabEquipeResponse,
   ProcessoAcompanhadoResumoDTO,
 } from '../../core/models/acompanhamento/acompanhamento.model';
@@ -28,7 +29,7 @@ import { Page } from '../../core/models/processo/pagination.model';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '../../shared/components/confirm-dialog/confirm-dialog.component';
-import { statusColor, statusLabel } from '../../core/utils/acompanhamento-status.util';
+import { pendenciaLabel, statusColor, statusLabel } from '../../core/utils/acompanhamento-status.util';
 
 @Component({
   selector: 'app-acompanhamento',
@@ -82,6 +83,8 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
   readonly carregando = signal(true);
   readonly salvando = signal(false);
   readonly sincronizando = signal(false);
+  readonly sincronizandoFonte = signal<FonteAcompanhamento | null>(null);
+  readonly fontesStatus = signal<FonteSincronizacaoDTO[]>([]);
 
   readonly processos = signal<ProcessoAcompanhadoResumoDTO[]>([]);
   readonly carregandoProcessos = signal(false);
@@ -92,6 +95,7 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
 
   readonly statusLabel = statusLabel;
   readonly statusColor = statusColor;
+  readonly pendenciaLabel = pendenciaLabel;
 
   readonly membroAtual = computed(
     () => this.equipe()?.membros.find((membro) => membro.usuarioAtual) ?? null,
@@ -107,6 +111,7 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.carregarEquipe();
+    this.carregarStatusFontes();
     this.carregarProcessos(true);
   }
 
@@ -128,6 +133,9 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
         }
         if (atual?.ultimoStatus === 'EM_ANDAMENTO') {
           this.iniciarPolling();
+        }
+        if (atual?.temOab && atual.ativo) {
+          this.carregarStatusFontes();
         }
         this.carregando.set(false);
       },
@@ -199,6 +207,27 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
         this.notification.error('Erro ao solicitar sincronização');
       },
     });
+  }
+
+  sincronizarFonte(fonte: FonteAcompanhamento) {
+    if (this.sincronizando()) return;
+    this.sincronizandoFonte.set(fonte);
+    this.sincronizando.set(true);
+    this.acompanhamentoService.sincronizar([fonte]).subscribe({
+      next: () => {
+        this.notification.info(`Sincronização de ${fonteLabel(fonte)} solicitada`);
+        this.iniciarPolling();
+      },
+      error: () => {
+        this.sincronizandoFonte.set(null);
+        this.sincronizando.set(false);
+        this.notification.error(`Erro ao sincronizar ${fonteLabel(fonte)}`);
+      },
+    });
+  }
+
+  statusFonte(fonte: FonteAcompanhamento): FonteSincronizacaoDTO | null {
+    return this.fontesStatus().find((item) => item.fonte === fonte) ?? null;
   }
 
   desativarOab() {
@@ -288,6 +317,7 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
     this.acompanhamentoService.obterStatus().subscribe({
       next: (status) => {
         this.atualizarStatusAtual(status.status, status.ultimaSincronizacaoEm, status.ultimoErro);
+        this.fontesStatus.set(status.fontes ?? []);
         const emAndamento = status.status === 'EM_ANDAMENTO';
 
         if (emAndamento && tentativasRestantes > 0) {
@@ -296,6 +326,7 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
         }
 
         this.sincronizando.set(false);
+        this.sincronizandoFonte.set(null);
         if (status.status === 'ERRO') {
           this.notification.error('Falha na sincronização da OAB');
         } else if (!emAndamento) {
@@ -310,7 +341,15 @@ export class AcompanhamentoComponent implements OnInit, OnDestroy {
           return;
         }
         this.sincronizando.set(false);
+        this.sincronizandoFonte.set(null);
       },
+    });
+  }
+
+  private carregarStatusFontes() {
+    this.acompanhamentoService.obterStatus().subscribe({
+      next: (status) => this.fontesStatus.set(status.fontes ?? []),
+      error: () => this.fontesStatus.set([]),
     });
   }
 
