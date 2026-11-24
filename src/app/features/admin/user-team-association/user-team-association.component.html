@@ -112,6 +112,46 @@
                   </td>
                 </ng-container>
 
+                <!-- Acesso Direto Column -->
+                <ng-container matColumnDef="acessoDireto">
+                  <th *matHeaderCellDef mat-header-cell> Acesso direto </th>
+                  <td *matCellDef="let element" mat-cell>
+                    @if (isAdmin()) {
+                      <button
+                        type="button"
+                        mat-icon-button
+                        [color]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'primary' : undefined"
+                        [matTooltip]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO')
+                          ? 'Remover acesso direto ao Acompanhamento'
+                          : 'Conceder acesso direto ao Acompanhamento'"
+                        (click)="alternarFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO')"
+                      >
+                        <mat-icon>
+                          {{ temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'travel_explore' : 'add_location_alt' }}
+                        </mat-icon>
+                      </button>
+                    } @else {
+                      <mat-icon [color]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'primary' : undefined">
+                        {{ temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'check_circle' : 'remove_circle_outline' }}
+                      </mat-icon>
+                    }
+                  </td>
+                </ng-container>
+
+                <!-- Acesso pela Equipe Column -->
+                <ng-container matColumnDef="acessoEquipe">
+                  <th *matHeaderCellDef mat-header-cell> Acesso pela equipe </th>
+                  <td *matCellDef="let element" mat-cell>
+                    @if (temFuncionalidadeHerdada(element)) {
+                      <span class="team-badge" matTooltip="Acesso herdado da equipe. Para revogar, remova a funcionalidade da equipe.">
+                        {{ element.equipeNome }} (herdado)
+                      </span>
+                    } @else {
+                      <span class="no-team-badge">Não herdado</span>
+                    }
+                  </td>
+                </ng-container>
+
                 <!-- Ações Column -->
                 <ng-container matColumnDef="acoes">
                   <th *matHeaderCellDef mat-header-cell> Ações </th>

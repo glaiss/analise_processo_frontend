@@ -21,7 +21,7 @@ describe('AssignedProcessesListComponent', () => {
       constructor(_callback: any) { }
     });
 
-    const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true };
+    const emptyPage = { content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true };
 
     distService = {
       getMeusProcessos: vi.fn().mockReturnValue(of(emptyPage)),
@@ -83,7 +83,7 @@ describe('AssignedProcessesListComponent', () => {
         totalElements: 1,
         totalPages: 1,
         number: 0,
-        size: 20,
+        size: 50,
         first: true,
         last: true,
         empty: false,
@@ -95,7 +95,7 @@ describe('AssignedProcessesListComponent', () => {
       fixture.componentRef.setInput('mode', 'meus');
       fixture.detectChanges();
 
-      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0, 20, undefined);
+      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0, 50, undefined);
       expect(fixture.componentInstance.atribuicoes.length).toBe(1);
       expect(fixture.componentInstance.totalElements).toBe(1);
     });
@@ -108,7 +108,7 @@ describe('AssignedProcessesListComponent', () => {
         totalElements: 0,
         totalPages: 0,
         number: 0,
-        size: 20,
+        size: 50,
         first: true,
         last: true,
         empty: true,
@@ -120,12 +120,12 @@ describe('AssignedProcessesListComponent', () => {
       fixture.componentRef.setInput('mode', 'equipe');
       fixture.detectChanges();
 
-      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0, 20, undefined);
+      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0, 50, undefined);
     });
   });
 
   it('should set correct title based on mode', () => {
-    distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true }));
+    distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true }));
 
     const fixture = TestBed.createComponent(AssignedProcessesListComponent);
     fixture.componentRef.setInput('mode', 'meus');
@@ -140,7 +140,7 @@ describe('AssignedProcessesListComponent', () => {
       totalElements: 0,
       totalPages: 2,
       number: 0,
-      size: 20,
+      size: 50,
       first: true,
       last: false,
       empty: true,
@@ -152,12 +152,12 @@ describe('AssignedProcessesListComponent', () => {
 
     fixture.componentInstance.onScroll();
 
-    expect(distService.getMeusProcessos).toHaveBeenCalledWith(1, 20, undefined);
+    expect(distService.getMeusProcessos).toHaveBeenCalledWith(1, 50, undefined);
   });
 
   describe('ngOnChanges', () => {
     it('should reset list when mode changes', () => {
-      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true }));
+      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true }));
 
       const fixture = TestBed.createComponent(AssignedProcessesListComponent);
       fixture.componentRef.setInput('mode', 'meus');
@@ -165,14 +165,14 @@ describe('AssignedProcessesListComponent', () => {
       distService.getMeusProcessos.mockClear();
 
       fixture.componentRef.setInput('mode', 'equipe');
-      distService.getProcessosEquipe.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true }));
+      distService.getProcessosEquipe.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true }));
       fixture.detectChanges();
 
-      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0, 20, undefined);
+      expect(distService.getProcessosEquipe).toHaveBeenCalledWith(0, 50, undefined);
     });
 
     it('should reset list when filter changes', () => {
-      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true }));
+      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true }));
 
       const fixture = TestBed.createComponent(AssignedProcessesListComponent);
       fixture.componentRef.setInput('mode', 'meus');
@@ -180,10 +180,10 @@ describe('AssignedProcessesListComponent', () => {
       distService.getMeusProcessos.mockClear();
 
       fixture.componentRef.setInput('filter', { numero: '123' });
-      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 20, first: true, last: true, empty: true }));
+      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 0, number: 0, size: 50, first: true, last: true, empty: true }));
       fixture.detectChanges();
 
-      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0, 20, { numero: '123' });
+      expect(distService.getMeusProcessos).toHaveBeenCalledWith(0, 50, { numero: '123' });
     });
   });
 
@@ -258,7 +258,7 @@ describe('AssignedProcessesListComponent', () => {
 
   describe('onScroll', () => {
     it('should not scroll when isLastPage is true', () => {
-      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 1, number: 0, size: 20, first: true, last: true, empty: true }));
+      distService.getMeusProcessos.mockReturnValue(of({ content: [], totalElements: 0, totalPages: 1, number: 0, size: 50, first: true, last: true, empty: true }));
 
       const fixture = TestBed.createComponent(AssignedProcessesListComponent);
       fixture.componentRef.setInput('mode', 'meus');

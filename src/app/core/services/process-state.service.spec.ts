@@ -30,7 +30,7 @@ function createMockPage(content: ProcessoResumoDTO[]): Page<ProcessoResumoDTO> {
     totalElements: content.length,
     totalPages: 1,
     number: 0,
-    size: 20,
+    size: 50,
     first: true,
     last: true,
     empty: content.length === 0,
@@ -66,7 +66,7 @@ describe('ProcessStateService', () => {
     it('should load processes from API', () => {
       const processos = [createMockProcesso()];
       service.loadProcesses();
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       expect(req.request.method).toBe('GET');
       req.flush(createMockPage(processos));
       expect(service.allProcesses()).toEqual(processos);
@@ -75,7 +75,7 @@ describe('ProcessStateService', () => {
     });
     it('should load monitored processes when mode is monitorados', () => {
       service.setMode('monitorados');
-      const req = httpMock.expectOne(`${API_URL}/monitorados?page=0&size=20`);
+      const req = httpMock.expectOne(`${API_URL}/monitorados?page=0&size=50`);
       expect(req.request.method).toBe('GET');
       req.flush(createMockPage([]));
       expect(service.currentMode()).toBe('monitorados');
@@ -84,22 +84,22 @@ describe('ProcessStateService', () => {
       const p1 = createMockProcesso({ numero: '1' });
       const p2 = createMockProcesso({ numero: '2' });
       service.loadProcesses();
-      httpMock.expectOne(`${API_URL}?page=0&size=20`).flush(createMockPage([p1]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50`).flush(createMockPage([p1]));
       service.loadProcesses(true);
-      httpMock.expectOne(`${API_URL}?page=0&size=20`).flush(createMockPage([p2]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50`).flush(createMockPage([p2]));
       expect(service.allProcesses()).toEqual([p1, p2]);
     });
     it('should not load if already loading', () => {
       service.loadProcesses();
       service.loadProcesses();
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
-      httpMock.expectNone(`${API_URL}?page=0&size=20`);
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
+      httpMock.expectNone(`${API_URL}?page=0&size=50`);
       req.flush({
         content: [],
         totalElements: 0,
         totalPages: 0,
         number: 0,
-        size: 20,
+        size: 50,
         first: true,
         last: true,
         empty: true,
@@ -107,32 +107,32 @@ describe('ProcessStateService', () => {
     });
     it('should set error on failure', () => {
       service.loadProcesses();
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       req.error(new ProgressEvent('error'));
       expect(service.errorMessage()).toBe('Erro ao carregar processos');
       expect(service.isLoading()).toBe(false);
     });
     it('should include filter params when set', () => {
       service.setFilterNivel(['ALTO']);
-      httpMock.expectOne(`${API_URL}?page=0&size=20&niveis=ALTO`).flush(createMockPage([]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50&niveis=ALTO`).flush(createMockPage([]));
       service.setFilterStatus([StatusAtribuicao.DISPONIVEL]);
       httpMock
-        .expectOne(`${API_URL}?page=0&size=20&niveis=ALTO&status=DISPONIVEL`)
+        .expectOne(`${API_URL}?page=0&size=50&niveis=ALTO&status=DISPONIVEL`)
         .flush(createMockPage([]));
       service.setSearchQuery('123');
       httpMock
-        .expectOne(`${API_URL}?page=0&size=20&numero=123&niveis=ALTO&status=DISPONIVEL`)
+        .expectOne(`${API_URL}?page=0&size=50&numero=123&niveis=ALTO&status=DISPONIVEL`)
         .flush(createMockPage([]));
       service.setFilterSituacao([ProcessoSituacao.ENRIQUECIDO]);
       httpMock
         .expectOne(
-          `${API_URL}?page=0&size=20&numero=123&niveis=ALTO&status=DISPONIVEL&situacao=ENRIQUECIDO`,
+          `${API_URL}?page=0&size=50&numero=123&niveis=ALTO&status=DISPONIVEL&situacao=ENRIQUECIDO`,
         )
         .flush(createMockPage([]));
       service.setFilterAssunto('Indenização');
       httpMock
         .expectOne(
-          `${API_URL}?page=0&size=20&numero=123&assunto=Indeniza%C3%A7%C3%A3o&niveis=ALTO&status=DISPONIVEL&situacao=ENRIQUECIDO`,
+          `${API_URL}?page=0&size=50&numero=123&assunto=Indeniza%C3%A7%C3%A3o&niveis=ALTO&status=DISPONIVEL&situacao=ENRIQUECIDO`,
         )
         .flush(createMockPage([]));
     });
@@ -141,34 +141,34 @@ describe('ProcessStateService', () => {
     it('should increment page and load more', () => {
       service.loadProcesses();
       httpMock
-        .expectOne(`${API_URL}?page=0&size=20`)
+        .expectOne(`${API_URL}?page=0&size=50`)
         .flush({ ...createMockPage([createMockProcesso()]), totalPages: 2 });
       service.loadNextPage();
-      httpMock.expectOne(`${API_URL}?page=1&size=20`).flush(createMockPage([createMockProcesso()]));
+      httpMock.expectOne(`${API_URL}?page=1&size=50`).flush(createMockPage([createMockProcesso()]));
     });
     it('should not load if already on last page', () => {
       service.loadProcesses();
       httpMock
-        .expectOne(`${API_URL}?page=0&size=20`)
+        .expectOne(`${API_URL}?page=0&size=50`)
         .flush({
           content: [],
           totalElements: 0,
           totalPages: 1,
           number: 0,
-          size: 20,
+          size: 50,
           first: true,
           last: true,
           empty: true,
         });
       service.loadNextPage();
-      httpMock.expectNone(`${API_URL}?page=1&size=20`);
+      httpMock.expectNone(`${API_URL}?page=1&size=50`);
     });
   });
   describe('alternarMonitoramento', () => {
     it('should toggle monitorado optimistically and revert on error', () => {
       const processo = createMockProcesso({ numero: '123', monitorado: false });
       service.loadProcesses();
-      httpMock.expectOne(`${API_URL}?page=0&size=20`).flush(createMockPage([processo]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50`).flush(createMockPage([processo]));
       service.alternarMonitoramento('123').subscribe();
       expect(service.allProcesses()[0].monitorado).toBe(true);
       const req = httpMock.expectOne(`${API_URL}/123/monitorar`);
@@ -183,7 +183,7 @@ describe('ProcessStateService', () => {
       const p2 = createMockProcesso({ numero: '2', equipeNome: 'Equipe A', scoreFinal: 50 });
       const p3 = createMockProcesso({ numero: '3', equipeNome: 'Equipe B', scoreFinal: 200 });
       service.loadProcesses();
-      httpMock.expectOne(`${API_URL}?page=0&size=20`).flush(createMockPage([p1, p2, p3]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50`).flush(createMockPage([p1, p2, p3]));
       const groups = service.groupedProcesses();
       expect(groups.length).toBe(2);
       expect(groups[0].name).toBe('Equipe A');
@@ -196,7 +196,7 @@ describe('ProcessStateService', () => {
     it('should group null equipe as Não Atribuído', () => {
       const p = createMockProcesso({ numero: '1', equipeNome: undefined });
       service.loadProcesses();
-      httpMock.expectOne(`${API_URL}?page=0&size=20`).flush(createMockPage([p]));
+      httpMock.expectOne(`${API_URL}?page=0&size=50`).flush(createMockPage([p]));
       expect(service.groupedProcesses()[0].name).toBe('Não Atribuído');
     });
   });
@@ -296,7 +296,7 @@ describe('ProcessStateService', () => {
         situacao: [],
         assunto: '',
       });
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       expect(req.request.params.getAll('processosTipologia')).toBeNull();
       req.flush(createMockPage([]));
     });

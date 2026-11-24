@@ -69,8 +69,8 @@ export class AssignedProcessesListComponent implements OnInit, OnChanges {
     this.isLoading.set(true);
 
     const request = this.mode === 'meus'
-      ? this.distService.getMeusProcessos(this.currentPage, 20, this.filter)
-      : this.distService.getProcessosEquipe(this.currentPage, 20, this.filter);
+      ? this.distService.getMeusProcessos(this.currentPage, 50, this.filter)
+      : this.distService.getProcessosEquipe(this.currentPage, 50, this.filter);
 
     request.subscribe({
       next: (page) => {

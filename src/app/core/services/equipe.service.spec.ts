@@ -20,8 +20,8 @@ describe('EquipeService', () => {
   });
   describe('getEquipes', () => {
     it('should GET equipes with pagination', () => {
-      service.getEquipes(0, 20).subscribe();
-      const req = httpMock.expectOne(`${API_URL}?page=0&size=20`);
+      service.getEquipes(0, 50).subscribe();
+      const req = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       expect(req.request.method).toBe('GET');
       req.flush({ content: [] });
     });
@@ -42,6 +42,26 @@ describe('EquipeService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(equipe);
       req.flush({ id: '1', ...equipe });
+    });
+  });
+  describe('funcionalidades', () => {
+    it('should GET equipe funcionalidades', () => {
+      service.listarFuncionalidades('eq-1').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades`);
+      expect(req.request.method).toBe('GET');
+      req.flush([]);
+    });
+    it('should POST equipe funcionalidade', () => {
+      service.adicionarFuncionalidade('eq-1', 'FUNC_ACOMPANHAMENTO').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades/FUNC_ACOMPANHAMENTO`);
+      expect(req.request.method).toBe('POST');
+      req.flush(null);
+    });
+    it('should DELETE equipe funcionalidade', () => {
+      service.removerFuncionalidade('eq-1', 'FUNC_ACOMPANHAMENTO').subscribe();
+      const req = httpMock.expectOne(`${API_URL}/eq-1/funcionalidades/FUNC_ACOMPANHAMENTO`);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
     });
   });
 });

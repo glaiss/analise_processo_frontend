@@ -1,0 +1,318 @@
+<div class="acompanhamento-page">
+  <app-page-header title="Acompanhamento" subtitle="Processos vinculados às OABs da sua equipe">
+    <button
+      type="button"
+      mat-stroked-button
+      [disabled]="!usuarioAtualTemOab() || sincronizando()"
+      (click)="sincronizarAgora()"
+    >
+      @if (sincronizando()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <mat-icon>sync</mat-icon>
+      }
+      Sincronizar agora
+    </button>
+  </app-page-header>
+
+  @if (carregando()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48" />
+      <p>Carregando acompanhamento...</p>
+    </div>
+  } @else {
+    <div class="cards-grid">
+      <mat-card class="oab-card">
+        <mat-card-header>
+          <mat-card-title>
+            {{ usuarioAtualTemOab() ? 'Minha OAB' : 'Cadastrar minha OAB' }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            {{ usuarioAtualTemOab()
+              ? 'Atualize o número, a UF e os sites consultados.'
+              : 'Cadastre sua OAB para que a equipe acompanhe seus processos.' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <form [formGroup]="oabForm" (ngSubmit)="salvarOab()">
+            <div class="oab-fields">
+              <mat-form-field appearance="outline" class="numero-field">
+                <mat-label>Número da OAB</mat-label>
+                <input matInput formControlName="numero" inputmode="numeric" maxlength="7" />
+                @if (oabForm.get('numero')?.hasError('required') && oabForm.get('numero')?.touched) {
+                  <mat-error>Informe o número da OAB</mat-error>
+                }
+                @if (oabForm.get('numero')?.hasError('pattern') && oabForm.get('numero')?.touched) {
+                  <mat-error>Somente números (até 7 dígitos)</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="uf-field">
+                <mat-label>UF</mat-label>
+                <mat-select formControlName="uf">
+                  @for (uf of ufs; track uf) {
+                    <mat-option [value]="uf">{{ uf }}</mat-option>
+                  }
+                </mat-select>
+                @if (oabForm.get('uf')?.hasError('required') && oabForm.get('uf')?.touched) {
+                  <mat-error>UF é obrigatória</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="fontes-section">
+              <span class="fontes-title">Sites consultados</span>
+              <p class="fontes-hint">
+                Escolha em quais sites seus processos serão buscados pela OAB. Você pode marcar
+                mais de um.
+              </p>
+
+              <div class="fontes-options">
+                @for (fonte of fontesOpcoes; track fonte.valor) {
+                  <mat-checkbox
+                    [checked]="isFonteSelecionada(fonte.valor)"
+                    (change)="alternarFonte(fonte.valor, $event.checked)"
+                  >
+                    <span class="fonte-info">
+                      <span class="fonte-nome">{{ fonte.label }}</span>
+                      <span class="fonte-descricao">{{ fonte.descricao }}</span>
+                    </span>
+                  </mat-checkbox>
+                }
+              </div>
+
+              @if (fontesSelecionadas().length === 0) {
+                <p class="error-text">Selecione ao menos um site de consulta.</p>
+              }
+            </div>
+
+            @if (usuarioAtualTemOab()) {
+              <div class="oab-status">
+                <span [class]="'status-chip ' + statusColor(membroAtual()?.ultimoStatus ?? null)">
+                  {{ statusLabel(membroAtual()?.ultimoStatus ?? null) }}
+                </span>
+                @if (membroAtual()?.ultimaSincronizacaoEm) {
+                  <span class="status-date">
+                    Última sincronização:
+                    {{ membroAtual()?.ultimaSincronizacaoEm | date: 'dd/MM/yyyy HH:mm' }}
+                  </span>
+                }
+              </div>
+            }
+
+            @if (usuarioAtualTemOab() && fontesStatus().length > 0) {
+              <div class="fontes-status">
+                <span class="fontes-title">Situação por fonte</span>
+                @for (fonte of fontesStatus(); track fonte.fonte) {
+                  <div class="fonte-status-row">
+                    <div class="fonte-status-info">
+                      <span class="fonte-nome">{{ fonteLabel(fonte.fonte) }}</span>
+                      <span [class]="'status-chip ' + statusColor(fonte.status)">
+                        {{ statusLabel(fonte.status) }}
+                      </span>
+                    </div>
+                    <div class="fonte-status-metrics">
+                      <span>{{ fonte.quantidadeEncontrada ?? 0 }} encontrado(s)</span>
+                      <span>{{ fonte.quantidadeCompleta ?? 0 }} completo(s)</span>
+                      @if (fonte.quantidadeErro) {
+                        <span class="error-text">{{ fonte.quantidadeErro }} erro(s)</span>
+                      }
+                    </div>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      matTooltip="Sincronizar apenas esta fonte"
+                      [disabled]="sincronizando()"
+                      (click)="sincronizarFonte(fonte.fonte)"
+                    >
+                      @if (sincronizandoFonte() === fonte.fonte) {
+                        <mat-spinner diameter="18" />
+                      } @else {
+                        <mat-icon>sync</mat-icon>
+                      }
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (membroAtual()?.ultimoErro) {
+              <p class="error-text">{{ membroAtual()?.ultimoErro }}</p>
+            }
+
+            <div class="form-actions">
+              <button
+                mat-flat-button
+                color="primary"
+                type="submit"
+                [disabled]="oabForm.invalid || fontesSelecionadas().length === 0 || salvando()"
+              >
+                @if (salvando()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ usuarioAtualTemOab() ? 'Salvar alterações' : 'Cadastrar OAB' }}
+                }
+              </button>
+
+              @if (usuarioAtualTemOab()) {
+                <button mat-button color="warn" type="button" (click)="desativarOab()">
+                  Desativar OAB
+                </button>
+              }
+            </div>
+          </form>
+
+          @if (!todosComOab() && membrosPendentes().length > 0) {
+            <mat-divider class="oab-divider" />
+            <p class="hint">
+              <mat-icon>info</mat-icon>
+              {{ membrosPendentes().length }} membro(s) da equipe ainda não cadastraram a OAB.
+            </p>
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="equipe-card">
+        <mat-card-header>
+          <mat-card-title>OABs da equipe</mat-card-title>
+          <mat-card-subtitle>
+            {{ todosComOab() ? 'Todas as OABs cadastradas' : 'Cadastros pendentes' }}
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          @for (membro of equipe()?.membros ?? []; track membro.usuarioId) {
+            <div class="membro-row" [class.atual]="membro.usuarioAtual">
+              <div class="membro-info">
+                <span class="membro-nome">
+                  {{ membro.nome }}
+                  @if (membro.usuarioAtual) {
+                    <span class="tag">você</span>
+                  }
+                </span>
+                <span class="membro-username">{{ membro.username }}</span>
+              </div>
+
+              <div class="membro-oab">
+                @if (membro.temOab && membro.ativo) {
+                  <span class="oab-badge">{{ membro.oabNumero }}/{{ membro.oabUf }}</span>
+                  @if (membro.fontes.length > 0) {
+                    <span class="fontes-membro">
+                      @for (fonte of membro.fontes; track fonte) {
+                        <span class="fonte-chip">{{ fonteLabel(fonte) }}</span>
+                      }
+                    </span>
+                  }
+                  <span [class]="'status-chip ' + statusColor(membro.ultimoStatus)">
+                    {{ statusLabel(membro.ultimoStatus) }}
+                  </span>
+                } @else {
+                  <span class="pendente-badge">Pendente</span>
+                }
+              </div>
+            </div>
+          } @empty {
+            <app-empty-state icon="groups" message="Nenhum membro encontrado na equipe." />
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <mat-card class="processos-card">
+      <mat-card-header>
+        <mat-card-title>Processos acompanhados</mat-card-title>
+        <mat-card-subtitle>{{ totalProcessos() }} processo(s) encontrado(s)</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="filters">
+          <mat-form-field appearance="outline" class="filter-numero">
+            <mat-label>Número do processo</mat-label>
+            <input matInput [value]="filtroNumero()" (input)="atualizarFiltroNumero($event)" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-status">
+            <mat-label>Status</mat-label>
+            <mat-select [value]="filtroStatus()" (selectionChange)="filtroStatus.set($event.value)">
+              <mat-option value="">Todos</mat-option>
+              <mat-option value="ATIVO">Ativo</mat-option>
+              <mat-option value="ERRO">Erro</mat-option>
+              <mat-option value="PROCESSO_DESVINCULADO">Desvinculado</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="filter-actions">
+            <button mat-flat-button color="primary" type="button" (click)="aplicarFiltros()">
+              Filtrar
+            </button>
+            <button mat-button type="button" (click)="limparFiltros()">Limpar</button>
+          </div>
+        </div>
+
+        @if (carregandoProcessos() && processos().length === 0) {
+          <div class="loading-container">
+            <mat-spinner diameter="36" />
+          </div>
+        } @else if (processos().length === 0) {
+          <app-empty-state
+            icon="work_off"
+            message="Nenhum processo encontrado para as OABs da equipe."
+          />
+        } @else {
+          <div class="processos-list">
+            @for (processo of processos(); track processo.numero) {
+              <button type="button" class="processo-item" (click)="abrirProcesso(processo.numero)">
+                <div class="processo-main">
+                  <span class="processo-numero">{{ processo.numero }}</span>
+                  <span class="processo-meta">
+                    {{ processo.tribunal }}
+                    @if (processo.grau) {
+                      · {{ processo.grau }}
+                    }
+                    @if (processo.classe) {
+                      · {{ processo.classe }}
+                    }
+                  </span>
+                  <span class="processo-dono">OAB {{ processo.oab }} · {{ processo.donoNome }}</span>
+                </div>
+
+                <div class="processo-side">
+                  <span [class]="'status-chip ' + statusColor(processo.statusVinculo)">
+                    {{ statusLabel(processo.statusVinculo) }}
+                  </span>
+                  <span
+                    [class]="'status-chip ' + statusColor(processo.statusDados)"
+                    [matTooltip]="pendenciaLabel(processo.pendencias)"
+                  >
+                    {{ statusLabel(processo.statusDados) }}
+                  </span>
+                  @if (processo.fontePrincipal) {
+                    <span class="meta-chip">{{ fonteLabel(processo.fontePrincipal) }}</span>
+                  }
+                  @if (processo.ultimaMovimentacao) {
+                    <span class="processo-data">
+                      {{ processo.ultimaMovimentacao | date: 'dd/MM/yyyy' }}
+                    </span>
+                  }
+                </div>
+              </button>
+            }
+          </div>
+
+          @if (!ultimaPagina()) {
+            <div class="load-more">
+              <button mat-stroked-button type="button" [disabled]="carregandoProcessos()" (click)="carregarMais()">
+                @if (carregandoProcessos()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  Carregar mais
+                }
+              </button>
+            </div>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

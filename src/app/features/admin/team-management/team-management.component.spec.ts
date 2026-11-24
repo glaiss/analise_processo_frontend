@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { TeamManagementComponent } from './team-management.component';
 import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
@@ -8,6 +9,7 @@ import { of } from 'rxjs';
 
 describe('TeamManagementComponent', () => {
   let mockEquipeService: Partial<EquipeService>;
+  let mockAuthService: Partial<AuthService>;
   let mockNotification: Partial<NotificationService>;
 
   beforeEach(async () => {
@@ -20,6 +22,13 @@ describe('TeamManagementComponent', () => {
         totalElements: 2, totalPages: 1, size: 20, number: 0, last: true, first: true, empty: false
       })),
       criarEquipe: vi.fn().mockReturnValue(of({ id: '3', nome: 'Nova Equipe', ativo: true } as EquipeDto)),
+      listarFuncionalidades: vi.fn().mockReturnValue(of([])),
+      adicionarFuncionalidade: vi.fn().mockReturnValue(of(undefined)),
+      removerFuncionalidade: vi.fn().mockReturnValue(of(undefined)),
+    };
+
+    mockAuthService = {
+      hasRole: vi.fn().mockReturnValue(true),
     };
 
     mockNotification = {
@@ -32,6 +41,7 @@ describe('TeamManagementComponent', () => {
       providers: [
         provideRouter([]),
         { provide: EquipeService, useValue: mockEquipeService },
+        { provide: AuthService, useValue: mockAuthService },
         { provide: NotificationService, useValue: mockNotification },
       ],
     }).compileComponents();
@@ -79,5 +89,46 @@ describe('TeamManagementComponent', () => {
 
     fixture.componentInstance.back();
     expect(spy).toHaveBeenCalledWith(['/admin']);
+  });
+
+  it('should load and toggle team functionality when admin', () => {
+    const fixture = TestBed.createComponent(TeamManagementComponent);
+    fixture.detectChanges();
+
+    expect(mockEquipeService.listarFuncionalidades).toHaveBeenCalledWith('1');
+    expect(fixture.componentInstance.temFuncionalidade('1', 'FUNC_ACOMPANHAMENTO')).toBe(false);
+
+    fixture.componentInstance.alternarFuncionalidade(
+      { id: '1', nome: 'Equipe A', ativo: true },
+      'FUNC_ACOMPANHAMENTO',
+    );
+
+    expect(mockEquipeService.adicionarFuncionalidade).toHaveBeenCalledWith('1', 'FUNC_ACOMPANHAMENTO');
+    expect(fixture.componentInstance.temFuncionalidade('1', 'FUNC_ACOMPANHAMENTO')).toBe(true);
+  });
+
+  it('should not toggle team functionality when not admin', () => {
+    mockAuthService.hasRole = vi.fn().mockReturnValue(false);
+    const fixture = TestBed.createComponent(TeamManagementComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.alternarFuncionalidade(
+      { id: '1', nome: 'Equipe A', ativo: true },
+      'FUNC_ACOMPANHAMENTO',
+    );
+
+    expect(mockEquipeService.adicionarFuncionalidade).not.toHaveBeenCalled();
+  });
+
+  it('should not toggle functionality for inactive team', () => {
+    const fixture = TestBed.createComponent(TeamManagementComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.alternarFuncionalidade(
+      { id: '2', nome: 'Equipe B', ativo: false },
+      'FUNC_ACOMPANHAMENTO',
+    );
+
+    expect(mockEquipeService.adicionarFuncionalidade).not.toHaveBeenCalled();
   });
 });

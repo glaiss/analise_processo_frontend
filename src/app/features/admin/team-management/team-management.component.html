@@ -80,6 +80,39 @@
                   </td>
                 </ng-container>
 
+                <!-- Acompanhamento Column -->
+                <ng-container matColumnDef="acompanhamento">
+                  <th *matHeaderCellDef mat-header-cell> Acompanhamento </th>
+                  <td *matCellDef="let element" mat-cell>
+                    @if (isAdmin()) {
+                      <button
+                        type="button"
+                        mat-icon-button
+                        [disabled]="!element.ativo"
+                        [color]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'primary' : undefined"
+                        [matTooltip]="!element.ativo
+                          ? 'Equipe inativa não concede funcionalidades'
+                          : (temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO')
+                            ? 'Remover acesso ao Acompanhamento da equipe'
+                            : 'Conceder acesso ao Acompanhamento para a equipe')"
+                        (click)="alternarFuncionalidade(element, 'FUNC_ACOMPANHAMENTO')"
+                      >
+                        <mat-icon>
+                          {{ temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'travel_explore' : 'add_location_alt' }}
+                        </mat-icon>
+                      </button>
+                    } @else {
+                      <span [matTooltip]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO')
+                        ? 'Concedido à equipe'
+                        : 'Não concedido à equipe'">
+                        <mat-icon [color]="temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'primary' : undefined">
+                          {{ temFuncionalidade(element.id, 'FUNC_ACOMPANHAMENTO') ? 'check_circle' : 'remove_circle_outline' }}
+                        </mat-icon>
+                      </span>
+                    }
+                  </td>
+                </ng-container>
+
                 <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
                 <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
               </table>

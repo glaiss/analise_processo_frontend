@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -8,7 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { Funcionalidade } from '../../../core/models/funcionalidade.model';
+import { AuthService } from '../../../core/services/auth.service';
 import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Page } from '../../../core/models/processo/pagination.model';
@@ -28,6 +31,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
     MatIconModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     PageHeaderComponent,
     EmptyStateComponent
   ],
@@ -37,6 +41,7 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 export class TeamManagementComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly equipeService = inject(EquipeService);
+  private readonly authService = inject(AuthService);
   private readonly notification = inject(NotificationService);
   private readonly router = inject(Router);
 
@@ -44,7 +49,9 @@ export class TeamManagementComponent implements OnInit {
   readonly equipes = signal<EquipeDto[]>([]);
   readonly loading = signal(false);
   readonly loadingList = signal(false);
-  displayedColumns: string[] = ['nome', 'status'];
+  readonly funcionalidadesPorEquipe = signal<Record<string, Funcionalidade[]>>({});
+  readonly isAdmin = computed(() => this.authService.hasRole('ADMIN'));
+  displayedColumns: string[] = ['nome', 'status', 'acompanhamento'];
 
   constructor() {
     this.teamForm = this.fb.group({
@@ -62,6 +69,7 @@ export class TeamManagementComponent implements OnInit {
     this.equipeService.getEquipes(0, 100).subscribe({
       next: (page: Page<EquipeDto>) => {
         this.equipes.set(page.content);
+        this.carregarFuncionalidades(page.content);
         this.loadingList.set(false);
       },
       error: () => {
@@ -99,5 +107,52 @@ export class TeamManagementComponent implements OnInit {
 
   back() {
     void this.router.navigate(['/admin']);
+  }
+
+  temFuncionalidade(equipeId: string, funcionalidade: Funcionalidade): boolean {
+    return (this.funcionalidadesPorEquipe()[equipeId] ?? []).includes(funcionalidade);
+  }
+
+  alternarFuncionalidade(equipe: EquipeDto, funcionalidade: Funcionalidade) {
+    if (!this.isAdmin() || !equipe.ativo) {
+      return;
+    }
+
+    const possui = this.temFuncionalidade(equipe.id, funcionalidade);
+    const requisicao = possui
+      ? this.equipeService.removerFuncionalidade(equipe.id, funcionalidade)
+      : this.equipeService.adicionarFuncionalidade(equipe.id, funcionalidade);
+
+    requisicao.subscribe({
+      next: () => {
+        this.funcionalidadesPorEquipe.update((mapa) => {
+          const atuais = mapa[equipe.id] ?? [];
+          return {
+            ...mapa,
+            [equipe.id]: possui
+              ? atuais.filter((item) => item !== funcionalidade)
+              : [...atuais, funcionalidade],
+          };
+        });
+        this.notification.success(
+          possui
+            ? 'Funcionalidade removida da equipe. Os membros devem entrar novamente para atualizar o acesso.'
+            : 'Funcionalidade concedida à equipe. Os membros devem entrar novamente para receber o acesso.',
+        );
+      },
+      error: () => this.notification.error('Erro ao atualizar funcionalidade da equipe'),
+    });
+  }
+
+  private carregarFuncionalidades(equipes: EquipeDto[]) {
+    for (const equipe of equipes) {
+      this.equipeService.listarFuncionalidades(equipe.id).subscribe({
+        next: (funcionalidades) =>
+          this.funcionalidadesPorEquipe.update((mapa) => ({
+            ...mapa,
+            [equipe.id]: funcionalidades,
+          })),
+      });
+    }
   }
 }

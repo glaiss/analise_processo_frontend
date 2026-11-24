@@ -1,0 +1,211 @@
+<div class="details-page">
+  <app-page-header
+    subtitle="Detalhes do processo acompanhado"
+    backRouterLink="/acompanhamento"
+    [title]="processo()?.numero ?? numero()"
+    [backButton]="true"
+  >
+    <button type="button" mat-icon-button matTooltip="Copiar número" (click)="copiarNumero()">
+      <mat-icon>content_copy</mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-stroked-button
+      [disabled]="carregando() || sincronizando()"
+      (click)="sincronizarProcesso()"
+    >
+      @if (sincronizando()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <mat-icon>sync</mat-icon>
+      }
+      Reconsultar
+    </button>
+  </app-page-header>
+
+  @if (carregando()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48" />
+      <p>Carregando detalhes...</p>
+    </div>
+  } @else if (erro()) {
+    <app-empty-state icon="error_outline" actionLabel="Voltar" [message]="erro()" (action)="voltar()" />
+  } @else if (processo(); as p) {
+    <div class="chips-row">
+      <span [class]="'status-chip ' + statusColor(p.statusVinculo)">
+        {{ statusLabel(p.statusVinculo) }}
+      </span>
+      <span class="meta-chip">OAB {{ p.oab }}</span>
+      <span class="meta-chip">Responsável: {{ p.donoNome }}</span>
+      @if (p.fontePrincipal) {
+        <span class="meta-chip">Fonte principal: {{ fonteLabel(p.fontePrincipal) }}</span>
+      }
+      <span [class]="'status-chip ' + statusColor(p.statusDados)">
+        {{ statusLabel(p.statusDados) }}
+      </span>
+    </div>
+
+    @if (!p.dadosCompletos) {
+      <mat-card class="info-card pendencia-card">
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Pendências de dados</span>
+            <span class="value">
+              {{ p.pendencias ? pendenciaLabel(p.pendencias) : 'Partes, advogados ou movimentações precisam ser revisados.' }}
+            </span>
+          </div>
+          <div class="checks-row">
+            <span [class]="'status-chip ' + statusColor(p.partesOk ? 'COMPLETO' : 'PARCIAL')">
+              Partes: {{ p.partesOk ? 'ok' : 'pendente' }}
+            </span>
+            <span [class]="'status-chip ' + statusColor(p.advogadosOk ? 'COMPLETO' : 'PARCIAL')">
+              Advogados: {{ p.advogadosOk ? 'ok' : 'pendente' }}
+            </span>
+            <span [class]="'status-chip ' + statusColor(p.movimentacoesOk ? 'COMPLETO' : 'PARCIAL')">
+              Movimentações: {{ p.movimentacoesOk ? 'ok' : 'pendente' }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <mat-card class="info-card">
+      <mat-card-content>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">Tribunal</span>
+            <span class="value">{{ p.tribunal }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Grau</span>
+            <span class="value">{{ p.grau || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Foro</span>
+            <span class="value">{{ p.foro || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Órgão julgador</span>
+            <span class="value">{{ p.orgaoJulgadorNome || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Classe</span>
+            <span class="value">{{ p.classe || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Assunto</span>
+            <span class="value">{{ p.assunto || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Situação</span>
+            <span class="value">{{ p.situacao || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Data de ajuizamento</span>
+            <span class="value">
+              @if (p.dataAjuizamento) {
+                {{ p.dataAjuizamento | date: 'dd/MM/yyyy' }}
+              } @else {
+                —
+              }
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">Fontes</span>
+            <span class="value">
+              @for (fonte of p.fontes; track fonte) {
+                <span class="meta-chip">{{ fonteLabel(fonte) }}</span>
+              } @empty {
+                —
+              }
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="label">Última verificação</span>
+            <span class="value">
+              @if (p.ultimaVerificacaoEm) {
+                {{ p.ultimaVerificacaoEm | date: 'dd/MM/yyyy HH:mm' }}
+              } @else {
+                —
+              }
+            </span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="details-grid">
+      <mat-card class="partes-card">
+        <mat-card-header>
+          <mat-card-title>Partes</mat-card-title>
+          <mat-card-subtitle>{{ p.partes.length }} parte(s)</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          @for (parte of p.partes; track $index) {
+            <div class="parte-row">
+              <div class="parte-head">
+                <span class="parte-nome">{{ parte.nome || 'Sem nome' }}</span>
+                <div class="parte-tags">
+                  @if (parte.polo) {
+                    <span class="meta-chip">{{ parte.polo }}</span>
+                  }
+                  @if (parte.papel) {
+                    <span class="meta-chip">{{ parte.papel }}</span>
+                  }
+                </div>
+              </div>
+
+              @if (parte.advogados.length > 0) {
+                <ul class="advogados-list">
+                  @for (advogado of parte.advogados; track $index) {
+                    <li>{{ advogado }}</li>
+                  }
+                </ul>
+              }
+            </div>
+          } @empty {
+            <app-empty-state icon="people_outline" message="Nenhuma parte informada." />
+          }
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="movimentacoes-card">
+        <mat-card-header>
+          <mat-card-title>Movimentações</mat-card-title>
+          <mat-card-subtitle>{{ p.movimentacoes.length }} movimentação(ões)</mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="timeline">
+            @for (movimentacao of p.movimentacoes; track $index) {
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-head">
+                    <span class="timeline-date">
+                      @if (movimentacao.dataHora) {
+                        {{ movimentacao.dataHora | date: 'dd/MM/yyyy HH:mm' }}
+                      } @else {
+                        Data não informada
+                      }
+                    </span>
+                    @if (movimentacao.tipo) {
+                      <span class="meta-chip">{{ movimentacao.tipo }}</span>
+                    }
+                  </div>
+                  <p class="timeline-desc">{{ movimentacao.descricao || '—' }}</p>
+                  @if (movimentacao.orgaoJulgadorNome) {
+                    <span class="timeline-orgao">{{ movimentacao.orgaoJulgadorNome }}</span>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <app-empty-state icon="history_toggle_off" message="Nenhuma movimentação registrada." />
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
+</div>

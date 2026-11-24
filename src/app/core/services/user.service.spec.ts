@@ -35,7 +35,7 @@ describe('UserService', () => {
         totalElements: 1,
         totalPages: 1,
         number: 0,
-        size: 100,
+        size: 50,
         first: true,
         last: true,
         empty: false,
@@ -43,7 +43,7 @@ describe('UserService', () => {
       service.getUsuarios().subscribe((page) => {
         expect(page).toEqual(mockPage);
       });
-      const httpReq = httpMock.expectOne(`${API_URL}?page=0&size=100`);
+      const httpReq = httpMock.expectOne(`${API_URL}?page=0&size=50`);
       expect(httpReq.request.method).toBe('GET');
       httpReq.flush(mockPage);
     });

@@ -27,6 +27,12 @@
     <mat-icon matListItemIcon>star</mat-icon>
     <span matListItemTitle>Monitorados</span>
   </a>
+  @if (auth.hasRole('FUNC_ACOMPANHAMENTO') || auth.hasRole('ADMIN')) {
+    <a mat-list-item routerLinkActive="active" (click)="navigate('/acompanhamento')">
+      <mat-icon matListItemIcon>travel_explore</mat-icon>
+      <span matListItemTitle>Acompanhamento</span>
+    </a>
+  }
   @if (auth.hasRole('ADMIN')) {
     <a mat-list-item routerLinkActive="active" (click)="navigate('/relatorios')">
       <mat-icon matListItemIcon>analytics</mat-icon>

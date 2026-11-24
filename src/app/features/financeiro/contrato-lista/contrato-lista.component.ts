@@ -40,7 +40,7 @@ export class ContratoListaComponent implements OnInit {
   readonly contratos = signal<Contrato[]>([]);
   readonly loading = signal(false);
   readonly total = signal(0);
-  readonly pageSize = signal(20);
+  readonly pageSize = signal(50);
 
   readonly displayedColumns = ['numero', 'cliente', 'modalidade', 'valorTotal', 'valorPendente', 'status', 'acoes'];
   readonly statusLabels = STATUS_CONTRATO_LABEL;
