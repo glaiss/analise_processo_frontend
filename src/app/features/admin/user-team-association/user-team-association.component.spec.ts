@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { UserTeamAssociationComponent } from './user-team-association.component';
 import { UserService, UsuarioResponse } from '../../../core/services/user.service';
 import { EquipeDto, EquipeService } from '../../../core/services/equipe.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, provideRouter } from '@angular/router';
@@ -10,6 +11,7 @@ import { of, throwError } from 'rxjs';
 describe('UserTeamAssociationComponent', () => {
   let mockUserService: Partial<UserService>;
   let mockEquipeService: Partial<EquipeService>;
+  let mockAuthService: Partial<AuthService>;
   let mockNotification: Partial<NotificationService>;
 
   beforeEach(async () => {
@@ -20,6 +22,9 @@ describe('UserTeamAssociationComponent', () => {
       })),
       associarEquipe: vi.fn().mockReturnValue(of({ id: 'u1', nome: 'João', username: 'joao', role: 'ANALISTA', equipeId: 'e1', equipeNome: 'Equipe A' })),
       desassociarEquipe: vi.fn().mockReturnValue(of(undefined)),
+      listarFuncionalidades: vi.fn().mockReturnValue(of([])),
+      adicionarFuncionalidade: vi.fn().mockReturnValue(of(undefined)),
+      removerFuncionalidade: vi.fn().mockReturnValue(of(undefined)),
     };
 
     mockEquipeService = {
@@ -27,6 +32,11 @@ describe('UserTeamAssociationComponent', () => {
         content: [{ id: 'e1', nome: 'Equipe A', ativo: true }] as EquipeDto[],
         totalElements: 1, totalPages: 1, size: 100, number: 0, last: true, first: true, empty: false
       })),
+      listarFuncionalidades: vi.fn().mockReturnValue(of([])),
+    };
+
+    mockAuthService = {
+      hasRole: vi.fn().mockReturnValue(true),
     };
 
     mockNotification = {
@@ -40,6 +50,7 @@ describe('UserTeamAssociationComponent', () => {
         provideRouter([]),
         { provide: UserService, useValue: mockUserService },
         { provide: EquipeService, useValue: mockEquipeService },
+        { provide: AuthService, useValue: mockAuthService },
         { provide: NotificationService, useValue: mockNotification },
       ],
     }).compileComponents();
@@ -167,5 +178,39 @@ describe('UserTeamAssociationComponent', () => {
     fixture.componentInstance.desvincular('u1');
 
     expect(mockNotification.error).toHaveBeenCalledWith('Erro ao desvincular usuário');
+  });
+
+  it('should identify functionality inherited from the user team', () => {
+    mockUserService.getUsuarios = vi.fn().mockReturnValue(of({
+      content: [{ id: 'u1', nome: 'João', username: 'joao', role: 'ANALISTA', equipeId: 'e1', equipeNome: 'Equipe A' }] as UsuarioResponse[],
+      totalElements: 1, totalPages: 1, size: 100, number: 0, last: true, first: true, empty: false
+    }));
+    mockEquipeService.listarFuncionalidades = vi.fn().mockReturnValue(of(['FUNC_ACOMPANHAMENTO']));
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    const usuario = fixture.componentInstance.usuarios()[0];
+
+    expect(fixture.componentInstance.temFuncionalidadeHerdada(usuario)).toBe(true);
+  });
+
+  it('should toggle direct functionality when admin', () => {
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.alternarFuncionalidade('u1', 'FUNC_ACOMPANHAMENTO');
+
+    expect(mockUserService.adicionarFuncionalidade).toHaveBeenCalledWith('u1', 'FUNC_ACOMPANHAMENTO');
+    expect(fixture.componentInstance.temFuncionalidade('u1', 'FUNC_ACOMPANHAMENTO')).toBe(true);
+  });
+
+  it('should not toggle functionality when not admin', () => {
+    mockAuthService.hasRole = vi.fn().mockReturnValue(false);
+    const fixture = TestBed.createComponent(UserTeamAssociationComponent);
+    fixture.detectChanges();
+
+    fixture.componentInstance.alternarFuncionalidade('u1', 'FUNC_ACOMPANHAMENTO');
+
+    expect(mockUserService.adicionarFuncionalidade).not.toHaveBeenCalled();
   });
 });
